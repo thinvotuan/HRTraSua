@@ -1,0 +1,154 @@
+﻿@using BatDongSan.Models.DBChamCong
+@{
+    Layout = "~/Views/Shared/_Popup.cshtml";
+}
+
+<script type="text/javascript">
+    var obj = window.opener;
+    $(document).ready(function () {
+        $("#divUpdate").dialog({
+            autoOpen: false,
+            modal: true,
+            width: 750
+        });
+
+
+    });
+    function CloseWindow() {
+        window.close();
+        obj.$("#btnSearchNVLK").click();
+    }
+    function ChooseMayChamCong(MaMay) {
+
+        var MaPB = $("#departmentID").val();
+        if (MaPB == null || MaPB == "" || MaPB == "undefined") {
+
+            Alert.error("Có lỗi xảy ra, Vui lòng kiểm tra lại!", "Thông báo", { displayDuration: 2000 });
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: '/PhongBan/UpdateMaMayPB/',
+            data: {
+                MaMay: MaMay,
+                MaPB: MaPB
+            },
+            success: function (result) {
+
+                if (result == "true") {
+
+                    Alert.success("Đã thêm!", "Thông báo", { displayDuration: 2000 });
+                    obj.$("#btnSearchMayCC").click();
+                }
+                else {
+                    Alert.success(result, "Thông báo", { displayDuration: 2000 });
+                }
+
+            }
+        });
+    }
+
+
+
+</script>
+<div id="tabs" style="width: 68%; height: auto; border: none; float: left; box-sizing: border-box; overflow: hidden; clear: none;" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+        <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active activeColorTab tabToggle">
+            <a href="#"><span><i class="fa fa-users" aria-hidden="true"></i>Danh sách máy chấm công</span></a>
+
+        </li>
+
+    </ul>
+</div>
+<div id="container">
+    <input type="hidden" value="@ViewBag.DeparmentID" class="" id="departmentID"/>
+    <table class="table table-striped table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>STT
+                </th>
+                <th>Mã máy
+                </th>
+                <th>Tên máy
+                </th>
+                <th>Tên công trường/VP.
+                </th>
+                <th>Trạng thái
+                </th>
+
+
+                <th>Loại máy
+                </th>
+                <th>ghi chú
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{
+                var danhSach = ViewBag.List as List<Sp_ViewMachinePBResult>;
+                if (danhSach != null)
+                {
+                    int stt = 1;
+                    foreach (var data in danhSach)
+                    {
+                        
+                
+                <tr>
+                    <td style="text-align:center">
+                        @stt
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" onclick="ChooseMayChamCong('@data.machineId')">@data.machineId</a>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" onclick="ChooseMayChamCong('@data.machineId')">@data.MachineName</a>
+                    </td>
+                    <td>
+                        @data.siteName
+                    </td>
+
+                    @if (data.trangThai == 1)
+                    {
+                        <td>Online
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="color: Red">Offline
+                        </td>
+               
+                    }
+                    @Html.Hidden("status", data.trangThai)
+
+
+                    <td>
+                        @if (data.typeMachine == 1)
+                        { 
+                            <span>Máy vào</span>
+                        }
+                        else if (data.typeMachine == 2)
+                        {
+                            <span>Máy ra</span>
+                        }
+                    </td>
+                    <td>
+                        @data.remark
+                    </td>
+
+                    <td align="center">
+
+                        <a href="javascript:void(0)" onclick="ChooseMayChamCong('@data.machineId')">Chọn</a>
+                    </td>
+                </tr>
+                        stt++;
+                    }
+                }
+            }
+        </tbody>
+
+    </table>
+</div>
+
+

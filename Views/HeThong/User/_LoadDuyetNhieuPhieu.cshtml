@@ -1,0 +1,129 @@
+﻿@using BatDongSan.Models.HeThong
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+ 
+   
+}
+<table style="width: 100%" class="table table-striped table-hover table-condensed tableThemeCustome TableMobile TableDuyetNhieuPhieuIndex">
+
+    <thead>
+        <tr>
+            <th style="width: 35px; text-align: center">STT
+            </th>
+
+            <th style="text-align: center; min-width: 150px">Nhân viên
+            </th>
+            <th style="text-align: center; min-width: 150px;">Mã phiếu
+            </th>
+
+            <th style="text-align: center">Phòng ban
+            </th>
+
+
+
+            <th style="text-align: center; max-width: 300px;">Nội dung
+            </th>
+            <th style="text-align: center; min-width: 200px">Ngày bắt đầu<br />
+                Ngày Kết thúc
+            </th>
+
+            <th style="text-align: center">Số ngày</th>
+            <th style="text-align: center">
+                <input name="check-all" type="checkbox" checked="checked" /></th>
+
+
+        </tr>
+    </thead>
+    <tbody id="tbody">
+
+        @{
+                                
+            int stt = 1;
+            int page_ = Convert.ToInt32(ViewBag.page);
+            int total_ = Convert.ToInt32(ViewBag.total);
+
+            var ls = ViewData["lsDanhSach"] as List<sp_NS_DuyetNhieuPhieuResult>;
+
+            foreach (var item in ls.ToList())
+            {
+
+                if(item.ngayBatDau.Value.Year > 2016){
+                string Link = "/" + ViewBag.maCongViec + "/ViewsApproval/" + item.maPhieu;
+            <tr>
+                <td align="center">
+                    @(stt++)
+                </td>
+                <td>@item.maNhanVien
+                    <br />
+                    <i class="fa fa-user" aria-hidden="true"></i>@item.hoTen</td>
+                <td>
+                    <i class="fa fa-file-code-o" aria-hidden="true"></i>
+                    <a style="color:#519ee5" href="@Link" target="_blank">@item.maPhieu</a>
+
+                </td>
+                <td><i class="fa fa-barcode" aria-hidden="true"></i>@item.tenPhongBan<br />
+                </td>
+                
+
+                <td>
+                    <i class="fa fa-th"></i>@Html.Raw(item.noiDung)
+                </td>
+
+                <td style="text-align: center">@String.Format("{0: dd/MM/yyyy}", item.ngayBatDau) - @String.Format("{0: dd/MM/yyyy}", item.ngayKetThuc)</td>
+                <td style="text-align: center">@item.soNgay</td>
+                <td style="text-align: center">
+                    <input name="checkeds" type="checkbox" value="@item.maPhieu" checked="checked"/></td>
+
+
+
+
+            </tr>
+        }
+                           
+    
+            }
+        }
+
+        <tr>
+            <td colspan="11" align="left" class="clrBeforeMobile">
+                @{
+                
+                    if (page_ > 1)
+                    {
+        
+                    <a class="pageFirst" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(1);">First</a> <a class="pagePrevious" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ - 1));">
+                Previous</a>
+       
+                    }
+
+
+                    if (page_ - 2 >= 1)
+                    { 
+                    <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ - 2));">
+                        @(page_ - 2) </a> <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ - 1));">
+                            @(page_ - 1) </a>
+                    } <span class="pageActive">@page_</span>
+                    if (page_ + 2 <= total_)
+                    { 
+                    <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ + 1) );">
+                        @(page_ + 1) </a> <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ + 2));">
+                            @(page_ + 2) </a>
+                    }
+
+                    if (page_ < total_)
+                    { 
+        
+                    <a class="pageNext" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ + 1));">Next</a> <a class="pageLast" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@total_);">
+                Last</a>
+        
+                    }
+        
+                    <span class="clrFullMobile"><span>Tổng số dòng :</span><strong>@ViewBag.totalRow</strong></span>
+                }
+            </td>
+        </tr>
+    </tbody>
+
+
+</table>

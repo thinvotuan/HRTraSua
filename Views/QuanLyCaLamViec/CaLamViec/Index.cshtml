@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<style>
+    #filterPanel td {
+        border: none;
+    }
+</style>
+<link rel="stylesheet" href="~/Content/batdongsan-alert.css" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/moment.min.js"></script>
+<script src="~/Scripts/vi.js"></script>
+<script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+<script src="~/Scripts/batdongsan.generals.js"></script>
+<script src="~/Scripts/autoNumeric.js"></script>
+<link rel="stylesheet" href="~/Content/bootstrap-datetimepicker.min.css" />
+<script>
+    $(function () {
+
+        $(document).on("click", "[name=maCa]", function () {
+            if (false == $(this).prop("checked")) { //if this item is unchecked
+                $("[name=check-all]").prop('checked', $(this).prop("checked")); //change "select all" checked status to false
+            }
+        });
+        $(document).on("click", "[name=check-all]", function () {
+            $('#content input:checkbox').not(this).prop('checked', this.checked);
+        });
+        $('#btnSearch').click(function () {
+            listFilter(this);
+        });
+        $('#btnUpdate').click(function (id) {
+            var idArray = [];
+            $("#container [name=maCa]:checked").each(function () {
+                idArray.push(this.value);
+            });
+            var url = '@Url.Action("Edit", "CaLamViec")';
+            if (idArray.length > 0) {
+                url = url + "/" + idArray[0];
+                window.location.href = url;
+            }
+            else {
+                bootbox.alert("Vui lòng chọn số phiếu để cập nhật.");
+            }
+        });
+    });
+    function themMoi() {
+        location.href = '@Url.Action("Create", "CaLamViec")';
+    }
+    function listFilter(obj) {
+        var url = "@Url.Action("Index", "CaLamViec")" + "?qSearch=" + $("#pref-search").val().replace(/\ /g, "+")
+        beginPaging();
+        $('#container').html('<h4>Loading...</h4>').load(url, function () {
+            successPaging();
+        });
+    }
+    function beginPaging(args) {
+        // Animate        
+        $('#container').fadeOut('fast');
+    }
+
+    function successPaging() {
+        $('#container').fadeIn('fast');
+    }
+    function failurePaging() {
+        alert("Không thể tải dữ liệu");
+    }
+
+    function enterToSeacrh(event) {
+        if (event.keyCode == 13)
+            $("#btnSearch").click();
+    }
+</script>
+@using (Html.BeginForm("Delete", "CaLamViec", FormMethod.Post, new { @class = "form-inline", @role = "form", @id = "form-submit" }))
+{
+    <fieldset class="removeBorderFieldset">
+        <div id="tabs" style="border: none;" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+            <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+                <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a><span>Danh mục ca làm việc</span></a></li>
+            </ul>
+        </div>
+        <div id="filterPanel">
+            <table class="table table-condensed TableMobileChild">
+                <tr class="background_tr">
+                    <td colspan="3">
+                        <div style="display: inline-flex; width: 100%;">
+                            <input type="text" class="form-control input-sm" style="width: 100%" id="pref-search" onkeydown="enterToSeacrh(event)" value="" placeholder="Nhập giá trị tìm kiếm...">
+                            <div style="width: 71px;">
+                                <button id="btnSearch" type="button" class="btn btn-primary btn-sm" style="border: 1px double; margin-left: 5px">
+                                    <span class="glyphicon glyphicon-search"></span>Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="float: right">
+                            <button class="btn btn-info" id="btnThem" type="button" onclick="themMoi()">Thêm </button>
+                            <button class="btn btn-info" type="button" id="btnUpdate">Sửa </button>
+                            <button class="btn btn-info" id="btnDelete" type="button" onclick="deleteOnSubmit()">Xóa </button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="container">
+            @{Html.RenderPartial("ViewIndex");}
+
+        </div>
+    </fieldset>
+}
+

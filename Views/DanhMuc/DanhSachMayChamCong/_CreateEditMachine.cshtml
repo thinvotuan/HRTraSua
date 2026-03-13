@@ -1,0 +1,55 @@
+﻿@using BatDongSan.Models.DBChamCong;
+@model Sys_Machine
+<script type="text/javascript">
+    
+    $(document).ready(function () {
+        $(".numberinputInt").autoNumeric('init', { lZero: 'deny', mDec: 0, pSign: 's', aSep: ',', aDec: '.' });
+    });
+    </script>
+<div class="bs-callout bs-callout-info" id="callout-glyphicons-location">
+    <h4 style="color: #1b809e; margin-left: 10px">@ViewBag.TitleHead máy chấm công</h4>
+</div>
+<div style="margin-top: 15px">
+    <table class="table table-responsive" id="tbl-create">
+        <tr>
+            <td>siteId<span style="font-style: italic; color: red">*</span></td>
+            <td>@Html.DropDownListFor(model => model.siteId, ViewBag.ListSites as SelectList, new { @class = "form-control", required="required" })</td>
+        </tr>
+        <tr>
+            <td>machineId<span style="font-style: italic; color: red">*</span></td>
+            @{
+                if(Model.machineId != null){
+                
+            <td>@Html.TextBoxFor(model => model.machineId, new { @class = "form-control", required="required", @readonly="readonly" })</td>
+            }
+            else{
+                    <td>@Html.TextBoxFor(model => model.machineId, new { @class = "form-control", required="required" })</td>
+                
+                }
+                }
+                </tr>
+        <tr>
+            <td>MachineName<span style="font-style: italic; color: red">*</span></td>
+            <td>@Html.TextBoxFor(model => model.MachineName, new { @class = "form-control", required="required" })</td>
+        </tr>
+        <tr>
+            <td>remark </td>
+            <td>@Html.TextBoxFor(model => model.remark, new { @class = "form-control" })</td>
+        </tr>
+        <tr>
+            <td>typeMachine </td>
+            <td>@Html.TextBoxFor(model => model.typeMachine, new { @class = "form-control numberinputInt"})</td>
+        </tr>
+    </table>
+</div>
+<style>
+    #tbl-create td
+    {
+        border: none;
+    }
+
+    #tbl-create
+    {
+        margin: 0;
+    }
+</style>

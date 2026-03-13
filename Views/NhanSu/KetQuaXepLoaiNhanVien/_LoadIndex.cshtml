@@ -1,0 +1,84 @@
+﻿@using BatDongSan.Models.DanhMuc
+@{
+    ViewBag.Title = "Index";
+    Layout = "";
+    var ls = ViewBag.List as List<tbl_NS_KetQuaDanhGiaXepLoai>;
+    var listXLDG = ViewBag.listXLDG as List<tbl_DM_XepLoaiDG>;
+    int flash = (int)ViewBag.flash;
+}
+  @{
+      if(flash == 1){
+                              int stt = 1;
+                              foreach (var item in ls.ToList() )
+                              {
+                           
+                            <tr>
+                                <td align="center" data-label="STT">
+                                    @stt
+                                </td>
+                               
+                                <td>
+                                    @item.tenPhongBan
+                                </td>
+                                <td>
+                                    @item.hoTen
+                                </td>
+                                <td style="text-align:right">
+                                    @item.diemCT1
+                                </td>
+                                <td style="text-align:right">
+                                    @item.diemNC1
+                                </td>
+                                <td style="text-align:right">
+                                    @item.diemCD1
+                                </td>
+                                <td style="text-align:right;background: #f5f55d;">
+                                    @item.tongDiem1
+                                </td>
+                                <td style="text-align:right">
+                                    @item.diemCT2
+                                </td>
+                                <td style="text-align:right">
+                                    @item.diemNC2
+                                </td>
+                                <td style="text-align:right">
+                                    @item.diemCD2
+                                </td>
+                                <td style="text-align:right;background: #f5f55d;">
+                                    @item.tongDiem2
+                                </td>
+                                <td style="text-align:right;background: #dfd;">
+                                    @item.tongDiem
+                                </td>
+                                @*@{
+                                  var colorLoai = item.xepLoaiHT;
+                                  var getTenLoai = listXLDG.Where(d => d.maXepLoai == item.xepLoaiHT).Select(d => d.tenXepLoai).FirstOrDefault();
+                                  if (item.xepLoaiHT == "A+"){colorLoai = "AA";}
+
+                                  if (item.xepLoaiHT == "B+"){colorLoai = "BB";}
+                                    }
+                                <td style="text-align:center;" class="@colorLoai">
+                                    @getTenLoai
+                                </td>*@
+                                 @{
+                                  var colorDC = item.dieuChinhXL;
+
+                                  var getTenLoaiHT = listXLDG.Where(d => d.maXepLoai == item.dieuChinhXL).Select(d => d.tenXepLoai).FirstOrDefault();
+                                  if (item.dieuChinhXL == "A+"){colorDC = "AA";}
+
+                                  if (item.dieuChinhXL == "B+") { colorDC = "BB"; }
+                                  
+                                    }
+                                <td  style="text-align:center" class="@colorDC">@getTenLoaiHT</td>
+
+                                
+                            </tr>
+                                  stt++;
+                           }
+                            }
+                            else{
+      <tr>
+          <td colspan="13">Kết quả chưa được duyệt</td>
+      </tr>
+      }
+                            }

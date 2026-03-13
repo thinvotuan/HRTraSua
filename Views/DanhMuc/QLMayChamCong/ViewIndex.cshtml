@@ -1,0 +1,133 @@
+﻿@using BatDongSan.Models.DBChamCong;
+@{
+    int i = 1;
+    int page_ = Convert.ToInt32(ViewBag.page);
+    int total_ = Convert.ToInt32(ViewBag.total);
+
+    var LstCongTrinh = ViewBag.LstCongTrinh as List<Sys_SiteConection>;
+}
+
+
+
+@{
+   
+    var danhSach = ViewData["lsDanhSach"] as List<Sp_ViewMachinePBResult>;
+
+                    if (danhSach != null)
+                    {
+                        int stt = 1;
+                        foreach (var data in danhSach.OrderBy(d => d.siteId))
+                        {
+                        
+                
+                    <tr id="@data.machineId">
+                        <td style="text-align: center">
+                            @stt
+                        </td>
+                        <td>
+                            @data.machineId
+                        </td>
+                        <td>
+                            <input type="text" value="@data.MachineName" class="MachineName form-control"/>
+                        </td>
+                        <td>
+                            <select class="form-control siteCongTrinh">
+                                @{
+                            foreach (var item in LstCongTrinh)
+                            {
+                                if (item.siteId == data.siteId)
+                                {
+                                    <option value="@item.siteId" selected>
+                                        @item.siteName
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@item.siteId">
+                                        @item.siteName
+                                    </option>
+                            
+                                }
+                            }
+                                }
+
+                            </select>
+                        </td>
+
+                        @if (data.trangThai == 1)
+                        {
+                            <td style="text-align:center">Online
+                            </td>
+                        }
+                        else
+                        {
+                            <td style="color: Red; text-align:center">Offline
+                            </td>
+               
+                        }
+                        @Html.Hidden("status", data.trangThai)
+
+
+                        <td style="text-align:center">
+                            @if (data.typeMachine == 1)
+                            { 
+                                <span>Máy vào</span>
+                            }
+                            else if (data.typeMachine == 2)
+                            {
+                                <span>Máy ra</span>
+                            }
+                        </td>
+                        <td>
+                            <input type="text" value="@data.remark" class="remark form-control" />
+                        </td>
+                       @* <td style="text-align: center">
+                                    <button type="button" class="btn btn-warning btn-xs btnXoaMayCC"><span class="glyphicon glyphicon-minus"></span></button>
+                                </td>*@
+
+                    </tr>
+                            stt++;
+                        }
+                    }
+                
+            
+}
+
+@*<tr>
+    <td colspan="8" class="clrBeforeMobile">
+        @{
+                
+            if (page_ > 1)
+            {
+        
+            <a class="pageFirst" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(1);">First</a> <a class="pagePrevious" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ - 1));">
+                Previous</a>
+       
+            }
+
+
+            if (page_ - 2 >= 1)
+            { 
+            <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ - 2));">
+                @(page_ - 2) </a> <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ - 1));">
+                    @(page_ - 1) </a>
+            } <span class="pageActive">@page_</span>
+            if (page_ + 2 <= total_)
+            { 
+            <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ + 1) );">
+                @(page_ + 1) </a> <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ + 2));">
+                    @(page_ + 2) </a>
+            }
+
+            if (page_ < total_)
+            { 
+        
+            <a class="pageNext" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ + 1));">Next</a> <a class="pageLast" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@total_);" attrIdLast="@total_">
+                Last</a>
+        
+            }
+        
+            <span class="clrFullMobile GetTongSoDong"><span>Tổng số dòng :</span><strong>@ViewBag.totalRow</strong></span>
+        }
+    </td>
+</tr>*@

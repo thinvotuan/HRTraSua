@@ -1,0 +1,535 @@
+﻿@using BatDongSan.Models.HeThong;
+@using BatDongSan.Models.NhanSu;
+@model List<tbl_FileDinhKem>
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int i = 1;
+    // var List = ViewBag.lsTieuChi as List<tbl_NS_TieuChi>;
+    Sys_ThongBao item = ViewBag.data;
+}
+
+<link rel="stylesheet" href="~/Content/bootstrap-datetimepicker.min.css" />
+<script src="~/Scripts/moment.min.js"></script>
+<script src="~/Scripts/vi.js"></script>
+<script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+<script src="~/Scripts/autoNumeric.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script type="text/javascript" src="~/Scripts/Jquery.treeview/jquery.treeview.js"></script>
+<link rel="stylesheet" href="~/Scripts/Jquery.treeview/jquery.treeview.css" />
+<script src="~/Scripts/batdongsansearch.utils.js"></script>
+
+
+
+<script src="~/Scripts/select2.full.js"></script>
+
+<link href="~/Scripts/select2.min.css" rel="stylesheet">
+<script type="text/javascript">
+    $().ready(function () {
+        //setting phong ban//
+        $("#navigation1").treeview({
+            persist: "location",
+            unique: false,
+            collapsed: true
+        }).find(".expandable-hitarea").click();
+        
+        $('ul.dropdown-menu .hitarea').on('click', function (event) {
+            event.stopPropagation();
+        });
+        //
+        //Xóa file upload
+        $(".btnDeleteFile").click(function () {
+            var url = "@Url.Action("DeleteFile", "QuanLyThongBao")" + "/" + this.value;
+            var row = $(this).closest("tr");
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: 'json',
+                success: function () {
+                    row.remove();
+                    Alert.success("Đã xóa thành công", "Thông báo", { displayDuration: 2000 });
+                },
+                error: function () {
+                    Alert.error("Có lỗi xảy ra.", "Thông báo", { displayDuration: 2000 });
+                }
+            })
+        });
+        //
+
+        $('#txtsearch').on("input", function () {
+
+            $('#phongban-div #navigation1').filterLink($('#phongban-div #txtsearch').val());
+        });
+
+        $("#phongban-dropdown-menu").removeAttr("style");
+
+        $("#customModal").on("hide.bs.modal", function () {
+            $("#custom-panel").html("");
+        });
+
+        $(document).on("click", "#phongban-div #phongban-dropdown-menu li a", function () {
+           
+            var valMaPB = $("#btnPhongBan").val();
+            valMaPB = valMaPB + "__" + $(this).attr('id');
+            $("#saveIDPhongBan").val($(this).attr('id'));
+            $("#btnPhongBan").val(valMaPB);
+            $("#maPhongBan").val($(this).attr('id'));
+            var liHTML = "<li attrPB='"+$(this).attr('id')+"'><span class='deletePB'><i class='fa fa-times' aria-hidden='true'></i></span>"+$(this).text()+"</li>";
+            $(".GroupPhongBanSeleted ul").append(liHTML);
+            $(this).parents(".dropdown").find('.btn').html("Chọn phòng ban");
+            var ValPB = "";
+            for(var stt = 0; stt <  $(".GroupPhongBanSeleted ul li").length; stt++){
+                
+                ValPB = ValPB + $(".GroupPhongBanSeleted ul li").eq(stt).attr('attrPB')+",";
+            }
+            $("#lstPhongBanSeleted").val(ValPB);
+
+        });
+        $("#btnSave").click(function () {
+            if($("#tenThongBao").val()==null || $("#tenThongBao").val()==""){
+                Alert.warning("Vui lòng nhập tên thông báo.", "Thông báo", { displayDuration: 3000 });
+
+                $("#tenThongBao").focus();
+                return false;
+            }
+           
+            $("form").submit();
+             
+        });  
+        setTimeout(function () { $("#divMsg").hide() }, 5000); 
+        $("#btnPhongBan").val();
+        $("#ListNhanVien").select2({
+            placeholder: "Chọn nhân viên"
+        });
+        $("#ListCapBac").select2({
+            placeholder: "Chọn cấp bậc"
+        });
+        $(document).on("click",".deletePB",function(){
+            $(this).parent().remove();
+            var ValPB = "";
+            for(var stt = 0; stt <  $(".GroupPhongBanSeleted ul li").length; stt++){
+                
+                ValPB = ValPB + $(".GroupPhongBanSeleted ul li").eq(stt).attr('attrPB')+",";
+            }
+            $("#lstPhongBanSeleted").val(ValPB);
+        })
+        GetGiaTriPB();
+    });
+
+    function GetGiaTriPB(){
+        var ValPB = "";
+        for(var stt = 0; stt <  $(".GroupPhongBanSeleted ul li").length; stt++){
+                
+            ValPB = ValPB + $(".GroupPhongBanSeleted ul li").eq(stt).attr('attrPB')+",";
+        }
+        $("#lstPhongBanSeleted").val(ValPB);
+    }
+
+    function ValidateKeypress(numcheck, e) {
+        var keynum, keychar, numcheck;
+        if (window.event) {//IE
+            keynum = e.keyCode;
+        }
+        else if (e.which) {// Netscape/Firefox/Opera
+            keynum = e.which;
+        }
+        if (keynum == 8 || keynum == 127 || keynum == null || keynum == 9 || keynum == 0 || keynum == 13) return true;
+        keychar = String.fromCharCode(keynum);
+        var result = numcheck.test(keychar);
+        return result;
+    }   
+    
+    function GuiEmailThongBao(id)
+    {
+        bootbox.confirm("Bạn có muốn gửi email đến tất cả nhân viên không", function(result){
+            if(result)
+            {
+                var daGuiEmail = $("#daGuiEmail").val();
+                if(daGuiEmail == 1){
+                    bootbox.confirm("Thông báo này đã được gửi email. Bạn có muôn tiếp tục gửi không?", function(result1){
+                        if(result1)
+                        {
+                            var url='@Url.Action("SendEmailThongBao", "QuanLyThongBao")'+'/'+id;
+                            $.ajax({
+                                url:url,
+                                type:'POST',
+                                data:'json',
+                                success: function () {
+                                    Alert.success("Gửi email thành công", "Thông báo", { displayDuration: 2000 });
+                                },
+                                error: function () {
+                                    Alert.error("Có lỗi xảy ra", "Thông báo", { displayDuration: 2000 });
+                                }
+                            })
+                        }
+                        else{
+                           
+                        }
+                    });
+                }
+                else{
+                    var url='@Url.Action("SendEmailThongBao", "QuanLyThongBao")'+'/'+id;
+                    $.ajax({
+                        url:url,
+                        type:'POST',
+                        data:'json',
+                        success: function () {
+                            Alert.success("Gửi email thành công", "Thông báo", { displayDuration: 2000 });
+                        },
+                        error: function () {
+                            Alert.error("Có lỗi xảy ra", "Thông báo", { displayDuration: 2000 });
+                        }
+                    })
+                }
+            }
+        })
+    }
+    function GuiSMSThongBao(id)
+    {
+        bootbox.confirm("Bạn có muốn gửi SMS đến tất cả nhân viên không.", function(result){
+            if(result)
+            {
+                var daGuiSMS = $("#daGuiSMS").val();
+                if(daGuiSMS == 1){
+                    bootbox.confirm("Thông báo này đã được gửi SMS. Bạn có muôn tiếp tục gửi không?", function(result1){
+                        if(result1)
+                        {
+                            var url='@Url.Action("SendSMSThongBao", "QuanLyThongBao")'+'/'+id;
+                            $.ajax({
+                                url:url,
+                                type:'POST',
+                                data:'json',
+                                success: function () {
+                                    Alert.success("Gửi SMS thành công", "Thông báo", { displayDuration: 2000 });
+                                },
+                                error: function () {
+                                    Alert.error("Có lỗi xảy ra", "Thông báo", { displayDuration: 2000 });
+                                }
+                            })
+                        }
+                        else{
+                           
+                        }
+                    });
+                }
+                else{
+                    var url='@Url.Action("SendSMSThongBao", "QuanLyThongBao")'+'/'+id;
+                    $.ajax({
+                        url:url,
+                        type:'POST',
+                        data:'json',
+                        success: function () {
+                            Alert.success("Gửi SMS thành công", "Thông báo", { displayDuration: 2000 });
+                        },
+                        error: function () {
+                            Alert.error("Có lỗi xảy ra", "Thông báo", { displayDuration: 2000 });
+                        }
+                    })
+                }
+            }
+        })
+    }
+    
+
+</script>
+
+<style>
+    td
+    {
+        border: none!important;
+    }
+
+    .input-group-btn
+    {
+        position: absolute;
+        font-size: 0;
+    }
+
+    .numberinput
+    {
+        text-align: right;
+    }
+
+    #navigation1
+    {
+        overflow: auto;
+        height: 600px;
+    }
+
+    #phongban-dropdown-menu
+    {
+        width: 500px;
+    }
+
+    .select2-container--default .select2-selection--multiple
+    {
+        border-right: 0 !important;
+        border-top: 0 !important;
+        border-left: 0 !important;
+        border-bottom: 1px solid #eee !important;
+        border-radius: 0 !important;
+    }
+
+    #ListNhanVien + span
+    {
+        width: 100% !important;
+    }
+
+    fieldset
+    {
+        padding: 0 0px!important;
+    }
+
+    .GroupPhongBanSeleted ul li
+    {
+        font-size: 15px;
+    }
+
+        .GroupPhongBanSeleted ul li span
+        {
+            color: green;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .GroupPhongBanSeleted ul li:hover
+        {
+            color: red;
+        }
+</style>
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<script src="~/Scripts/ckfinder/ckfinder.js"></script>
+<script>
+    $(document).ready(function () {
+       
+        var newCKEdit=  CKEDITOR.replace("noiDungThongBao", {
+            toolbar: 'DauThau',
+        });
+        CKFinder.setupCKEditor(newCKEdit, '@Url.Content("~/Scripts/ckfinder")');
+    });
+</script>
+<form method="post" id="form-submit" enctype="multipart/form-data">
+    <fieldset class="fieldset1">
+        <input type="hidden" name="lstPhongBanSeleted" id="lstPhongBanSeleted" />
+        <legend class="legend">Sửa thông báo</legend>
+
+
+        <div class="tab-content">
+            <div class="tab-pane in active" id="tab1">
+                <table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
+                    <tr>
+                        <td style="width: 150px" class="tdtitle">Tên
+                        </td>
+                        <td>
+                            <input type="text" id="tenThongBao" name="tenThongBao" value="@item.tenThongBao"
+                            maxlength="250"  />
+                            <input type="hidden" value="@(item.daGuiEmail == true ? 1 : 0)" name="daGuiEmail" id="daGuiEmail" />
+                            <input type="hidden" value="@(item.daGuiSMS == true ? 1 : 0)" name="daGuiSMS" id="daGuiSMS" />
+                        </td>
+                    </tr>
+                    <tr>
+                    <tr>
+                        <td style="width: 150px" class="tdtitle">Title Email
+                        </td>
+                        <td>
+                            <input type="text" id="titleMail" name="titleMail" class="form-control" value="@item.titleMail"
+                            maxlength="550" required="required" />
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td class="tdtitle">Phòng ban 
+                        
+                        </td>
+
+                        <td>
+                            @*<span style="float: left">
+                                <input type="text" readonly="readonly" name="maPhongBan" id="maPhongBan" value="@item.maPhongBan" />
+                            </span>*@
+                            <span style="float: left">
+                                <div class="form-group" id="phongban-div">
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary btn-sm dropdown-toggle" id="btnPhongBan" type="button" data-toggle="dropdown">
+                                            Chọn phòng ban&nbsp;<span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" id="phongban-dropdown-menu">
+                                            <li role="presentation">
+                                                <div class="form-group has-feedback" style="width: 90%; margin: 5px auto;">
+                                                    <input type="text" class="form-control input-sm" id="txtsearch" placeholder="Search" style="width: 100%" />
+                                                    <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                                                </div>
+                                            </li>
+                                            <li role="presentation">
+                                                @Html.Raw(ViewBag.PhongBans)
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="GroupPhongBanSeleted">
+                                    <ul>
+                                        @{
+                                            var lstPB = ViewBag.PBs;
+                                            foreach (var itemPB in lstPB)
+                                            {
+                                            <li attrPB="@itemPB.MaPhongBan"><span class='deletePB'><i class='fa fa-times' aria-hidden='true'></i></span>@itemPB.Ten</li>
+                                            }
+                                        }
+
+                                    </ul>
+                                </div>
+                            </span></td>
+                    </tr>
+                    <tr>
+                        <td class="tdtitle">Cấp bậc</td>
+                        <td style="border: 1px solid #ccc !important;">
+
+                            <select class="form-control selectpicker" id="ListCapBac" name="ListCapBac" multiple="multiple">
+
+                                @{
+                                    if (item.listCapBac != null)
+                                    {
+                                        var lstCB = item.listCapBac.ToString();
+                                        foreach (var itemCD in ViewBag.capBacChucDanh as List<BatDongSan.Models.DanhMuc.tbl_DM_CapBacChucDanh>)
+                                        {
+                                            if (lstCB.Contains(Convert.ToString(itemCD.soCapBac)))
+                                            {
+                                    <option value="@itemCD.soCapBac" selected>@itemCD.tenCapBac</option>
+                                            }
+                                            else
+                                            {
+                                    <option value="@itemCD.soCapBac">@itemCD.tenCapBac</option>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        foreach (var itemCD in ViewBag.capBacChucDanh as List<BatDongSan.Models.DanhMuc.tbl_DM_CapBacChucDanh>)
+                                        {
+                                            
+                                    <option value="@itemCD.soCapBac">@itemCD.tenCapBac</option>
+                                            
+                                        }
+
+                                    }
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdtitle">Nhân viên</td>
+                        <td style="border: 1px solid #ccc !important;">
+                            <select class="form-control selectpicker" id="ListNhanVien" name="ListNhanVien" multiple="multiple">
+                                @{
+                                    if (item.listNhanVien != null)
+                                    {
+                                        var lstNV = item.listNhanVien.ToString();
+                                        foreach (var itemNV in ViewBag.nhanViens as List<tbl_NS_NhanVien>)
+                                        {
+                                            var hovaten = itemNV.ho + " " + itemNV.ten;
+                                            if (lstNV.Contains(Convert.ToString(itemNV.maNhanVien)))
+                                            {
+                                    <option value="@itemNV.maNhanVien" selected>@hovaten</option>
+                                            }
+                                            else
+                                            {
+                                    <option value="@itemNV.maNhanVien">@hovaten</option>                                    }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        foreach (var itemNV in ViewBag.nhanViens as List<tbl_NS_NhanVien>)
+                                        {
+                                            var hovaten = itemNV.ho + " " + itemNV.ten;
+                                    <option value="@itemNV.maNhanVien">@hovaten</option>                                    }
+
+                                    }
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdtitle">Nội dung
+                        </td>
+                        <td>
+
+                            <textarea id="noiDungThongBao" name="noiDungThongBao" class="form-control" required="required">@item.noiDungThongBao</textarea>
+                        </td>
+                    </tr>
+
+                    <tr style="display: none">
+                        <td class="tdtitle">Gửi SMS
+                        </td>
+                        <td>
+
+                            <textarea id="noiDungSMS" name="noiDungSMS" class="form-control">@item.noiDungSMS</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdtitle">Đính kèm file
+                        </td>
+                        <td colspan="4" style="background: transparent; padding: 0px !important;">
+                            <div id="dinhkemfile-panel" class="filter-panel">
+                                <input type="hidden" id="nguoiUpLoad" value="@Session["TenNhanVien"]">
+                                <div id="container">
+                                    <table class="table table-stripped removeBackTbl" id="tbl-uploading">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="2">Tên tài liệu</th>
+                                                <th>Người upload</th>
+                                                <th>Ngày upload</th>
+                                                <th style="width: 100px">
+                                                    <input type="file" style="height: 30px; display: none" name="fileDinhKems" class="form-control" multiple="multiple" value="">
+                                                    <label class="btn btn-info btn-xs btn-link" style="font-size: 12px; padding: 0px!important; font-size: 11px!important; width: 83px; height: 18px;" for="input-upload">Chọn tập tin</label>
+                                                    <input type="file" style="height: 30px; display: none" name="fileDinhKems" id="input-upload" class="form-control" multiple="multiple" value=""></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var file in Model)
+                                            {
+                                                <tr>
+                                                    <td style="text-align: left">
+                                                        <img style="width:32px; height: 32px" src="@file.thumbnailURL"></td>
+                                                    <td>@file.originalFileName</td>
+                                                    <td>@file.tenNguoiUpLoad</td>
+                                                    <td>@file.ngayLap</td>
+                                                    <td style="text-align: right">
+                                                        <a class="btn btn-link btn-xs" type="button" href="@Url.Action("Download", "QuanLyThongBao", new { id = file.id })" value="@file.id"><i class="fa fa-download" aria-hidden="true"></i></a>
+                                                        <button class="btn btn-link btnDeleteFile" type="button" value="@file.id">Xóa</button>
+                                                    </td>
+                                                </tr> 
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;
+                        </td>
+                        <td colspan="2">
+                            <input type="button" class="btn btn-primary btnBlack" id="btnSave" value="Lưu" />
+                            @* <input type="button" class="btn btn-primary" id="btnGuiEmail" value="Gửi email" onclick="GuiEmailThongBao(@item.id)">
+                            <input type="button" class="btn btn-primary" id="btnGuiSMS" value="Gửi SMS" onclick="GuiSMSThongBao(@item.id)">*@
+                            <input type="button" class="btn btn-primary btnBlack" value="Đến trang gửi email" onclick="window.location='@Url.Action("Details/" + @item.id, "QuanLyThongBao") '" style="    width: 119px;"/>
+                            <input type="button" class="btn btn-primary btnBlack" value="Trở về" onclick="window.location='@Url.Action("Index", "QuanLyThongBao")    '" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+<div class="modal fade" id="loadingModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>
+                    <img src="/Images/loader.gif" />
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

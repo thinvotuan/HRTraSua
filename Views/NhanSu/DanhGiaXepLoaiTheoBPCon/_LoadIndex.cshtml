@@ -1,0 +1,46 @@
+﻿@using BatDongSan.Models.DanhMuc
+@{
+    ViewBag.Title = "Index";
+    Layout = "";
+    var ls = ViewBag.List as List<sp_DG_DanhGiaXepLoaiTheoBPCon_IndexResult>; 
+   
+}
+  @{
+                              int stt = 1;
+                              foreach (var item in ls.ToList().OrderByDescending(t=>t.ngayLap ))
+                              {
+                           
+                            <tr>
+                                <td align="center" data-label="STT">
+                                    @stt
+                                </td>
+                                <td>
+                                   
+                                     @Html.ActionLink(item.maPhieu, "Details", new { id = item.maPhieu},new {@style="color:blue;"})
+                                </td>
+                                <td>
+                                    @item.maPhuongPhapDanhGia
+                                </td>
+                                <td>
+                                    @string.Format("{0:dd/MM/yyyy}", item.nguoiLap)
+                                </td>
+                                <td style="text-align:right">
+                                    
+                                 @string.Format("{0:dd/MM/yyyy}", item.ngayLap)
+                                </td>
+                                <td style="text-align:right">
+                                    @item.nam
+                                </td>
+                              
+                                <td data-label="" align="center">
+                                    
+   <a href="/DanhGiaXepLoaiTheoBPCon/Edit/@item.maPhieu" title="Sửa phiếu"><i class="fa fa-pencil-square-o" style="font-size: 30px; color: orange;" aria-hidden="true"> | </i></a>                         
+                        <a class="btnDelete" alt="@item.maPhieu" title="Xoá phiếu"><i class="fa fa-trash" style="font-size: 30px; color: red; cursor: pointer;" aria-hidden="true"></i></a>
+                
+                               
+                                 
+                                </td>
+                            </tr>
+                                  stt++;
+                           }
+                            }

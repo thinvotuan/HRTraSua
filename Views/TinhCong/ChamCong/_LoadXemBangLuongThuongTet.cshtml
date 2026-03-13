@@ -1,0 +1,59 @@
+﻿@using BatDongSan.Models.NhanSu
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+ 
+   
+}
+
+@{
+                                
+    int stt = 1;
+    string ckDuyet = ViewBag.ckDuyet;
+    var ls = ViewData["lsDanhSach"] as List<sp_NS_BangLuongThuongTetResult>;
+    if (ckDuyet =="duyet"){
+    foreach (var item in ls.ToList())
+    {
+
+
+   <tr>
+        <td align="center">
+            @(stt++)
+        </td>
+        <td><i class="fa fa-user" aria-hidden="true"></i>@item.maNhanVien</td>
+        <td>@item.hoTen</td>
+        
+        <td style="text-align: right">@item.diemDanhGia</td>
+        @{
+        var clsColor = item.xepLoai;
+        if (clsColor == "A+") { clsColor = "AA"; }
+
+        if (clsColor == "B+") { clsColor = "BB"; }
+            }
+        <td style="text-align: center" class="@clsColor">@item.xepLoai</td>
+        
+        <td style="text-align: right">@String.Format("{0:###,##0.##}", item.tongThuNhapTrongNam)</td>
+        
+        <td style="text-align: right">@String.Format("{0:###,##0.##}", item.luongThangTrungBinh)</td>
+        <td style="text-align: right">@item.soThangThuong</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.##}", item.soTienThuong)</td>
+       <td style="text-align: right">@String.Format("{0:###,##0.##}", item.thue1Thang)</td>
+       <td style="text-align: right">@String.Format("{0:###,##0.##}", item.chuyenLan1)<br />(Lương tháng 13, đã trừ thuế TNCN)</td>
+       <td style="text-align: right">@String.Format("{0:###,##0.##}", item.chuyenLan2)<br />(Lương tháng 14,15,16)</td>
+
+
+
+
+
+    </tr>
+                           
+    
+    }
+    }
+    else{
+    <tr>
+        <td colspan="12"  class="clrBeforeMobile">Bảng lương thưởng tết chưa được duyệt</td>
+
+    </tr>
+    }
+}

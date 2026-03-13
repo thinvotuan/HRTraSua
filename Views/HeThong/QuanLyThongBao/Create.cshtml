@@ -1,0 +1,304 @@
+﻿@using BatDongSan.Models.HeThong;
+@model Sys_ThongBao
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+   
+}
+<link rel="stylesheet" href="~/Content/bootstrap-datetimepicker.min.css" />
+<script src="~/Scripts/moment.min.js"></script>
+<script src="~/Scripts/vi.js"></script>
+<script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+<script src="~/Scripts/autoNumeric.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script type="text/javascript" src="~/Scripts/Jquery.treeview/jquery.treeview.js"></script>
+<link rel="stylesheet" href="~/Scripts/Jquery.treeview/jquery.treeview.css" />
+<script src="~/Scripts/batdongsansearch.utils.js"></script>
+
+
+
+<script src="~/Scripts/select2.full.js"></script>
+
+<link href="~/Scripts/select2.min.css" rel="stylesheet">
+<script type="text/javascript">
+    $().ready(function () {
+        $("#btnSave").click(function () {
+            if($("#tenThongBao").val()==null || $("#tenThongBao").val()==""){
+                Alert.warning("Vui lòng nhập tên thông báo.", "Thông báo", { displayDuration: 3000 });
+
+                $("#tenThongBao").focus();
+                return false;
+            }
+            
+            $("form").submit();
+             
+        });
+    
+
+  
+
+        setTimeout(function () { $("#divMsg").hide() }, 5000);
+    });
+   
+     
+    function ValidateKeypress(numcheck, e) {
+        var keynum, keychar, numcheck;
+        if (window.event) {//IE
+            keynum = e.keyCode;
+        }
+        else if (e.which) {// Netscape/Firefox/Opera
+            keynum = e.which;
+        }
+        if (keynum == 8 || keynum == 127 || keynum == null || keynum == 9 || keynum == 0 || keynum == 13) return true;
+        keychar = String.fromCharCode(keynum);
+        var result = numcheck.test(keychar);
+        return result;
+    }
+
+</script>
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<script src="~/Scripts/ckfinder/ckfinder.js"></script>
+<script>
+    $(document).ready(function () {
+        //setting phong ban//
+        $("#navigation1").treeview({
+            persist: "location",
+            unique: false,
+            collapsed: true
+        }).find(".expandable-hitarea").click();
+        
+        $('ul.dropdown-menu .hitarea').on('click', function (event) {
+            event.stopPropagation();
+        });
+
+
+        $('#txtsearch').on("input", function () {
+
+            $('#phongban-div #navigation1').filterLink($('#phongban-div #txtsearch').val());
+        });
+
+        $("#phongban-dropdown-menu").removeAttr("style");
+
+        $("#customModal").on("hide.bs.modal", function () {
+            $("#custom-panel").html("");
+        });
+
+        $(document).on("click", "#phongban-div #phongban-dropdown-menu li a", function () {
+            var valMaPB = $("#btnPhongBan").val();
+            valMaPB = valMaPB + "__" + $(this).attr('id');
+            $("#saveIDPhongBan").val($(this).attr('id'));
+            $("#btnPhongBan").val(valMaPB);
+            $("#maPhongBan").val($(this).attr('id'));
+            var liHTML = "<li attrPB='"+$(this).attr('id')+"'><span class='deletePB'><i class='fa fa-times' aria-hidden='true'></i></span>"+$(this).text()+"</li>";
+            $(".GroupPhongBanSeleted ul").append(liHTML);
+            $(this).parents(".dropdown").find('.btn').html("Chọn phòng ban");
+            var ValPB = "";
+            for(var stt = 0; stt <  $(".GroupPhongBanSeleted ul li").length; stt++){
+                
+                ValPB = ValPB + $(".GroupPhongBanSeleted ul li").eq(stt).attr('attrPB')+",";
+            }
+            $("#lstPhongBanSeleted").val(ValPB);
+           
+        });
+        var newCKEdit=  CKEDITOR.replace("noiDungThongBao", {
+            toolbar: 'DauThau',
+        });
+        CKFinder.setupCKEditor(newCKEdit, '@Url.Content("~/Scripts/ckfinder")');
+        $("#ListNhanVien").select2({
+            placeholder: "Chọn nhân viên"
+        });
+        $("#ListCapBac").select2({
+            placeholder: "Chọn cấp bậc"
+        });
+        $(document).on("click",".deletePB",function(){
+            $(this).parent().remove();
+            var ValPB = "";
+            for(var stt = 0; stt <  $(".GroupPhongBanSeleted ul li").length; stt++){
+                
+                ValPB = ValPB + $(".GroupPhongBanSeleted ul li").eq(stt).attr('attrPB')+",";
+            }
+            $("#lstPhongBanSeleted").val(ValPB);
+        })
+    });
+ 
+</script>
+<style>
+    td {
+        border: none!important;
+    }
+
+    .input-group-btn {
+        position: absolute;
+        font-size: 0;
+    }
+
+    .numberinput {
+        text-align: right;
+    }
+
+    #navigation1 {
+        overflow: auto;
+        height: 600px;
+    }
+
+    #phongban-dropdown-menu {
+        width: 500px;
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        border-right: 0 !important;
+        border-top: 0 !important;
+        border-left: 0 !important;
+        border-bottom: 1px solid #eee !important;
+        border-radius: 0 !important;
+    }
+
+    #ListNhanVien + span {
+        width: 100% !important;
+    }
+    fieldset {
+        padding: 0 0px!important;
+    }
+    .GroupPhongBanSeleted ul li {
+   font-size:15px;
+         }
+        
+    .GroupPhongBanSeleted ul li span {
+    color:green;
+    cursor:pointer;
+    padding:5px;
+            }
+     .GroupPhongBanSeleted ul li:hover {
+    color:red;
+     }
+
+</style>
+<form method="post" id="form-submit" enctype="multipart/form-data">
+    <div class="myatable03 mtxxs">
+        <fieldset class="fieldset1">
+            <input type="hidden" name="lstPhongBanSeleted" id="lstPhongBanSeleted" />
+            <legend class="legend">Thêm mới thông báo </legend>
+            <div id="divMsg" style="color: Red; width: 900px; text-align: center">
+                @{if ((string)ViewBag.Message != "")
+                  { 
+                    <span>@ViewBag.Message</span>
+                  } 
+                }
+            </div>
+
+            <table border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
+                 <tr>
+                    <td style="width: 150px" class="tdtitle">Tên thông báo
+                    </td>
+                    <td>
+                        <input type="text" id="tenThongBao" name="tenThongBao" class="form-control" value=""
+                            maxlength="250" required="required" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 150px" class="tdtitle">Title Email
+                    </td>
+                    <td>
+                        <input type="text" id="titleMail" name="titleMail" class="form-control" value=""
+                            maxlength="550" required="required" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdtitle">Phòng ban 
+                         @Html.TextBoxFor(model => model.maPhongBan, new { @class = "form-control", required = "required", @style = "display:none" })
+                    </td>
+                    <td>
+                        <div class="form-group" id="phongban-div">
+                            <div class="dropdown">
+                                <button class="btn btn-primary btn-sm dropdown-toggle" id="btnPhongBan" type="button" data-toggle="dropdown">
+                                    Chọn phòng ban&nbsp;<span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" id="phongban-dropdown-menu">
+                                    <li role="presentation">
+                                        <div class="form-group has-feedback" style="width: 90%; margin: 5px auto;">
+                                            <input type="text" class="form-control input-sm" id="txtsearch" placeholder="Search" style="width: 100%" />
+                                            <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                                        </div>
+                                    </li>
+                                    <li role="presentation">
+                                        @Html.Raw(ViewBag.PhongBans)
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="GroupPhongBanSeleted">
+                            <ul>
+
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdtitle">Cấp bậc</td>
+                    <td style="border: 1px solid #ccc !important;">
+                        @Html.DropDownList("ListCapBac", ViewData["capBacCDS"] as SelectList, new { @multiple = "multiple" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdtitle">Nhân viên</td>
+                    <td style="border: 1px solid #ccc !important; ">
+                        @Html.DropDownList("ListNhanVien", ViewData["Sender"] as SelectList, new { @multiple = "multiple" })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="tdtitle">Nội dung thông báo
+                    </td>
+                    <td>
+
+                        <textarea id="noiDungThongBao" name="noiDungThongBao" class="form-control" required="required"></textarea>
+                    </td>
+                </tr>
+                <tr style="display:none">
+                    <td class="tdtitle">
+                    Nội dung SMS
+                    <td>
+
+                        <textarea id="noiDungSMS" name="noiDungSMS" class="form-control"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdtitle">Đính kèm file
+                    </td>
+                    <td colspan="4" style="background: transparent; padding: 0px !important;">
+                        <div id="dinhkemfile-panel" class="filter-panel">
+                            <input type="hidden" id="nguoiUpLoad" value="@Session["TenNhanVien"]">
+                            <div id="container">
+                                <table class="table table-stripped removeBackTbl" id="tbl-uploading">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">Tên tài liệu</th>
+                                            <th>Người upload</th>
+                                            <th>Ngày upload</th>
+                                            <th style="width: 100px">
+                                                <input type="file" style="height: 30px; display: none" name="fileDinhKems" class="form-control" multiple="multiple" value="">
+                                                <label class="btn btn-info btn-xs btn-link" style="font-size: 12px; padding: 0px!important; font-size: 11px!important; width: 83px; height: 18px;" for="input-upload">Chọn tập tin</label>
+                                                <input type="file" style="height: 30px; display: none" name="fileDinhKems" id="input-upload" class="form-control" multiple="multiple" value=""></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;
+                    </td>
+                    <td colspan="2">
+                        <input type="button" class="btnBlack" id="btnSave" value="Lưu" />
+                        <input type="button" class="btnBlack" value="Trở về" onclick="window.location='@Url.Action("Index", "QuanLyThongBao")    '" />
+                    </td>
+                </tr>
+            </table>
+
+        </fieldset>
+    </div>
+
+</form>

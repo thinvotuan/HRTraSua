@@ -1,0 +1,133 @@
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\BatDongSan.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\BatDongSan.pdb
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\Ionic.Zip.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\log4net.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.Infrastructure.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.WebPages.OAuth.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\NPOI.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Net.Http.Formatting.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.Helpers.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.Http.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.Http.WebHost.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.Mvc.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.Razor.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Deployment.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Razor.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\WebMatrix.Data.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\WebMatrix.WebData.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\log4net.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.Infrastructure.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Net.Http.Formatting.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.Helpers.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.Http.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.Http.WebHost.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.Mvc.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.Razor.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Deployment.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Razor.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\WebMatrix.Data.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.WebPages.OAuth.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\WebMatrix.WebData.xml
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\obj\Debug\NhanSuTheAlleyThuThiem.csprojResolveAssemblyReference.cache
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\obj\Debug\BatDongSan.dll
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\obj\Debug\BatDongSan.pdb
+D:\CODE\2.NHAN_SU\5.TheAlleyThuThiem\NhanSuTheAlleyThuThiem\bin\DocumentFormat.OpenXml.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\BatDongSan.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\BatDongSan.pdb
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Ionic.Zip.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\log4net.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.Infrastructure.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.WebPages.OAuth.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\NPOI.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Helpers.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Razor.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Deployment.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Razor.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.Data.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.WebData.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\log4net.xml
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.Infrastructure.xml
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Helpers.xml
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Razor.xml
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.xml
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Deployment.xml
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Razor.xml
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.Data.xml
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.WebPages.OAuth.xml
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.WebData.xml
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\obj\Debug\NhanSuTheAlleyThuThiem.csprojResolveAssemblyReference.cache
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\obj\Debug\BatDongSan.dll
+E:\Tổng hợp code Thuận Việt\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\obj\Debug\BatDongSan.pdb
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\BatDongSan.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\BatDongSan.pdb
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Ionic.Zip.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\log4net.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.Infrastructure.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.WebPages.OAuth.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\NPOI.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Net.Http.Formatting.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Helpers.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Http.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Http.WebHost.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Mvc.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Razor.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Deployment.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Razor.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.Data.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.WebData.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\log4net.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.Infrastructure.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Net.Http.Formatting.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Helpers.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Http.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Http.WebHost.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Mvc.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Razor.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Deployment.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Razor.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.Data.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.WebPages.OAuth.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.WebData.xml
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\obj\Debug\NhanSuTheAlleyThuThiem.csprojResolveAssemblyReference.cache
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\obj\Debug\BatDongSan.dll
+D:\Tổng hợp hệ thống Thuận Việt\Tổng hợp code Thuận Việt 2020\Code NhanSu\2.NHAN_SU\HRTraSua\thealley\NhanSuTheAlleyThuThiem\obj\Debug\BatDongSan.pdb
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\BatDongSan.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\BatDongSan.pdb
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Ionic.Zip.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\log4net.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.Infrastructure.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.WebPages.OAuth.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\NPOI.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Net.Http.Formatting.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Helpers.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Http.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Http.WebHost.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Mvc.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Razor.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Deployment.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Razor.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.Data.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.WebData.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\log4net.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.Infrastructure.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Net.Http.Formatting.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Helpers.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Http.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Http.WebHost.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Mvc.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.Razor.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Deployment.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\System.Web.WebPages.Razor.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.Data.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\Microsoft.Web.WebPages.OAuth.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\bin\WebMatrix.WebData.xml
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\obj\Debug\NhanSuTheAlleyThuThiem.csprojResolveAssemblyReference.cache
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\obj\Debug\BatDongSan.dll
+D:\Code Nhân Sự 1811\HRTraSua\thealley\NhanSuTheAlleyThuThiem\obj\Debug\BatDongSan.pdb

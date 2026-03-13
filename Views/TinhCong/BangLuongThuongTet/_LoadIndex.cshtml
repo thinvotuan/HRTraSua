@@ -1,0 +1,102 @@
+﻿@using BatDongSan.Models.NhanSu
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+ 
+   
+}
+<input type="hidden" value="@ViewBag.ckDuyet" id="ckDuyet" />
+@{
+                                
+    int stt = 1;
+   
+
+    var ls = ViewData["lsDanhSach"] as List<sp_NS_BangLuongThuongTetResult>;
+
+    foreach (var item in ls.ToList())
+    {
+
+
+      
+    <tr>
+        <td align="center">
+            @(stt++)
+        </td>
+        <td><i class="fa fa-user" aria-hidden="true"></i>@item.maNhanVien</td>
+        <td>@item.hoTen</td>
+       
+        <td style="text-align: right">@item.diemDanhGia</td>
+        @{
+        var clsColor = item.xepLoai;
+        if (clsColor == "A+") { clsColor = "AA"; }
+
+        if (clsColor == "B+") { clsColor = "BB"; }
+            }
+        <td style="text-align: center" class="@clsColor">@item.xepLoai</td>
+        
+        <td style="text-align: right">@String.Format("{0:###,##0.##}", item.tongThuNhapTrongNam)</td>
+        
+        <td style="text-align: right">@String.Format("{0:###,##0.##}", item.luongThangTrungBinh)</td>
+        <td style="text-align: right">@item.soThangThuong</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.##}", item.soTienThuong)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.##}", item.thue1Thang)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.##}", item.chuyenLan1)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.##}", item.chuyenLan2)</td>
+
+
+
+
+
+    </tr>
+                           
+    
+    }
+    
+}
+@{
+    
+if(stt > 1){
+<tr class="fontBold">
+    
+    <td colspan="5" style="text-align:center">
+      Tổng
+    </td>
+     <td style="text-align:right">
+        @{
+            decimal tongThuNhap = ls.Sum(d => d.tongThuNhapTrongNam)??0;
+            }
+        @String.Format("{0:###,##0.##}", tongThuNhap)
+    </td>
+     <td style="text-align:right">
+       
+    </td>
+     <td style="text-align:right">
+        
+    </td>
+     <td style="text-align:right">
+        @{
+            decimal soTienThuong = ls.Sum(d => d.soTienThuong) ?? 0;
+            }
+        @String.Format("{0:###,##0.##}", soTienThuong)
+    </td>
+    <td style="text-align:right">
+        @{
+            decimal thueTNCN = ls.Sum(d => d.thue1Thang);
+            }
+        @String.Format("{0:###,##0.##}", thueTNCN)
+    </td>
+    <td style="text-align:right">
+        @{
+            decimal chuyenDot1 = ls.Sum(d => d.chuyenLan1) ?? 0;
+            }
+        @String.Format("{0:###,##0.##}", chuyenDot1)
+    </td>
+    <td style="text-align:right">
+        @{
+            decimal chuyenDot2 = ls.Sum(d => d.chuyenLan2) ?? 0;
+            }
+        @String.Format("{0:###,##0.##}", chuyenDot2)
+    </td>
+</tr>
+}
+}

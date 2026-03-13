@@ -1,0 +1,66 @@
+﻿@using BatDongSan.Models.DBChamCong
+@model IList<Sp_ViewMachinePBResult>
+
+
+            @{
+                var danhSach = ViewBag.List as List<Sp_ViewMachinePBResult>;
+                if (danhSach != null)
+                {
+                    int stt = 1;
+                    foreach (var data in danhSach)
+                    {
+                        
+                
+                <tr>
+                    <td style="text-align:center">
+                        @stt
+                    </td>
+                    <td>
+                       @data.machineId
+                    </td>
+                    <td style="color:green">
+                        @data.MachineName
+                    </td>
+                    <td>
+                        @data.siteName
+                    </td>
+
+                    @if (data.trangThai == 1)
+                    {
+                        <td>Online
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="color: Red">Offline
+                        </td>
+               
+                    }
+                    @Html.Hidden("status", data.trangThai)
+
+
+                    <td>
+                        @if (data.typeMachine == 1)
+                        { 
+                            <span>Máy vào</span>
+                        }
+                        else if (data.typeMachine == 2)
+                        {
+                            <span>Máy ra</span>
+                        }
+                    </td>
+                    <td>
+                        @data.remark
+                    </td>
+                    <td style="text-align:center">
+                         <button class="btn btn-warning btn-xs btnEdit btnEditMaChine" type="button" data-toggle="modal" data-target="#customModalMachine" value="@data.machineId">Sửa</button>
+            <button class="btn btn-warning btn-xs btnDelete btnDeleteMachine" type="button" value="@data.machineId">Xóa</button>
+                    </td>
+
+                   
+                </tr>
+                        stt++;
+                    }
+                }
+            }
+        

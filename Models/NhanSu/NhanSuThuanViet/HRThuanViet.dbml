@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="nhanSuThuanViet" Class="HRThuanVietDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="dbo.tbl_NS_ChamCong" Member="tbl_NS_ChamCongs">
+    <Type Name="tbl_NS_ChamCong">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="checkTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="maMayChamCong" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="maChamCong" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="idQuet" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

@@ -1,0 +1,4731 @@
+
+/* Copyright (C) 2005-2009 Zimbra Inc. http://www.zimbra.com/ */
+if(AjxPackage.define("ContactsCore")){
+if(AjxPackage.define("zimbraMail.abook.model.ZmAddrBook")){
+ZmAddrBook=function(e){
+e.type=ZmOrganizer.ADDRBOOK;
+ZmFolder.call(this,e)
+};
+ZmAddrBook.prototype=new ZmFolder;
+ZmAddrBook.prototype.constructor=ZmAddrBook;
+ZmAddrBook.prototype.isZmAddrBook=true;
+ZmAddrBook.prototype.toString=function(){
+return"ZmAddrBook"
+};
+ZmAddrBook.ID_ADDRESSBOOK=ZmOrganizer.ID_ADDRBOOK;
+ZmAddrBook.prototype.getIcon=function(){
+if(this.nId==ZmFolder.ID_ROOT){
+return null
+}
+if(this.nId==ZmFolder.ID_TRASH){
+return"Trash"
+}
+if(this.link||this.isRemote()){
+return"SharedContactsFolder"
+}
+if(this.nId==ZmFolder.ID_AUTO_ADDED){
+return"EmailedContacts"
+}
+return"ContactsFolder"
+};
+ZmAddrBook.prototype.supportsPublicAccess=function(){
+return true
+};
+ZmAddrBook.prototype.mayContain=function(o){
+if(!o){
+return true
+}
+if(this.id==ZmOrganizer.ID_DLS){
+return false
+}
+if(o.isZmAddrBook){
+return ZmFolder.prototype.mayContain.apply(this,arguments)
+}
+var e=AjxUtil.toArray(o);
+for(var t=0;
+t<e.length;
+t++){
+var a=e[t];
+if(a.type!==ZmItem.CONTACT&&a.type!==ZmItem.GROUP){
+return false
+}}
+return ZmFolder.prototype.mayContain.apply(this,arguments)
+}
+}
+if(AjxPackage.define("zimbraMail.abook.model.ZmContact")){
+if(!window.ZmContact){
+ZmContact=function(i,a,e,t){
+if(arguments.length==0){
+return
+}
+e=e||ZmItem.CONTACT;
+ZmItem.call(this,e,i,a);
+this.attr={};
+this.isGal=(this.list&&this.list.isGal)||t;
+if(t){
+this.folderId=ZmFolder.ID_DLS;
+this.dlInfo={
+isMember:false,isOwner:true,subscriptionPolicy:null,unsubscriptionPolicy:null,description:"",displayName:"",notes:"",hideInGal:false,mailPolicy:null,owners:[appCtxt.get(ZmSetting.USERNAME)]}
+}
+this.participants=new AjxVector()
+};
+ZmContact.prototype=new ZmItem;
+ZmContact.prototype.constructor=ZmContact;
+ZmContact.prototype.isZmContact=true;
+ZmContact.F_anniversary="anniversary";
+ZmContact.F_assistantPhone="assistantPhone";
+ZmContact.F_attachment="attachment";
+ZmContact.F_birthday="birthday";
+ZmContact.F_callbackPhone="callbackPhone";
+ZmContact.F_carPhone="carPhone";
+ZmContact.F_company="company";
+ZmContact.F_companyPhone="companyPhone";
+ZmContact.F_custom="custom";
+ZmContact.F_description="description";
+ZmContact.F_department="department";
+ZmContact.F_dlist="dlist";
+ZmContact.F_dlDisplayName="dldisplayname";
+ZmContact.F_dlDesc="dldesc";
+ZmContact.F_dlHideInGal="dlhideingal";
+ZmContact.F_dlNotes="dlnotes";
+ZmContact.F_dlSubscriptionPolicy="dlsubspolicy";
+ZmContact.F_dlMailPolicy="dlmailpolicy";
+ZmContact.F_dlMailPolicySpecificMailers="dlmailpolicyspecificmailers";
+ZmContact.F_dlUnsubscriptionPolicy="dlunsubspolicy";
+ZmContact.F_dlListOwners="dllistowners";
+ZmContact.F_email="email";
+ZmContact.F_email2="email2";
+ZmContact.F_email3="email3";
+ZmContact.F_email4="email4";
+ZmContact.F_email5="email5";
+ZmContact.F_email6="email6";
+ZmContact.F_email7="email7";
+ZmContact.F_email8="email8";
+ZmContact.F_email9="email9";
+ZmContact.F_email10="email10";
+ZmContact.F_email11="email11";
+ZmContact.F_email12="email12";
+ZmContact.F_email13="email13";
+ZmContact.F_email14="email14";
+ZmContact.F_email15="email15";
+ZmContact.F_email16="email16";
+ZmContact.F_fileAs="fileAs";
+ZmContact.F_firstName="firstName";
+ZmContact.F_folderId="folderId";
+ZmContact.F_groups="groups";
+ZmContact.F_homeCity="homeCity";
+ZmContact.F_homeCountry="homeCountry";
+ZmContact.F_homeFax="homeFax";
+ZmContact.F_homePhone="homePhone";
+ZmContact.F_homePhone2="homePhone2";
+ZmContact.F_homePostalCode="homePostalCode";
+ZmContact.F_homeState="homeState";
+ZmContact.F_homeStreet="homeStreet";
+ZmContact.F_homeURL="homeURL";
+ZmContact.F_image="image";
+ZmContact.F_imAddress="imAddress";
+ZmContact.F_imAddress1="imAddress1";
+ZmContact.F_imAddress2="imAddress2";
+ZmContact.F_imAddress3="imAddress3";
+ZmContact.F_jobTitle="jobTitle";
+ZmContact.F_lastName="lastName";
+ZmContact.F_maidenName="maidenName";
+ZmContact.F_memberC="memberC";
+ZmContact.F_memberG="memberG";
+ZmContact.F_memberI="memberI";
+ZmContact.F_middleName="middleName";
+ZmContact.F_mobilePhone="mobilePhone";
+ZmContact.F_namePrefix="namePrefix";
+ZmContact.F_nameSuffix="nameSuffix";
+ZmContact.F_nickname="nickname";
+ZmContact.F_notes="notes";
+ZmContact.F_otherCity="otherCity";
+ZmContact.F_otherCountry="otherCountry";
+ZmContact.F_otherFax="otherFax";
+ZmContact.F_otherPhone="otherPhone";
+ZmContact.F_otherPostalCode="otherPostalCode";
+ZmContact.F_otherState="otherState";
+ZmContact.F_otherStreet="otherStreet";
+ZmContact.F_otherURL="otherURL";
+ZmContact.F_pager="pager";
+ZmContact.F_phoneticFirstName="phoneticFirstName";
+ZmContact.F_phoneticLastName="phoneticLastName";
+ZmContact.F_phoneticCompany="phoneticCompany";
+ZmContact.F_type="type";
+ZmContact.F_workAltPhone="workAltPhone";
+ZmContact.F_workCity="workCity";
+ZmContact.F_workCountry="workCountry";
+ZmContact.F_workEmail1="workEmail1";
+ZmContact.F_workEmail2="workEmail2";
+ZmContact.F_workEmail3="workEmail3";
+ZmContact.F_workFax="workFax";
+ZmContact.F_workMobile="workMobile";
+ZmContact.F_workPhone="workPhone";
+ZmContact.F_workPhone2="workPhone2";
+ZmContact.F_workPostalCode="workPostalCode";
+ZmContact.F_workState="workState";
+ZmContact.F_workStreet="workStreet";
+ZmContact.F_workURL="workURL";
+ZmContact.F_imagepart="imagepart";
+ZmContact.F_zimletImage="zimletImage";
+ZmContact.X_fileAs="fileAs";
+ZmContact.X_firstLast="firstLast";
+ZmContact.X_fullName="fullName";
+ZmContact.X_vcardXProps="vcardXProps";
+ZmContact.X_outlookUserField="outlookUserField";
+ZmContact.MC_cardOwner="cardOwner";
+ZmContact.MC_workCardMessage="workCardMessage";
+ZmContact.MC_homeCardMessage="homeCardMessage";
+ZmContact.MC_homePhotoURL="homePhotoURL";
+ZmContact.MC_workPhotoURL="workPhotoURL";
+ZmContact.GAL_MODIFY_TIMESTAMP="modifyTimeStamp";
+ZmContact.GAL_CREATE_TIMESTAMP="createTimeStamp";
+ZmContact.GAL_ZIMBRA_ID="zimbraId";
+ZmContact.GAL_OBJECT_CLASS="objectClass";
+ZmContact.GAL_MAIL_FORWARD_ADDRESS="zimbraMailForwardingAddress";
+ZmContact.GAL_CAL_RES_TYPE="zimbraCalResType";
+ZmContact.GAL_CAL_RES_LOC_NAME="zimbraCalResLocationDisplayName";
+(function(){
+var e=1;
+ZmContact.FA_LAST_C_FIRST=e++;
+ZmContact.FA_FIRST_LAST=e++;
+ZmContact.FA_COMPANY=e++;
+ZmContact.FA_LAST_C_FIRST_COMPANY=e++;
+ZmContact.FA_FIRST_LAST_COMPANY=e++;
+ZmContact.FA_COMPANY_LAST_C_FIRST=e++;
+ZmContact.FA_COMPANY_FIRST_LAST=e++;
+ZmContact.FA_CUSTOM=e++
+}
+)();
+ZmContact.ADDRESS_FIELDS=[ZmContact.F_homeCity,ZmContact.F_homeCountry,ZmContact.F_homePostalCode,ZmContact.F_homeState,ZmContact.F_homeStreet,ZmContact.F_workCity,ZmContact.F_workCountry,ZmContact.F_workPostalCode,ZmContact.F_workState,ZmContact.F_workStreet,ZmContact.F_otherCity,ZmContact.F_otherCountry,ZmContact.F_otherPostalCode,ZmContact.F_otherState,ZmContact.F_otherStreet];
+ZmContact.EMAIL_FIELDS=[ZmContact.F_email,ZmContact.F_workEmail1,ZmContact.F_workEmail2,ZmContact.F_workEmail3];
+ZmContact.IM_FIELDS=[ZmContact.F_imAddress];
+ZmContact.OTHER_FIELDS=[ZmContact.F_birthday,ZmContact.F_anniversary,ZmContact.F_custom];
+ZmContact.PHONE_FIELDS=[ZmContact.F_mobilePhone,ZmContact.F_workPhone,ZmContact.F_workFax,ZmContact.F_companyPhone,ZmContact.F_homePhone,ZmContact.F_homeFax,ZmContact.F_pager,ZmContact.F_callbackPhone,ZmContact.F_assistantPhone,ZmContact.F_carPhone,ZmContact.F_otherPhone,ZmContact.F_otherFax,ZmContact.F_workAltPhone,ZmContact.F_workMobile];
+ZmContact.PRIMARY_FIELDS=[ZmContact.F_image,ZmContact.F_namePrefix,ZmContact.F_firstName,ZmContact.F_phoneticFirstName,ZmContact.F_middleName,ZmContact.F_maidenName,ZmContact.F_lastName,ZmContact.F_phoneticLastName,ZmContact.F_nameSuffix,ZmContact.F_nickname,ZmContact.F_jobTitle,ZmContact.F_department,ZmContact.F_company,ZmContact.F_phoneticCompany,ZmContact.F_fileAs,ZmContact.F_folderId,ZmContact.F_notes];
+ZmContact.URL_FIELDS=[ZmContact.F_homeURL,ZmContact.F_workURL,ZmContact.F_otherURL];
+ZmContact.GAL_FIELDS=[ZmContact.GAL_MODIFY_TIMESTAMP,ZmContact.GAL_CREATE_TIMESTAMP,ZmContact.GAL_ZIMBRA_ID,ZmContact.GAL_OBJECT_CLASS,ZmContact.GAL_MAIL_FORWARD_ADDRESS,ZmContact.GAL_CAL_RES_TYPE,ZmContact.GAL_CAL_RES_LOC_NAME,ZmContact.F_type];
+ZmContact.MYCARD_FIELDS=[ZmContact.MC_cardOwner,ZmContact.MC_homeCardMessage,ZmContact.MC_homePhotoURL,ZmContact.MC_workCardMessage,ZmContact.MC_workPhotoURL];
+ZmContact.X_FIELDS=[ZmContact.X_firstLast,ZmContact.X_fullName,ZmContact.X_vcardXProps];
+ZmContact.IGNORE_NORMALIZATION=[];
+ZmContact.ADDR_PREFIXES=["work","home","other"];
+ZmContact.ADDR_SUFFIXES=["Street","City","State","PostalCode","Country"];
+ZmContact.updateFieldConstants=function(){
+for(var t=0;
+t<ZmContact.ADDR_PREFIXES.length;
+t++){
+for(var e=0;
+e<ZmContact.ADDR_SUFFIXES.length;
+e++){
+ZmContact.IGNORE_NORMALIZATION.push(ZmContact.ADDR_PREFIXES[t]+ZmContact.ADDR_SUFFIXES[e])
+}}
+ZmContact.DISPLAY_FIELDS=[].concat(ZmContact.ADDRESS_FIELDS,ZmContact.EMAIL_FIELDS,ZmContact.IM_FIELDS,ZmContact.OTHER_FIELDS,ZmContact.PHONE_FIELDS,ZmContact.PRIMARY_FIELDS,ZmContact.URL_FIELDS);
+ZmContact.IGNORE_FIELDS=[].concat(ZmContact.GAL_FIELDS,ZmContact.MYCARD_FIELDS,ZmContact.X_FIELDS,[ZmContact.F_imagepart]);
+ZmContact.ALL_FIELDS=[].concat(ZmContact.DISPLAY_FIELDS,ZmContact.IGNORE_FIELDS);
+ZmContact.IS_DATE={};
+ZmContact.IS_DATE[ZmContact.F_birthday]=true;
+ZmContact.IS_DATE[ZmContact.F_anniversary]=true;
+ZmContact.IS_IGNORE=AjxUtil.arrayAsHash(ZmContact.IGNORE_FIELDS);
+ZmContact.DL_PAGE_SIZE=100;
+ZmContact.GROUP_CONTACT_REF="C";
+ZmContact.GROUP_GAL_REF="G";
+ZmContact.GROUP_INLINE_REF="I"
+};
+ZmContact.updateFieldConstants();
+ZmContact.IS_ADDONE={};
+ZmContact.IS_ADDONE[ZmContact.F_custom]=true;
+ZmContact.IS_ADDONE[ZmContact.F_imAddress]=true;
+ZmContact.IS_ADDONE[ZmContact.X_outlookUserField]=true;
+ZmContact.getAttributeName=function(t,e){
+e=e||1;
+return e>1||ZmContact.IS_ADDONE[t]?t+e:t
+};
+ZmContact.prototype.toString=function(){
+return"ZmContact"
+};
+ZmContact.createFromDom=function(a,t){
+var e=appCtxt.cacheGet(a.id);
+if(e==null||(e&&e.rev!=a.rev)){
+e=new ZmContact(a.id,t.list);
+if(t.isGal){
+e.isGal=t.isGal
+}
+e._loadFromDom(a);
+appCtxt.getApp(ZmApp.CONTACTS).getContactList().add(e)
+}else{
+if(a.m){
+e.attr[ZmContact.F_groups]=a.m
+}
+if(a.ref){
+e.ref=a.ref
+}
+if(a.tn){
+e._parseTagNames(a.tn)
+}
+AjxUtil.hashUpdate(e.attr,a._attrs);
+e.list=t.list||new ZmContactList(null);
+e._list={};
+e._list[e.list.id]=true
+}
+return e
+};
+ZmContact.compareByFileAs=function(i,e){
+var t=(i instanceof ZmContact)?i.getFileAs(true):ZmContact.computeFileAs(i._attrs).toLowerCase();
+var o=(e instanceof ZmContact)?e.getFileAs(true):ZmContact.computeFileAs(e._attrs).toLowerCase();
+if(!o||(t>o)){
+return 1
+}
+if(t<o){
+return -1
+}
+return 0
+};
+ZmContact.computeFileAs=function(a){
+var t=(a instanceof ZmContact)?a.getAttrs():a;
+if(!t){
+return
+}
+if(t[ZmContact.F_dlDisplayName]){
+return t[ZmContact.F_dlDisplayName]
+}
+var n=parseInt(t.fileAs);
+var o;
+var e=0;
+switch(n){
+case ZmContact.FA_LAST_C_FIRST:default:if(a&&a.isGal){
+if(t.fullName){
+return(t.fullName instanceof Array)?t.fullName[0]:t.fullName
+}
+return((t.email instanceof Array)?t.email[0]:t.email)
+}
+o=ZmContact.fileAsLastFirst(t.firstName,t.lastName,t.fullName,t.nickname);
+break;
+case ZmContact.FA_FIRST_LAST:o=ZmContact.fileAsFirstLast(t.firstName,t.lastName,t.fullName,t.nickname);
+break;
+case ZmContact.FA_COMPANY:if(t.company){
+o=t.company
+}
+break;
+case ZmContact.FA_LAST_C_FIRST_COMPANY:var i=ZmContact.fileAsLastFirst(t.firstName,t.lastName,t.fullName,t.nickname);
+o=ZmContact.fileAsNameCompany(i,t.company);
+break;
+case ZmContact.FA_FIRST_LAST_COMPANY:var i=ZmContact.fileAsFirstLast(t.firstName,t.lastName,t.fullName,t.nickname);
+o=ZmContact.fileAsNameCompany(i,t.company);
+break;
+case ZmContact.FA_COMPANY_LAST_C_FIRST:var i=ZmContact.fileAsLastFirst(t.firstName,t.lastName);
+o=ZmContact.fileAsCompanyName(i,t.company);
+break;
+case ZmContact.FA_COMPANY_FIRST_LAST:var i=ZmContact.fileAsFirstLast(t.firstName,t.lastName);
+o=ZmContact.fileAsCompanyName(i,t.company);
+break;
+case ZmContact.FA_CUSTOM:return t.fileAs.substring(2);
+break
+}
+return o||t.fullName||""
+};
+ZmContact.fileAsFirstLast=function(i,a,t,e){
+if(i&&a){
+return AjxMessageFormat.format(ZmMsg.fileAsFirstLast,[i,a])
+}
+return i||a||t||e||""
+};
+ZmContact.fileAsLastFirst=function(i,a,t,e){
+if(i&&a){
+return AjxMessageFormat.format(ZmMsg.fileAsLastFirst,[i,a])
+}
+return a||i||t||e||""
+};
+ZmContact.fileAsNameCompany=function(t,e){
+if(t&&e){
+return AjxMessageFormat.format(ZmMsg.fileAsNameCompany,[t,e])
+}
+if(e){
+return AjxMessageFormat.format(ZmMsg.fileAsCompanyAsSecondaryOnly,[e])
+}
+return t
+};
+ZmContact.fileAsCompanyName=function(t,e){
+if(e&&t){
+return AjxMessageFormat.format(ZmMsg.fileAsCompanyName,[t,e])
+}
+if(t){
+return AjxMessageFormat.format(ZmMsg.fileAsNameAsSecondaryOnly,[t])
+}
+return e
+};
+ZmContact.computeCustomFileAs=function(e){
+return[ZmContact.FA_CUSTOM,":",e].join("")
+};
+ZmContact.getAttr=function(t,e){
+return(t instanceof ZmContact)?t.getAttr(e):(t&&t._attrs)?t._attrs[e]:null
+};
+ZmContact.getPrefix=function(e){
+var t=e.replace(/\d+$/,"");
+if(t===""){
+return e
+}
+return t
+};
+ZmContact.getNormalizedAttrs=function(d,s,h){
+var r={};
+if(d){
+var l=AjxUtil.keys(d);
+l.sort(ZmContact.__BY_ATTRIBUTE);
+var c={};
+for(var o=0;
+o<l.length;
+o++){
+var e=l[o];
+var t=ZmContact.getPrefix(e);
+if(s&&s!=t){
+continue
+}
+if(AjxUtil.isArray(h)&&AjxUtil.indexOf(h,t)!=-1){
+r[e]=d[e]
+}else{
+if(!c[t]){
+c[t]=0
+}
+var n=ZmContact.getAttributeName(t,++c[t]);
+r[n]=d[e]
+}}}
+return r
+};
+ZmContact.__RE_ATTRIBUTE=/^(.*?)(\d+)$/;
+ZmContact.__BY_ATTRIBUTE=function(t,e){
+var i=t.match(ZmContact.__RE_ATTRIBUTE)||[t,t,1];
+var o=e.match(ZmContact.__RE_ATTRIBUTE)||[e,e,1];
+return i[1]==o[1]?Number(i[2])-Number(o[2]):i[1].localeCompare(o[1])
+};
+ZmContact.setAttr=function(t,e,a){
+if(t instanceof ZmContact){
+t.setAttr(e,a)
+}else{
+t._attrs[e]=a
+}};
+ZmContact.isInTrash=function(e){
+var t=(e instanceof ZmContact)?e.folderId:e.l;
+var a=appCtxt.getById(t);
+return(a&&a.isInTrash())
+};
+ZmContact.prototype.load=function(s,t,e,i){
+var n={
+GetContactsRequest:{
+_jsns:"urn:zimbraMail"}};
+if(i){
+n.GetContactsRequest.derefGroupMember="1"
+}
+var a=n.GetContactsRequest;
+a.cn=[{
+id:this.id}
+];
+var o=new AjxCallback(this,this._handleLoadResponse,[s]);
+if(e){
+var n={
+GetContactsRequest:{
+_jsns:"urn:zimbraMail"}};
+if(i){
+n.GetContactsRequest.derefGroupMember="1"
+}
+n.GetContactsRequest.cn={
+id:this.id};
+e.addRequestParams(n,o,t)
+}else{
+appCtxt.getAppController().sendRequest({
+jsonObj:n,asyncMode:true,callback:o,errorCallback:t}
+)
+}};
+ZmContact.prototype._handleLoadResponse=function(h,l){
+var e=l.getResponse().GetContactsResponse;
+var o=e.cn[0];
+this.attr=o._attrs;
+if(o.m){
+for(var a=0;
+a<o.m.length;
+a++){
+var t=o.m[a];
+var r=false;
+if(t.type==ZmContact.GROUP_GAL_REF){
+r=true
+}
+if(t.cn&&t.cn.length>0){
+var s=t.cn[0];
+s.ref=s.ref||(r&&t.value);
+var n=ZmContact.createFromDom(s,{
+list:this.list,isGal:r}
+);
+n.isDL=r&&n.attr[ZmContact.F_type]=="group";
+appCtxt.cacheSet(t.value,n)
+}}
+this._loadFromDom(o)
+}
+this.isLoaded=true;
+if(h){
+h.run(o,this)
+}};
+ZmContact.prototype.clear=function(){};
+ZmContact.prototype.isEmpty=function(){
+for(var e in this.attr){
+return false
+}
+return true
+};
+ZmContact.prototype.isShared=function(){
+return this.addrbook&&this.addrbook.link
+};
+ZmContact.prototype.isReadOnly=function(){
+if(this.isGal){
+return true
+}
+return this.isShared()?this.addrbook&&this.addrbook.isReadOnly():false
+};
+ZmContact.prototype.isLocked=function(){
+if(!this.isDistributionList()){
+return this.isReadOnly()
+}
+if(!this.dlInfo){
+return false
+}
+var e=this.dlInfo;
+if(e.isOwner){
+return false
+}
+if(e.isMember){
+return e.unsubscriptionPolicy==ZmContactSplitView.SUBSCRIPTION_POLICY_REJECT
+}
+return e.subscriptionPolicy==ZmContactSplitView.SUBSCRIPTION_POLICY_REJECT
+};
+ZmContact.prototype.isGroup=function(){
+return this.getAttr(ZmContact.F_type)=="group"||this.type==ZmItem.GROUP
+};
+ZmContact.prototype.isDistributionList=function(){
+return this.isGal&&this.isGroup()
+};
+ZmContact.prototype.getGroupMembers=function(){
+var a=this.getAllGroupMembers();
+var t=[];
+for(var e=0;
+e<a.length;
+e++){
+t.push(a[e].toString())
+}
+return AjxEmailAddress.parseEmailString(t.join(", "))
+};
+ZmContact.prototype.getAllGroupMembers=function(){
+if(this.isDistributionList()){
+return this.dlMembers
+}
+var n=[];
+var t=this.attr[ZmContact.F_groups];
+if(!t){
+return AjxEmailAddress.parseEmailString(this.attr[ZmContact.F_email])
+}
+for(var a=0;
+a<t.length;
+a++){
+var h=t[a];
+var o=h.type;
+var s=h.value;
+if(o==ZmContact.GROUP_INLINE_REF){
+n.push(ZmContactsHelper._wrapInlineContact(s))
+}else{
+var e=ZmContact.getContactFromCache(s);
+if(!e){
+continue
+}
+var r=ZmContactsHelper._wrapContact(e);
+if(r&&o===ZmContact.GROUP_CONTACT_REF){
+r.groupRefValue=s
+}
+if(r){
+n.push(r)
+}}}
+return n
+};
+ZmContact.prototype.gatherExtraDlStuff=function(t){
+if(this.dlInfo&&!this.dlInfo.isMinimal){
+this.loadDlMembers(t);
+return
+}
+var e=this._handleGetDlInfoResponse.bind(this,t);
+this.loadDlInfo(e)
+};
+ZmContact.prototype._handleGetDlInfoResponse=function(r,t){
+var i=t._data.GetDistributionListResponse;
+var n=i.dl[0];
+var o=n._attrs;
+var s=n.isMember;
+var a=n.isOwner;
+var e=[];
+this.dlInfo={
+isMember:s,isOwner:a,subscriptionPolicy:o.zimbraDistributionListSubscriptionPolicy,unsubscriptionPolicy:o.zimbraDistributionListUnsubscriptionPolicy,description:o.description||"",displayName:o.displayName||"",notes:o.zimbraNotes||"",hideInGal:o.zimbraHideInGal=="TRUE",mailPolicy:a&&this._getMailPolicy(n,e),owners:a&&this._getOwners(n)};
+this.dlInfo.mailPolicySpecificMailers=e;
+this.loadDlMembers(r)
+};
+ZmContact.prototype.loadDlMembers=function(t){
+if((!appCtxt.get("EXPAND_DL_ENABLED")||this.dlInfo.hideInGal)&&!this.dlInfo.isOwner){
+this.dlMembers=[];
+if(t){
+t()
+}
+return
+}
+if(this.dlMembers){
+if(t){
+t()
+}
+return
+}
+var e=this._handleGetDlMembersResponse.bind(this,t);
+this.getAllDLMembers(e)
+};
+ZmContact.prototype._handleGetDlMembersResponse=function(n,e){
+var o=e.list;
+if(!o){
+this.dlMembers=[];
+n();
+return
+}
+var t=[];
+for(var a=0;
+a<o.length;
+a++){
+t.push({
+type:ZmContact.GROUP_INLINE_REF,value:o[a],address:o[a]}
+)
+}
+this.dlMembers=t;
+n()
+};
+ZmContact.prototype._getOwners=function(t){
+var o=t.owners[0].owner;
+var n=[];
+for(var a=0;
+a<o.length;
+a++){
+var e=o[a].name;
+n.push(e)
+}
+return n
+};
+ZmContact.prototype._getMailPolicy=function(a,t){
+var h;
+var r=a.rights[0].right;
+var n=r[0];
+var s=n.grantee;
+if(!s){
+return ZmGroupView.MAIL_POLICY_ANYONE
+}
+for(var o=0;
+o<s.length;
+o++){
+var e=s[o];
+h=ZmGroupView.GRANTEE_TYPE_TO_MAIL_POLICY_MAP[e.type];
+if(h==ZmGroupView.MAIL_POLICY_SPECIFIC){
+t.push(e.name)
+}else{
+if(h==ZmGroupView.MAIL_POLICY_ANYONE){
+break
+}else{
+if(h==ZmGroupView.MAIL_POLICY_INTERNAL){
+break
+}else{
+if(h==ZmGroupView.MAIL_POLICY_MEMBERS){
+if(e.name==this.getEmail()){
+break
+}else{
+t.push(e.name);
+h=ZmGroupView.MAIL_POLICY_SPECIFIC
+}}}}}}
+h=h||ZmGroupView.MAIL_POLICY_ANYONE;
+return h
+};
+ZmContact.prototype.loadDlInfo=function(a){
+var t=AjxSoapDoc.create("GetDistributionListRequest","urn:zimbraAccount",null);
+t.setMethodAttribute("needOwners","1");
+t.setMethodAttribute("needRights","sendToDistList");
+var e=t.set("dl",this.getEmail());
+e.setAttribute("by","name");
+appCtxt.getAppController().sendRequest({
+soapDoc:t,asyncMode:true,callback:a}
+)
+};
+ZmContact.prototype.toggleSubscription=function(a){
+var t=AjxSoapDoc.create("SubscribeDistributionListRequest","urn:zimbraAccount",null);
+t.setMethodAttribute("op",this.dlInfo.isMember?"unsubscribe":"subscribe");
+var e=t.set("dl",this.getEmail());
+e.setAttribute("by","name");
+appCtxt.getAppController().sendRequest({
+soapDoc:t,asyncMode:true,callback:a}
+)
+};
+ZmContact.prototype.getId=function(e){
+if(e){
+return this.isShared()?this.id:appCtxt.accountList.mainAccount.id+":"+this.id
+}
+return this.id
+};
+ZmContact.prototype.getIcon=function(e){
+if(this.isDistributionList()){
+return"DistributionList"
+}
+if(this.isGal){
+return"GALContact"
+}
+if(this.isShared()||(e&&e.link)){
+return"SharedContact"
+}
+if(this.isGroup()){
+return"Group"
+}
+return"Contact"
+};
+ZmContact.prototype.getIconLarge=function(){
+if(this.isDistributionList()){
+return"Group_48"
+}
+return"Person_48"
+};
+ZmContact.prototype.getFolderId=function(){
+return this.isShared()?this.folderId.split(":")[0]:this.folderId
+};
+ZmContact.prototype.getAttr=function(e){
+var t=this.attr[e];
+return t?((t instanceof Array)?t[0]:t):""
+};
+ZmContact.prototype.setAttr=function(e,t){
+this.attr[e]=t
+};
+ZmContact.prototype.setParticipantStatus=function(e){
+this.participantStatus=e
+};
+ZmContact.prototype.getParticipantStatus=function(){
+return this.participantStatus
+};
+ZmContact.prototype.setParticipantRole=function(e){
+this.participantRole=e
+};
+ZmContact.prototype.getParticipantRole=function(){
+return this.participantRole
+};
+ZmContact.prototype.removeAttr=function(e){
+delete this.attr[e]
+};
+ZmContact.prototype.getAttrs=function(a){
+var t=this.attr;
+if(a){
+t={};
+for(var e in this.attr){
+var i=ZmContact.getPrefix(e);
+if(i===a){
+t[e]=this.attr[e]
+}}}
+return t
+};
+ZmContact.prototype.getNormalizedAttrs=function(e){
+return ZmContact.getNormalizedAttrs(this.attr,e,ZmContact.IGNORE_NORMALIZATION)
+};
+ZmContact.prototype.create=function(s,o,a){
+if(this.isDistributionList()){
+this._createDl(s);
+return
+}
+var l={
+CreateContactRequest:{
+_jsns:"urn:zimbraMail"}};
+var n=l.CreateContactRequest;
+var r=n.cn={};
+var i=s[ZmContact.F_folderId]||ZmFolder.ID_CONTACTS;
+var t=appCtxt.getById(i);
+if(t&&t.isRemote()){
+i=t.getRemoteId()
+}
+r.l=i;
+r.a=[];
+r.m=[];
+for(var e in s){
+if(e==ZmContact.F_folderId||e=="objectClass"||e=="zimbraId"||e=="createTimeStamp"||e=="modifyTimeStamp"){
+continue
+}
+if(e==ZmContact.F_groups){
+this._addContactGroupAttr(r,s)
+}else{
+this._addRequestAttr(r,e,s[e])
+}}
+this._addRequestAttr(r,ZmContact.X_fullName,ZmContact.computeFileAs(s));
+var h=new AjxCallback(this,this._handleResponseCreate,[s,o!=null,a]);
+if(o){
+o.addRequestParams(l,h)
+}else{
+appCtxt.getAppController().sendRequest({
+jsonObj:l,asyncMode:true,callback:h}
+)
+}};
+ZmContact.prototype._handleResponseCreate=function(h,i,t,c){
+if(i){
+return
+}
+var n=c.getResponse().CreateContactResponse;
+cn=n?n.cn[0]:null;
+var e=cn?cn.id:null;
+if(e){
+this._fileAs=null;
+this._fullName=null;
+this.id=e;
+this.modified=cn.md;
+this.folderId=cn.l||ZmOrganizer.ID_ADDRBOOK;
+for(var l in h){
+if(!(h[l]==undefined||h[l]=="")){
+this.setAttr(l,h[l])
+}}
+var r=cn?cn.m:null;
+if(r){
+this.attr[ZmContact.F_groups]=r;
+cn._attrs[ZmContact.F_groups]=r
+}
+if(!t){
+var o=this.isGroup()?ZmMsg.groupCreated:ZmMsg.contactCreated;
+appCtxt.getAppController().setStatusMsg(o)
+}
+appCtxt.getApp(ZmApp.CONTACTS).getContactList().add(cn)
+}else{
+var o=this.isGroup()?ZmMsg.errorCreateGroup:ZmMsg.errorCreateContact;
+var s=ZmMsg.errorTryAgain+"\n"+ZmMsg.errorContact;
+appCtxt.getAppController().setStatusMsg(o,ZmStatusView.LEVEL_CRITICAL,s)
+}};
+ZmContact.prototype.createFromVCard=function(t,e){
+var o={
+CreateContactRequest:{
+_jsns:"urn:zimbraMail"}};
+var i=o.CreateContactRequest.cn={
+l:ZmFolder.ID_CONTACTS};
+i.vcard={
+mid:t,part:e};
+var a={
+jsonObj:o,asyncMode:true,callback:(new AjxCallback(this,this._handleResponseCreateVCard)),errorCallback:(new AjxCallback(this,this._handleErrorCreateVCard))};
+appCtxt.getAppController().sendRequest(a)
+};
+ZmContact.prototype._handleResponseCreateVCard=function(e){
+appCtxt.getAppController().setStatusMsg(ZmMsg.contactCreated)
+};
+ZmContact.prototype._handleErrorCreateVCard=function(e){
+appCtxt.getAppController().setStatusMsg(ZmMsg.errorCreateContact,ZmStatusView.LEVEL_CRITICAL)
+};
+ZmContact.prototype.modify=function(h,m,l,a){
+if(this.isDistributionList()){
+this._modifyDl(h);
+return
+}
+if(this.list.isGal){
+return
+}
+var p={
+ModifyContactRequest:{
+_jsns:"urn:zimbraMail",replace:"0",force:"1"}};
+var d=p.ModifyContactRequest.cn={
+id:this.id};
+d.a=[];
+d.m=[];
+var t=false;
+for(var e in h){
+if(e==ZmContact.F_folderId){
+continue
+}
+if(e==ZmContact.F_groups){
+this._addContactGroupAttr(d,h)
+}else{
+this._addRequestAttr(d,e,(h[e]&&h[e].value)||h[e])
+}
+t=true
+}
+if(ZmContact.F_firstName in h||ZmContact.F_lastName in h||ZmContact.F_company in h||ZmContact.X_fileAs in h){
+var r={};
+var s=[ZmContact.F_firstName,ZmContact.F_lastName,ZmContact.F_company,ZmContact.X_fileAs];
+for(var n=0;
+n<s.length;
+n++){
+var c=s[n];
+var u=h[c];
+r[c]=u!=null?u:this.getAttr(c)
+}
+var o=ZmContact.computeFileAs(r);
+this._addRequestAttr(d,ZmContact.X_fullName,o)
+}
+if(t){
+if(a){
+a.addRequestParams(p,null,null)
+}else{
+var f=this._handleResponseModify.bind(this,h,m,l);
+appCtxt.getAppController().sendRequest({
+jsonObj:p,asyncMode:true,callback:f}
+)
+}}else{
+if(h[ZmContact.F_folderId]){
+this._setFolder(h[ZmContact.F_folderId])
+}}};
+ZmContact.prototype._createDl=function(e){
+this.attr=e;
+var a=this._getCreateDlReq(e);
+var t=[];
+this._addMemberModsReqs(t,e);
+this._addMailPolicyAndOwnersReqs(t,e);
+var o={
+BatchRequest:{
+_jsns:"urn:zimbra",CreateDistributionListRequest:a,DistributionListActionRequest:t}};
+var i=this._createDlResponseHandler.bind(this);
+appCtxt.getAppController().sendRequest({
+jsonObj:o,asyncMode:true,callback:i}
+)
+};
+ZmContact.prototype._addMailPolicyAndOwnersReqs=function(t,e){
+var i=e[ZmContact.F_dlMailPolicy];
+if(i){
+t.push(this._getSetMailPolicyReq(i,e[ZmContact.F_dlMailPolicySpecificMailers]))
+}
+var a=e[ZmContact.F_dlListOwners];
+if(a){
+t.push(this._getSetOwnersReq(a))
+}};
+ZmContact.prototype._addMemberModsReqs=function(a,t){
+var e=t[ZmContact.F_groups];
+var h=[];
+var r=[];
+if(e){
+for(var s=0;
+s<e.length;
+s++){
+var n=e[s];
+var o=(n.op=="+"?h:r);
+o.push(n)
+}}
+if(h.length>0){
+a.push(this._getAddOrRemoveReq(h,true))
+}
+if(r.length>0){
+a.push(this._getAddOrRemoveReq(r,false))
+}};
+ZmContact.prototype._modifyDl=function(t){
+var n=[];
+var l=t[ZmContact.F_email];
+var o=false;
+if(l!==undefined){
+o=true;
+n.push(this._getRenameDlReq(l));
+this.setAttr(ZmContact.F_email,l)
+}
+var h=this._getModifyDlAttributesReq(t);
+if(h){
+n.push(h)
+}
+var a=t[ZmContact.F_dlDisplayName];
+if(a!==undefined){
+this.setAttr(ZmContact.F_dlDisplayName,a)
+}
+var e=this.getFileAs();
+this._resetCachedFields();
+var i=e!=this.getFileAs();
+this._addMemberModsReqs(n,t);
+this._addMailPolicyAndOwnersReqs(n,t);
+if(n.length==0){
+this._modifyDlResponseHandler(false,null);
+return
+}
+var r={
+BatchRequest:{
+_jsns:"urn:zimbra",DistributionListActionRequest:n}};
+var s=this._modifyDlResponseHandler.bind(this,i||o);
+appCtxt.getAppController().sendRequest({
+jsonObj:r,asyncMode:true,callback:s}
+)
+};
+ZmContact.prototype._getAddOrRemoveReq=function(e,o){
+var a={
+_jsns:"urn:zimbraAccount",dl:{
+by:"name",_content:this.getEmail()}
+,action:{
+op:o?"addMembers":"removeMembers",dlm:[]}};
+for(var t=0;
+t<e.length;
+t++){
+var n=e[t];
+a.action.dlm.push({
+_content:n.email}
+)
+}
+return a
+};
+ZmContact.prototype._getRenameDlReq=function(e){
+return{
+_jsns:"urn:zimbraAccount",dl:{
+by:"name",_content:this.getEmail()}
+,action:{
+op:"rename",newName:{
+_content:e}}}
+};
+ZmContact.prototype._getSetOwnersReq=function(t){
+var a=[];
+for(var e=0;
+e<t.length;
+e++){
+a.push({
+type:ZmGroupView.GRANTEE_TYPE_USER,by:"name",_content:t[e]}
+)
+}
+return{
+_jsns:"urn:zimbraAccount",dl:{
+by:"name",_content:this.getEmail()}
+,action:{
+op:"setOwners",owner:a}}
+};
+ZmContact.prototype._getSetMailPolicyReq=function(o,e){
+var a=[];
+if(o==ZmGroupView.MAIL_POLICY_SPECIFIC){
+for(var t=0;
+t<e.length;
+t++){
+a.push({
+type:ZmGroupView.GRANTEE_TYPE_EMAIL,by:"name",_content:e[t]}
+)
+}}else{
+if(o==ZmGroupView.MAIL_POLICY_ANYONE){
+a.push({
+type:ZmGroupView.GRANTEE_TYPE_PUBLIC}
+)
+}else{
+if(o==ZmGroupView.MAIL_POLICY_INTERNAL){
+a.push({
+type:ZmGroupView.GRANTEE_TYPE_ALL}
+)
+}else{
+if(o==ZmGroupView.MAIL_POLICY_MEMBERS){
+a.push({
+type:ZmGroupView.GRANTEE_TYPE_GROUP,by:"name",_content:this.getEmail()}
+)
+}else{
+throw"invalid mailPolicy value "+o
+}}}}
+return{
+_jsns:"urn:zimbraAccount",dl:{
+by:"name",_content:this.getEmail()}
+,action:{
+op:"setRights",right:{
+right:"sendToDistList",grantee:a}}}
+};
+ZmContact.prototype._addDlAttribute=function(a,o,t,i){
+var e=o[t];
+if(e===undefined){
+return
+}
+a.push({
+n:i,_content:e}
+)
+};
+ZmContact.prototype._getDlAttributes=function(t){
+var e=[];
+this._addDlAttribute(e,t,ZmContact.F_dlDisplayName,"displayName");
+this._addDlAttribute(e,t,ZmContact.F_dlDesc,"description");
+this._addDlAttribute(e,t,ZmContact.F_dlNotes,"zimbraNotes");
+this._addDlAttribute(e,t,ZmContact.F_dlHideInGal,"zimbraHideInGal");
+this._addDlAttribute(e,t,ZmContact.F_dlSubscriptionPolicy,"zimbraDistributionListSubscriptionPolicy");
+this._addDlAttribute(e,t,ZmContact.F_dlUnsubscriptionPolicy,"zimbraDistributionListUnsubscriptionPolicy");
+return e
+};
+ZmContact.prototype._getCreateDlReq=function(e){
+return{
+_jsns:"urn:zimbraAccount",name:e[ZmContact.F_email],a:this._getDlAttributes(e),dynamic:false}
+};
+ZmContact.prototype._getModifyDlAttributesReq=function(e){
+var t=this._getDlAttributes(e);
+if(t.length==0){
+return null
+}
+return{
+_jsns:"urn:zimbraAccount",dl:{
+by:"name",_content:this.getEmail()}
+,action:{
+op:"modify",a:t}}
+};
+ZmContact.prototype._modifyDlResponseHandler=function(a,e){
+if(this._handleErrorDl(e)){
+return
+}
+appCtxt.setStatusMsg(ZmMsg.dlSaved);
+this.clearDlInfo();
+var t={
+fileAsChanged:a};
+this._popView(a);
+this._notify(ZmEvent.E_MODIFY,t)
+};
+ZmContact.prototype._createDlResponseHandler=function(e){
+if(this._handleErrorDl(e,true)){
+this.attr={};
+return
+}
+appCtxt.setStatusMsg(ZmMsg.distributionListCreated);
+this._popView(true)
+};
+ZmContact.prototype._popView=function(t){
+var e=AjxDispatcher.run("GetContactController");
+e.popView(true);
+if(!t){
+return
+}
+var a=AjxDispatcher.run("GetContactListController");
+if(a.getFolderId()!=ZmFolder.ID_DLS){
+return
+}
+ZmAddrBookTreeController.dlFolderClicked()
+};
+ZmContact.prototype._handleErrorDl=function(t,e){
+if(!t){
+return false
+}
+var n=t.getResponse().BatchResponse;
+var i=n.Fault;
+if(!i){
+return false
+}
+var o=ZmCsfeCommand.faultToEx(i[0]);
+var a=AjxDispatcher.run("GetContactController");
+a.popupErrorDialog(e?ZmMsg.dlCreateFailed:ZmMsg.dlModifyFailed,o);
+return true
+};
+ZmContact.prototype.clearDlInfo=function(){
+this.dlMembers=null;
+this.dlInfo=null;
+var e=appCtxt.getApp(ZmApp.CONTACTS);
+e.cacheDL(this.getEmail(),null);
+appCtxt.cacheRemove(this.getId())
+};
+ZmContact.prototype._handleResponseModify=function(o,r,n,h){
+var t=h.getResponse().ModifyContactResponse;
+var s=t?t.cn[0]:null;
+var e=s?s.id:null;
+var i=s?s.m:null;
+if(i){
+this.attr[ZmContact.F_groups]=i;
+s._attrs[ZmContact.F_groups]=i
+}
+if(e&&e==this.id){
+if(!n){
+appCtxt.setStatusMsg(this.isGroup()?ZmMsg.groupSaved:ZmMsg.contactSaved)
+}
+if(o[ZmContact.F_folderId]&&this.folderId!=o[ZmContact.F_folderId]){
+this._setFolder(o[ZmContact.F_folderId])
+}
+appCtxt.getApp(ZmApp.CONTACTS).updateIdHash(s,false)
+}else{
+var a=ZmMsg.errorTryAgain+"\n"+ZmMsg.errorContact;
+appCtxt.getAppController().setStatusMsg(ZmMsg.errorModifyContact,ZmStatusView.LEVEL_CRITICAL,a)
+}};
+ZmContact.prototype._handleResponseMove=function(e,i){
+var a=e&&appCtxt.getById(e);
+var t=1;
+if(a){
+appCtxt.setStatusMsg(ZmList.getActionSummary({
+actionTextKey:"actionMove",numItems:t,type:ZmItem.CONTACT,actionArg:a.name}
+))
+}
+this._notify(ZmEvent.E_MODIFY,i)
+};
+ZmContact.prototype._setFolder=function(a){
+var i=appCtxt.getById(this.folderId);
+var e=i?i.nId:null;
+if(e==a){
+return
+}
+var o=appCtxt.getById(a);
+if(this.isShared()||(o&&o.link)){
+if(this.list){
+this.list.moveItems({
+items:[this],folder:o}
+)
+}}else{
+var s={
+ContactActionRequest:{
+_jsns:"urn:zimbraMail"}};
+s.ContactActionRequest.action={
+id:this.id,op:"move",l:a};
+var n=new AjxCallback(this,this._handleResponseMove,[a]);
+var t=appCtxt.multiAccounts&&appCtxt.accountList.mainAccount.name;
+appCtxt.getAppController().sendRequest({
+jsonObj:s,asyncMode:true,callback:n,accountName:t}
+)
+}};
+ZmContact.prototype.notifyModify=function(r,i){
+var u=ZmItem.prototype.notifyModify.apply(this,arguments);
+var o=window.parentAppCtxt||window.appCtxt;
+o.clearAutocompleteCache(ZmAutocomplete.AC_TYPE_CONTACT);
+if(u){
+return u
+}
+var s=this.getFileAs();
+var c=this.getFullName();
+this._resetCachedFields();
+var n={};
+if(r._attrs){
+var t=this.getAttrs();
+for(var d in t){
+n[d]=t[d];
+if(r._attrs[d]==null){
+this.removeAttr(d)
+}}
+for(var d in r._attrs){
+this.setAttr(d,r._attrs[d])
+}
+if(r.m){
+this.setAttr(ZmContact.F_groups,r.m)
+}}
+var e={
+attr:r._attrs,oldAttr:n,fullNameChanged:(this.getFullName()!=c),fileAsChanged:(this.getFileAs()!=s),contact:this};
+for(var h in this._list){
+var l=h&&appCtxt.getById(h);
+if(!l){
+continue
+}
+l.modifyLocal(r,e)
+}
+this._notify(ZmEvent.E_MODIFY,r)
+};
+ZmContact.prototype.notifyDelete=function(){
+ZmItem.prototype.notifyDelete.call(this);
+var e=window.parentAppCtxt||window.appCtxt;
+e.clearAutocompleteCache(ZmAutocomplete.AC_TYPE_CONTACT)
+};
+ZmContact.prototype.initFromEmail=function(e,t){
+if(e instanceof AjxEmailAddress){
+this.setAttr(ZmContact.F_email,e.getAddress());
+this._initFullName(e,t)
+}else{
+this.setAttr(ZmContact.F_email,e)
+}};
+ZmContact.prototype.initFromPhone=function(e,t){
+this.setAttr(t||ZmContact.F_companyPhone,e)
+};
+ZmContact.prototype.getEmail=function(t){
+var e=(this.getAttr(ZmContact.F_email)||this.getAttr(ZmContact.F_workEmail1)||this.getAttr(ZmContact.F_email2)||this.getAttr(ZmContact.F_workEmail2)||this.getAttr(ZmContact.F_email3)||this.getAttr(ZmContact.F_workEmail3));
+if(t){
+e=AjxEmailAddress.parse(e);
+if(e){
+e.isGroup=this.isGroup();
+e.canExpand=this.canExpand
+}}
+return e
+};
+ZmContact.prototype.getPhone=function(){
+var e=(this.getAttr(ZmContact.F_mobilePhone)||this.getAttr(ZmContact.F_workPhone)||this.getAttr(ZmContact.F_homePhone)||this.getAttr(ZmContact.F_otherPhone));
+return e
+};
+ZmContact.prototype.getLookupEmail=function(t){
+var e=this._lookupEmail;
+if(t&&e){
+e=AjxEmailAddress.parse(e);
+e.isGroup=this.isGroup();
+e.canExpand=this.canExpand
+}
+return e
+};
+ZmContact.prototype.getEmails=function(){
+var s=[];
+var a=this.getAttrs();
+for(var t=0;
+t<ZmContact.EMAIL_FIELDS.length;
+t++){
+var n=ZmContact.EMAIL_FIELDS[t];
+for(var o=1;
+true;
+o++){
+var e=ZmContact.getAttributeName(n,o);
+if(!a[e]){
+break
+}
+s.push(a[e])
+}}
+return s
+};
+ZmContact.prototype.getFullName=function(e){
+var t=null;
+if(!this._fullName||e){
+var a=this.getAttr(ZmContact.X_fullName);
+if(a){
+this._fullName=(a instanceof Array)?a[0]:a
+}else{
+this._fullName=this.getFullNameForDisplay(false)
+}
+if(e){
+t=this.getFullNameForDisplay(e)
+}}
+if(!this._fullName){
+this._fullName=this.getFileAs()
+}
+return t||this._fullName
+};
+ZmContact.prototype.getFullNameForDisplay=function(i){
+if(this.isDistributionList()){
+return this.getAttr(ZmContact.F_dlDisplayName)||this.getAttr("fullName")
+}
+var o=this.getAttr(ZmContact.F_namePrefix);
+var a=this.getAttr(ZmContact.F_firstName);
+var c=this.getAttr(ZmContact.F_middleName);
+var t=this.getAttr(ZmContact.F_maidenName);
+var h=this.getAttr(ZmContact.F_lastName);
+var l=this.getAttr(ZmContact.F_nameSuffix);
+var s=ZmMsg.fullname;
+if(l){
+s=t?ZmMsg.fullnameMaidenSuffix:ZmMsg.fullnameSuffix
+}else{
+if(t){
+s=ZmMsg.fullnameMaiden
+}}
+if(appCtxt.get(ZmSetting.LOCALE_NAME)==="ja"){
+var e=this.getAttr(ZmContact.F_fileAs);
+if(!AjxUtil.isEmpty(e)&&e!=="1"&&e!=="4"&&e!=="6"){
+s="{0} {1} {2} {4}"
+}}
+var r=new AjxMessageFormat(s);
+var n=[o,a,c,t,h,l];
+if(!i){
+return AjxStringUtil.trim(r.format(n),true)
+}
+return this._getFullNameHtml(r,n)
+};
+ZmContact.prototype._getFullNameHtml=function(l,t){
+var h=[];
+var n=l.getSegments();
+for(var o=0;
+o<n.length;
+o++){
+var s=n[o];
+if(s instanceof AjxFormat.TextSegment){
+h.push(s.format());
+continue
+}
+var r=s.getIndex();
+var e=t[r];
+var c=ZmContact.__RUBY_FIELDS[r]&&this.getAttr(ZmContact.__RUBY_FIELDS[r]);
+h.push(AjxStringUtil.htmlRubyEncode(e,c))
+}
+return h.join("")
+};
+ZmContact.__RUBY_FIELDS=[null,ZmContact.F_phoneticFirstName,null,null,ZmContact.F_phoneticLastName,null];
+ZmContact.prototype.getToolTip=function(e,i,a){
+var t={
+contact:this,entryTitle:this.getFileAs(),hint:a};
+return(AjxTemplate.expand("abook.Contacts#Tooltip",t))
+};
+ZmContact.prototype.getFileAs=function(e){
+if(!this._fileAs){
+this._fileAs=ZmContact.computeFileAs(this);
+this._fileAsLC=this._fileAs?this._fileAs.toLowerCase():null
+}
+if(e&&!this._fileAsLC){
+this._fileAsLC=this._fileAs.toLowerCase()
+}
+return e?this._fileAsLC:this._fileAs
+};
+ZmContact.prototype.getFileAsNoName=function(){
+return[ZmMsg.noName,this.getEmail()].join(" ")
+};
+ZmContact.prototype.getHeader=function(){
+return this.id?this.getFileAs():ZmMsg.newContact
+};
+ZmContact.NO_MAX_IMAGE_WIDTH=ZmContact.NO_MAX_IMAGE_HEIGHT=-1;
+ZmContact.prototype.getImageUrl=function(o,i){
+var n=this.getAttr(ZmContact.F_image);
+var a=n&&n.part||this.getAttr(ZmContact.F_imagepart);
+if(!a){
+return this.getAttr(ZmContact.F_zimletImage)
+}
+var s=appCtxt.get(ZmSetting.CSFE_MSG_FETCHER_URI);
+var t="";
+if(o!==ZmContact.NO_MAX_IMAGE_WIDTH){
+o=o||48;
+t=["&max_width=",o].join("")
+}
+var e="";
+if(i!==ZmContact.NO_MAX_IMAGE_HEIGHT){
+i=i||(o!==ZmContact.NO_MAX_IMAGE_WIDTH?o:48);
+e=["&max_height=",i].join("")
+}
+return[s,"&id=",this.id,"&part=",a,t,e,"&t=",(new Date()).getTime()].join("")
+};
+ZmContact.prototype.addModifyZimletImageToBatch=function(t,a){
+var e={};
+if(this.getAttr(ZmContact.F_zimletImage)===a){
+return
+}
+e[ZmContact.F_zimletImage]=a;
+t.add(this.modify.bind(this,e,null,true))
+};
+ZmContact.prototype.getCompanyField=function(){
+var t=this.getAttrs();
+if(t==null){
+return null
+}
+var a=parseInt(t.fileAs);
+var i=[];
+var e=0;
+if(a==ZmContact.FA_LAST_C_FIRST||a==ZmContact.FA_FIRST_LAST){
+if(t.jobTitle){
+i[e++]=t.jobTitle;
+if(t.company){
+i[e++]=", "
+}}
+if(t.company){
+i[e++]=t.company
+}}else{
+if(a==ZmContact.FA_COMPANY){
+if(t.lastName){
+i[e++]=t.lastName;
+if(t.firstName){
+i[e++]=", "
+}}
+if(t.firstName){
+i[e++]=t.firstName
+}
+if(t.jobTitle){
+i[e++]=" ("+t.jobTitle+")"
+}}else{
+if(t.jobTitle){
+i[e++]=t.jobTitle;
+if(t.company&&(t.fileAs==null||a==ZmContact.FA_LAST_C_FIRST||a==ZmContact.FA_FIRST_LAST)){
+i[e++]=", "
+}}
+if(t.company&&(t.fileAs==null||a==ZmContact.FA_LAST_C_FIRST||a==ZmContact.FA_FIRST_LAST)){
+i[e++]=t.company
+}}}
+if(i.length==0){
+return null
+}
+return i.join("")
+};
+ZmContact.prototype.getWorkAddrField=function(e){
+var t=this.getAttrs();
+return this._getAddressField(t.workStreet,t.workCity,t.workState,t.workPostalCode,t.workCountry)
+};
+ZmContact.prototype.getHomeAddrField=function(e){
+var t=this.getAttrs();
+return this._getAddressField(t.homeStreet,t.homeCity,t.homeState,t.homePostalCode,t.homeCountry)
+};
+ZmContact.prototype.getOtherAddrField=function(e){
+var t=this.getAttrs();
+return this._getAddressField(t.otherStreet,t.otherCity,t.otherState,t.otherPostalCode,t.otherCountry)
+};
+ZmContact.prototype.getAddressBook=function(){
+if(!this.addrbook){
+this.addrbook=appCtxt.getById(this.folderId)
+}
+return this.addrbook
+};
+ZmContact.prototype._getAddressField=function(s,n,i,a,o){
+if(s==null&&n==null&&i==null&&a==null&&o==null){
+return null
+}
+var t=[];
+var e=0;
+if(s){
+t[e++]=s;
+if(n||i||a){
+t[e++]="\n"
+}}
+if(n){
+t[e++]=n;
+if(i){
+t[e++]=", "
+}else{
+if(a){
+t[e++]=" "
+}}}
+if(i){
+t[e++]=i;
+if(a){
+t[e++]=" "
+}}
+if(a){
+t[e++]=a
+}
+if(o){
+t[e++]="\n"+o
+}
+return t.join("")
+};
+ZmContact.prototype._initFullName=function(t,o){
+var e=t.getName();
+e=AjxStringUtil.trim(e.replace(AjxEmailAddress.commentPat,""));
+if(e&&e.length){
+this._setFullName(e,[" "])
+}else{
+if(!o){
+e=t.getAddress();
+if(e&&e.length){
+var a=e.indexOf("@");
+if(a==-1){
+return
+}
+e=e.substr(0,a);
+this._setFullName(e,[".","_"])
+}}}};
+ZmContact.prototype._setFullName=function(s,n){
+var o=n[0];
+for(var e=0;
+e<n.length;
+e++){
+if(s.indexOf(n[e])!=-1){
+o=n[e];
+break
+}}
+var a=s.split(o);
+var t=this["__setFullName_"+AjxEnv.DEFAULT_LOCALE]||this.__setFullName;
+t.call(this,a,s,n)
+};
+ZmContact.prototype.__setFullName=function(e,a,t){
+this.setAttr(ZmContact.F_firstName,e[0]);
+if(e.length==2){
+this.setAttr(ZmContact.F_lastName,e[1])
+}else{
+if(e.length==3){
+this.setAttr(ZmContact.F_middleName,e[1]);
+this.setAttr(ZmContact.F_lastName,e[2])
+}}};
+ZmContact.prototype.__setFullName_ja=function(e,a,t){
+if(e.length>2){
+this.__setFullName(e,a,t);
+return
+}
+this.setAttr(ZmContact.F_lastName,e[0]);
+if(e.length>1){
+this.setAttr(ZmContact.F_firstName,e[1])
+}};
+ZmContact.prototype.__setFullName_ja_JP=ZmContact.prototype.__setFullName_ja;
+ZmContact.prototype._addRequestAttr=function(o,t,i){
+var e={
+n:t};
+if(t==ZmContact.F_image&&AjxUtil.isString(i)&&i.length){
+if(i.indexOf("aid_")!=-1){
+e.aid=i.substring(4)
+}else{
+e.part=i.substring(5)
+}}else{
+e._content=i||""
+}
+if(i instanceof Array){
+if(!o._attrs){
+o._attrs={}
+}
+o._attrs[t]=i||""
+}else{
+if(!o.a){
+o.a=[]
+}
+o.a.push(e)
+}};
+ZmContact.prototype._addContactGroupAttr=function(s,o){
+var t=o[ZmContact.F_groups];
+for(var a=0;
+a<t.length;
+a++){
+var n=t[a];
+if(!s.m){
+s.m=[]
+}
+var e={
+type:n.type,value:n.value};
+if(n.op){
+e.op=n.op
+}
+s.m.push(e)
+}};
+ZmContact.prototype._resetCachedFields=function(){
+this._fileAs=this._fileAsLC=this._fullName=null
+};
+ZmContact.prototype._loadFromDom=function(o){
+this.isLoaded=true;
+this.rev=o.rev;
+this.sf=o.sf||o._attrs.sf;
+if(!this.isGal){
+this.folderId=o.l
+}
+this.created=o.cd;
+this.modified=o.md;
+this.attr=o._attrs||{};
+if(o.m){
+this.attr[ZmContact.F_groups]=o.m
+}
+this.ref=o.ref||this.attr.dn;
+if(o.email){
+this.attr[ZmContact.F_email]=o.email
+}
+if(o.email2){
+this.attr[ZmContact.F_email2]=o.email2
+}
+if(o.email3){
+this.attr[ZmContact.F_email3]=o.email3
+}
+this.attr=ZmContact.mapAttrs(this.attr);
+var e=this.attr[ZmContact.F_groups];
+if(!e||(e instanceof Array&&e.length==0)){
+this.type=ZmItem.CONTACT
+}else{
+this.type=ZmItem.GROUP
+}
+var a=window.parentAppCtxt||window.appCtxt;
+this.addrbook=a.getById(this.folderId);
+this._parseTagNames(o.tn);
+if(!this.isShared()){
+this._parseFlags(o.f)
+}else{
+this.isLoaded=false
+}
+this._fileAs=ZmContact.computeFileAs(this);
+this.isDL=this.isDistributionList();
+if(this.isDL){
+this.dlInfo={
+isMinimal:true,isMember:o.isMember,isOwner:o.isOwner,subscriptionPolicy:this.attr.zimbraDistributionListSubscriptionPolicy,unsubscriptionPolicy:this.attr.zimbraDistributionListUnsubscriptionPolicy,displayName:o.d||"",hideInGal:this.attr.zimbraHideInGal=="TRUE"};
+this.canExpand=o.exp!==false;
+var n=this.getEmails();
+var a=window.parentAppCtxt||window.appCtxt;
+for(var t=0;
+t<n.length;
+t++){
+a.setIsExpandableDL(n[t],this.canExpand)
+}}};
+ZmContact.prototype.getAttendeeText=function(a,t){
+var e=this.getEmail(true);
+return(e?e.toString(t||(a&&a!=ZmCalBaseItem.PERSON)):"")
+};
+ZmContact.prototype.getAttendeeKey=function(){
+var t=this.getLookupEmail()||this.getEmail();
+var e=this.getFullName();
+return t?t:e
+};
+ZmContact.prototype.getUnknownFields=function(t){
+var r=ZmContact.__FIELD_MAP;
+if(!r){
+r=ZmContact.__FIELD_MAP={};
+for(var n=0;
+n<ZmContact.DISPLAY_FIELDS;
+n++){
+r[ZmContact.DISPLAY_FIELDS[n]]=true
+}}
+var e=[];
+var o=this.getAttrs();
+for(var a in o){
+var s=ZmContact.getPrefix(a);
+if(r[a]){
+continue
+}
+e.push(s)
+}
+return this.getFields(e,t)
+};
+ZmContact.prototype.getFields=function(a,c){
+var s;
+var h=this.getAttrs();
+for(var o=0;
+o<a.length;
+o++){
+for(var t=1;
+true;
+t++){
+var n=ZmContact.getAttributeName(a[o],t);
+if(!h[n]){
+break
+}
+if(!s){
+s={}
+}
+s[n]=h[n]
+}}
+if(c&&s){
+var l=AjxUtil.keys(s);
+l.sort(c);
+var e={};
+for(var t=0;
+t<l;
+t++){
+var r=l[t];
+e[r]=a[r]
+}
+s=e
+}
+return s
+};
+ZmContact.prototype.getDLMembers=function(n,i,l){
+var u={
+list:[],more:false,isDL:{}};
+if(!this.isDL){
+return u
+}
+var h=this.getEmail();
+var t=appCtxt.getApp(ZmApp.CONTACTS);
+var s=t.getDL(h);
+if(!s){
+s=u;
+s.more=true;
+t.cacheDL(h,s)
+}
+i=i||ZmContact.DL_PAGE_SIZE;
+var e=n||0;
+var a=(n+i)-1;
+if(s.list.length>=a+1||!s.more){
+var r=s.list.slice(n,a+1);
+u={
+list:r,more:s.more||(s.list.length>a+1),isDL:s.isDL};
+this._handleResponseGetDLMembers(e,i,l,u);
+return
+}
+if(!s.total||(n<s.total)){
+var d={
+GetDistributionListMembersRequest:{
+_jsns:"urn:zimbraAccount",offset:n,limit:i}};
+var o=d.GetDistributionListMembersRequest;
+o.dl={
+_content:this.getEmail()};
+var c=new AjxCallback(this,this._handleResponseGetDLMembers,[n,i,l]);
+appCtxt.getAppController().sendRequest({
+jsonObj:d,asyncMode:true,callback:c}
+)
+}else{
+this._handleResponseGetDLMembers(e,i,l,u)
+}};
+ZmContact.prototype._handleResponseGetDLMembers=function(o,t,u,m,e){
+if(e||!m.list){
+var l=[];
+e=e||m.getResponse();
+e=e.GetDistributionListMembersResponse;
+var r=appCtxt.getApp(ZmApp.CONTACTS).getDL(this.getEmail());
+var d=r.more=e.more;
+var c={};
+var a=e.dlm;
+if(a&&a.length){
+for(var s=0,h=a.length;
+s<h;
+s++){
+var n=a[s]._content;
+l.push(n);
+r.list[o+s]=n;
+if(a[s].isDL){
+c[n]=r.isDL[n]=true
+}}}
+r.total=e.total;
+var m={
+list:l,more:d,isDL:c}
+}
+if(u){
+u.run(m)
+}else{
+return m
+}};
+ZmContact.prototype.getAllDLMembers=function(i){
+var e={
+list:[],more:false,isDL:{}};
+if(!this.isDL){
+return e
+}
+var t=appCtxt.getApp(ZmApp.CONTACTS).getDL(this.getEmail());
+if(t&&!t.more){
+e={
+list:t.list.slice(),more:false,isDL:t.isDL};
+i.run(e);
+return
+}
+var a=new AjxCallback(this,this._getNextDLChunk,[i]);
+this.getDLMembers(t?t.list.length:0,null,a)
+};
+ZmContact.prototype._getNextDLChunk=function(i,e){
+var t=appCtxt.getApp(ZmApp.CONTACTS).getDL(this.getEmail());
+if(e.more){
+var a=new AjxCallback(this,this._getNextDLChunk,[i]);
+this.getDLMembers(t.list.length,null,a)
+}else{
+e.list=t.list.slice();
+i.run(e)
+}};
+ZmContact.getContactFromCache=function(a){
+var i=appCtxt.accountList.mainAccount.id;
+var t=null;
+if(a&&a.indexOf(i+":")!=-1){
+var e=a.split(i+":");
+t=e&&e.length>1?appCtxt.cacheGet(e[1]):appCtxt.cacheGet(a)
+}else{
+t=appCtxt.cacheGet(a)
+}
+if(t instanceof ZmContact){
+return t
+}
+return null
+};
+ZmContact.ATTR_VARIANTS={};
+ZmContact.IGNORE_ATTR_VARIANT={};
+ZmContact.IGNORE_ATTR_VARIANT[ZmContact.F_groups]=true;
+ZmContact.initAttrVariants=function(c){
+var l=Object.keys(c),o=l.length,r,t,n,h=[];
+var a=c.IGNORE_ATTR_VARIANT||{};
+for(t=0;
+t<o;
+t++){
+r=l[t];
+if(r.indexOf("F_")===0){
+n=c[r];
+if(!a[n]){
+h.push(n)
+}}}
+var s=/^([a-zA-Z]+)(\d+)$/;
+h.sort(function(u,i){
+var m=u.match(s),d=i.match(s);
+if(m&&d&&m[1]===d[1]){
+return m[2]-d[2]
+}else{
+return u>i?1:(u<i?-1:0)
+}}
+);
+var n,e;
+for(t=0;
+t<h.length;
+t++){
+n=h[t];
+e=n.replace(/\d+$/,"").toLowerCase();
+if(!ZmContact.ATTR_VARIANTS[e]){
+ZmContact.ATTR_VARIANTS[e]=[]
+}
+ZmContact.ATTR_VARIANTS[e].push(n)
+}};
+ZmContact.initAttrVariants(ZmContact);
+ZmContact.mapAttrs=function(o){
+var a,r,t,s={};
+for(a in o){
+r=o[a];
+if(r){
+t=ZmContact.ATTR_VARIANTS[a.toLowerCase()];
+if(t){
+r=AjxUtil.toArray(r);
+var e=Math.min(r.length,t.length),n;
+for(n=0;
+n<e;
+n++){
+s[t[n]]=r[n]
+}}else{
+s[a]=r
+}}}
+return s
+};
+ZmContact._AB_FIELD={
+firstName:ZmMsg.AB_FIELD_firstName,lastName:ZmMsg.AB_FIELD_lastName,middleName:ZmMsg.AB_FIELD_middleName,fullName:ZmMsg.AB_FIELD_fullName,jobTitle:ZmMsg.AB_FIELD_jobTitle,company:ZmMsg.AB_FIELD_company,department:ZmMsg.AB_FIELD_department,email:ZmMsg.AB_FIELD_email,email2:ZmMsg.AB_FIELD_email2,email3:ZmMsg.AB_FIELD_email3,imAddress1:ZmMsg.AB_FIELD_imAddress1,imAddress2:ZmMsg.AB_FIELD_imAddress2,imAddress3:ZmMsg.AB_FIELD_imAddress3,image:ZmMsg.AB_FIELD_image,attachment:ZmMsg.AB_FIELD_attachment,workStreet:ZmMsg.AB_FIELD_street,workCity:ZmMsg.AB_FIELD_city,workState:ZmMsg.AB_FIELD_state,workPostalCode:ZmMsg.AB_FIELD_postalCode,workCountry:ZmMsg.AB_FIELD_country,workURL:ZmMsg.AB_FIELD_URL,workPhone:ZmMsg.AB_FIELD_workPhone,workPhone2:ZmMsg.AB_FIELD_workPhone2,workFax:ZmMsg.AB_FIELD_workFax,assistantPhone:ZmMsg.AB_FIELD_assistantPhone,companyPhone:ZmMsg.AB_FIELD_companyPhone,callbackPhone:ZmMsg.AB_FIELD_callbackPhone,homeStreet:ZmMsg.AB_FIELD_street,homeCity:ZmMsg.AB_FIELD_city,homeState:ZmMsg.AB_FIELD_state,homePostalCode:ZmMsg.AB_FIELD_postalCode,homeCountry:ZmMsg.AB_FIELD_country,homeURL:ZmMsg.AB_FIELD_URL,homePhone:ZmMsg.AB_FIELD_homePhone,homePhone2:ZmMsg.AB_FIELD_homePhone2,homeFax:ZmMsg.AB_FIELD_homeFax,mobilePhone:ZmMsg.AB_FIELD_mobilePhone,pager:ZmMsg.AB_FIELD_pager,carPhone:ZmMsg.AB_FIELD_carPhone,otherStreet:ZmMsg.AB_FIELD_street,otherCity:ZmMsg.AB_FIELD_city,otherState:ZmMsg.AB_FIELD_state,otherPostalCode:ZmMsg.AB_FIELD_postalCode,otherCountry:ZmMsg.AB_FIELD_country,otherURL:ZmMsg.AB_FIELD_URL,otherPhone:ZmMsg.AB_FIELD_otherPhone,otherFax:ZmMsg.AB_FIELD_otherFax,notes:ZmMsg.notes,birthday:ZmMsg.AB_FIELD_birthday};
+ZmContact._AB_FILE_AS={
+1:ZmMsg.AB_FILE_AS_lastFirst,2:ZmMsg.AB_FILE_AS_firstLast,3:ZmMsg.AB_FILE_AS_company,4:ZmMsg.AB_FILE_AS_lastFirstCompany,5:ZmMsg.AB_FILE_AS_firstLastCompany,6:ZmMsg.AB_FILE_AS_companyLastFirst,7:ZmMsg.AB_FILE_AS_companyFirstLast}
+}}
+if(AjxPackage.define("zimbraMail.abook.model.ZmContactList")){
+ZmContactList=function(e,a,t){
+if(arguments.length==0){
+return
+}
+t=t||ZmItem.CONTACT;
+ZmList.call(this,t,e);
+this.isGal=(a===true);
+this.isCanonical=false;
+this.isLoaded=false;
+this._app=appCtxt.getApp(ZmApp.CONTACTS);
+if(!this._app){
+this._emailToContact=this._phoneToContact={};
+return
+}
+this._emailToContact=this._app._byEmail;
+this._phoneToContact=this._app._byPhone;
+this._alwaysUpdateHashes=true
+};
+ZmContactList.prototype=new ZmList;
+ZmContactList.prototype.constructor=ZmContactList;
+ZmContactList.prototype.isZmContactList=true;
+ZmContactList.prototype.toString=function(){
+return"ZmContactList"
+};
+ZmContactList.URL="/Contacts";
+ZmContactList.URL_ARGS={
+fmt:"cf",t:2,all:"all"};
+ZmContactList.CONTACT_SPLIT_CHAR="\u001E";
+ZmContactList.FIELD_SPLIT_CHAR="\u001D";
+ZmContactList.IS_CONTACT_FIELD={
+id:true,l:true,d:true,fileAsStr:true,rev:true};
+ZmContactList.prototype.addLoadedCallback=function(e){
+if(this.isLoaded){
+e.run();
+return
+}
+if(!this._loadedCallbacks){
+this._loadedCallbacks=[]
+}
+this._loadedCallbacks.push(e)
+};
+ZmContactList.prototype._finishLoading=function(){
+this.isLoaded=true;
+if(this._loadedCallbacks){
+var e;
+while(e=this._loadedCallbacks.shift()){
+e.run()
+}}};
+ZmContactList.prototype.load=function(n,e,a){
+this.isCanonical=true;
+var o=new AjxCallback(this,this._handleResponseLoad,[n]);
+if(appCtxt.isExternalAccount()){
+if(n){
+n.run()
+}
+return
+}
+var t=ZmContactList.URL_ARGS;
+if(AjxEnv.isIE){
+t=AjxUtil.hashCopy(t);
+t.sid=ZmCsfeCommand.getSessionId()
+}
+var i={
+asyncMode:true,noBusyOverlay:true,callback:o,errorCallback:e,offlineCallback:n};
+i.restUri=AjxUtil.formatUrl({
+path:["/home/",(a||appCtxt.getUsername()),ZmContactList.URL].join(""),qsArgs:t,qsReset:true}
+);
+appCtxt.getAppController().sendRequest(i);
+ZmContactList.addDlFolder()
+};
+ZmContactList.prototype._handleResponseLoad=function(f,y){
+var p=y.getResponse();
+if(p&&typeof p!=="string"){
+p=p._data
+}
+var e=[];
+if(p){
+var g=p.split(ZmContactList.CONTACT_SPLIT_CHAR);
+var r=new ZmBatchCommand(true,null,true);
+for(var s=0,d=g.length;
+s<d;
+s++){
+var l=g[s].split(ZmContactList.FIELD_SPLIT_CHAR);
+var c={}
+,m={};
+var h=[];
+var a=false;
+for(var n=0,o=l.length;
+n<o;
+n+=2){
+if(ZmContactList.IS_CONTACT_FIELD[l[n]]){
+c[l[n]]=l[n+1]
+}else{
+var u=l[n+1];
+switch(l[n]){
+case ZmContact.F_memberC:h.push({
+type:ZmContact.GROUP_CONTACT_REF,value:u}
+);
+a=true;
+break;
+case ZmContact.F_memberG:h.push({
+type:ZmContact.GROUP_GAL_REF,value:u}
+);
+a=true;
+break;
+case ZmContact.F_memberI:h.push({
+type:ZmContact.GROUP_INLINE_REF,value:u}
+);
+a=true;
+break;
+default:m[l[n]]=u
+}}}
+if(m[ZmContact.F_type]==="group"){
+m[ZmContact.F_groups]=h
+}
+if(a){
+var t=new ZmContact(c.id,this);
+r.add(new AjxCallback(t,t.load,[null,null,r,true]))
+}
+c._attrs=m;
+this._addContact(c)
+}
+r.run()
+}
+this._finishLoading();
+if(f){
+f.run()
+}};
+ZmContactList.addDlFolder=function(){
+if(!appCtxt.get(ZmSetting.DLS_FOLDER_ENABLED)){
+return
+}
+var a=appCtxt.getById(ZmOrganizer.ID_DLS);
+var e=appCtxt.getById(ZmOrganizer.ID_ROOT);
+if(!e){
+return
+}
+if(a&&e.getById(ZmOrganizer.ID_DLS)){
+return
+}
+if(!a){
+var t={
+id:ZmOrganizer.ID_DLS,name:ZmMsg.distributionLists,parent:e,tree:e.tree,type:ZmOrganizer.ADDRBOOK,numTotal:null,noTooltip:true};
+a=new ZmAddrBook(t);
+e.children.add(a);
+a._isDL=true
+}else{
+a.parent=e;
+e.children.add(a)
+}};
+ZmContactList.prototype.add=function(t,e){
+if(!t.id||!this._idHash[t.id]){
+this._vector.add(t,e);
+if(t.id){
+this._idHash[t.id]=t
+}
+this._updateHashes(t,true)
+}};
+ZmContactList.prototype.cache=function(h,t){
+var n=function(){
+return this.id
+};
+var o=function(i){
+return this._vector.containsLike(i,n)
+};
+var r=t.sub(o,this);
+this.getVector().merge(h,r);
+var s=r.getArray();
+for(var e=0;
+e<s.length;
+e++){
+var a=s[e];
+a.list=this;
+if(a.id){
+this._idHash[a.id]=a
+}}};
+ZmContactList.prototype._addContact=function(e){
+e.list=this;
+this._updateHashes(e,true);
+var t=[],a=[];
+if(e._attrs[ZmContact.F_firstName]){
+t.push(e._attrs[ZmContact.F_firstName])
+}
+if(e._attrs[ZmContact.F_middleName]){
+t.push(e._attrs[ZmContact.F_middleName])
+}
+if(e._attrs[ZmContact.F_lastName]){
+t.push(e._attrs[ZmContact.F_lastName])
+}
+if(t.length){
+e._attrs[ZmContact.X_fullName]=t.join(" ")
+}
+if(e._attrs[ZmContact.F_firstName]){
+a.push(e._attrs[ZmContact.F_firstName])
+}
+if(e._attrs[ZmContact.F_lastName]){
+a.push(e._attrs[ZmContact.F_lastName])
+}
+e._attrs[ZmContact.X_firstLast]=a.join(" ");
+this.add(e)
+};
+ZmContactList.prototype._realizeContact=function(contact,idx){
+if(contact instanceof ZmContact){
+return contact
+}
+if(contact&&contact.type==ZmItem.CONTACT){
+return contact
+}
+var args={
+list:this};
+var obj=eval(ZmList.ITEM_CLASS[this.type]);
+var realContact=obj&&obj.createFromDom(contact,args);
+if(this.isCanonical){
+var a=this.getArray();
+idx=idx||this.getIndexById(contact.id);
+a[idx]=realContact;
+this._updateHashes(realContact,true);
+this._idHash[contact.id]=realContact
+}
+return realContact
+};
+ZmContactList.prototype.getIndexById=function(o){
+var e=this.getArray();
+for(var t=0;
+t<e.length;
+t++){
+if(e[t].id==o){
+return t
+}}
+return null
+};
+ZmContactList.prototype.getSubList=function(r,s,o){
+if(o&&this.isCanonical){
+var d=[];
+var l=this.getArray();
+var e=0;
+this.setHasMore(false);
+for(var h=0;
+h<l.length;
+h++){
+l[h]=this._realizeContact(l[h],h);
+var t=appCtxt.getById(l[h].folderId);
+if(t&&t.nId==ZmOrganizer.normalizeId(o)){
+if(e>=r){
+if(d.length==s){
+this.setHasMore(true);
+break
+}
+d.push(l[h])
+}
+e++
+}}
+return AjxVector.fromArray(d)
+}else{
+var n=ZmList.prototype.getSubList.call(this,r,s);
+if(n){
+var c=n.getArray();
+for(var h=0;
+h<c.length;
+h++){
+c[h]=this._realizeContact(c[h],r+h)
+}}
+return n
+}};
+ZmContactList.prototype.getById=function(t){
+if(!t||!this.isCanonical){
+return null
+}
+var e=this._idHash[t];
+return e?this._realizeContact(e):null
+};
+ZmContactList.prototype.getContactByEmail=function(t){
+if(!t||!this.isCanonical){
+return null
+}
+var e=this._emailToContact[t.toLowerCase()];
+if(e){
+e=this._realizeContact(e);
+e._lookupEmail=t;
+return e
+}else{
+return null
+}};
+ZmContactList.prototype.getContactByPhone=function(e){
+if(!e||!this.isCanonical){
+return null
+}
+var a=this._getPhoneDigits(e);
+var t=this._phoneToContact[a];
+if(t){
+t.contact=this._realizeContact(t.contact);
+return t
+}else{
+return null
+}};
+ZmContactList.prototype.moveItems=function(h){
+h=Dwt.getParams(arguments,["items","folder","attrs","outOfTrash"]);
+h.items=AjxUtil.toArray(h.items);
+var a=new ZmBatchCommand(true,null,true);
+var t=new ZmBatchCommand(true,null,true);
+var s=[];
+if(h.items[0]&&h.items[0] instanceof ZmItem){
+for(var o=0;
+o<h.items.length;
+o++){
+var e=h.items[o];
+if(e.isReadOnly()){
+continue
+}
+s.push(e)
+}}else{
+s=h.items
+}
+if(s.length>0){
+var n=AjxUtil.hashCopy(h);
+n.attrs=h.attrs||{};
+var r=h.folder;
+n.attrs.l=r.isRemote()?r.getRemoteId():r.id;
+n.action="move";
+n.accountName=appCtxt.multiAccounts&&appCtxt.accountList.mainAccount.name;
+if(n.folder.id==ZmFolder.ID_TRASH){
+n.actionTextKey="actionTrash";
+n.accountName=appCtxt.multiAccounts&&h.items[0].getAccount().name
+}else{
+n.actionTextKey="actionMove";
+n.actionArg=r.getName(false,false,true)
+}
+n.callback=h.outOfTrash&&new AjxCallback(this,this._handleResponseMoveItems,h);
+this._itemAction(n)
+}};
+ZmContactList.prototype._handleResponseMoveBatchCmd=function(t){
+var n=t.getResponse().BatchResponse.ContactActionResponse;
+var o=n[0].action.id.split(",");
+for(var a=0;
+a<o.length;
+a++){
+var e=appCtxt.cacheGet(o[a]);
+if(e&&e.isShared()){
+e.notifyDelete();
+appCtxt.cacheRemove(o[a])
+}}};
+ZmContactList.prototype._handleResponseLoadMove=function(t,a){
+var e=new AjxCallback(this,this._itemAction,[a]);
+t.add(e);
+var i=new AjxCallback(this,this._handleResponseMoveBatchCmd);
+t.run(i)
+};
+ZmContactList.prototype._handleResponseBatchLoad=function(a,i,t,e){
+a.add(this._getCopyCmd(e,i))
+};
+ZmContactList.prototype._getCopyCmd=function(e,i){
+var t=new ZmContact(null,this);
+for(var a in e.attr){
+t.attr[a]=e.attr[a]
+}
+t.attr[ZmContact.F_folderId]=i.id;
+return new AjxCallback(t,t.create,[t.attr])
+};
+ZmContactList.prototype.deleteItems=function(e){
+if(this.isGal){
+if(ZmContactList.deleteGalItemsAllowed(e.items)){
+this._deleteDls(e.items);
+return
+}
+return
+}
+ZmList.prototype.deleteItems.call(this,e)
+};
+ZmContactList.deleteGalItemsAllowed=function(t){
+var s=appCtxt.createDistListAllowedDomainsMap;
+if(t.length==0){
+return false
+}
+for(var o=0;
+o<t.length;
+o++){
+var e=t[o];
+var a=e.getEmail();
+var n=a.split("@")[1];
+var r=e&&e.isDistributionList();
+if(!r||!s[n]||!e.dlInfo||!e.dlInfo.isOwner){
+return false
+}}
+return true
+};
+ZmContactList.prototype._deleteDls=function(n,e){
+if(!e){
+var s=this._deleteDls.bind(this,n,true);
+this._popupDeleteWarningDialog(s,false,n.length);
+return
+}
+var r=[];
+for(var t=0;
+t<n.length;
+t++){
+var a=n[t];
+var o=a.getEmail();
+r.push({
+_jsns:"urn:zimbraAccount",dl:{
+by:"name",_content:a.getEmail()}
+,action:{
+op:"delete"}}
+)
+}
+var l={
+BatchRequest:{
+_jsns:"urn:zimbra",DistributionListActionRequest:r}};
+var h=this._deleteDlsResponseHandler.bind(this,n);
+appCtxt.getAppController().sendRequest({
+jsonObj:l,asyncMode:true,callback:h}
+)
+};
+ZmContactList.prototype._deleteDlsResponseHandler=function(e){
+if(appCtxt.getCurrentView().isZmGroupView){
+this.controller.popView()
+}
+appCtxt.setStatusMsg(e.length==1?ZmMsg.dlDeleted:ZmMsg.dlsDeleted);
+for(var t=0;
+t<e.length;
+t++){
+var a=e[t];
+a.clearDlInfo();
+a._notify(ZmEvent.E_DELETE)
+}};
+ZmContactList.prototype.setIsGal=function(e){
+this.isGal=e
+};
+ZmContactList.prototype.notifyCreate=function(node){
+var obj=eval(ZmList.ITEM_CLASS[this.type]);
+if(obj){
+var item=obj.createFromDom(node,{
+list:this}
+);
+var index=this._sortIndex(item);
+var listSize=this.size();
+var visible=false;
+if(index<listSize||listSize==0||(index==listSize&&!this._hasMore)){
+this.add(item,index);
+this.createLocal(item);
+visible=true
+}
+this._notify(ZmEvent.E_CREATE,{
+items:[item],sortIndex:index,visible:visible}
+)
+}};
+ZmContactList.prototype.moveLocal=function(t,e){
+if(!this.isCanonical){
+ZmList.prototype.moveLocal.call(this,t,e)
+}
+if(e==ZmFolder.ID_TRASH){
+for(var a=0;
+a<t.length;
+a++){
+this._updateHashes(t[a],false)
+}}};
+ZmContactList.prototype.deleteLocal=function(e){
+ZmList.prototype.deleteLocal.call(this,e);
+for(var t=0;
+t<e.length;
+t++){
+this._updateHashes(e[t],false)
+}};
+ZmContactList.prototype.modifyLocal=function(o,i){
+if(i){
+this._evt.items=i.items=[o];
+this._evt.item=i.contact;
+this._notify(ZmEvent.E_MODIFY,i)
+}
+var e=i.contact;
+if(this.isCanonical||e.attr[ZmContact.F_email]!=i.oldAttr[ZmContact.F_email]){
+var n=new ZmContact(null,this);
+n.id=i.contact.id;
+n.attr=i.oldAttr;
+this._updateHashes(n,false);
+this._updateHashes(e,true)
+}
+if(i.fileAsChanged){
+this.remove(e);
+var t=this._sortIndex(e);
+var a=this.size();
+if(t<a||a==0||(t==a&&!this._hasMore)){
+this.add(e,t)
+}}
+if(e.addrbook&&(e.addrbook.id!=e.folderId)){
+e.addrbook=appCtxt.getById(e.folderId)
+}};
+ZmContactList.prototype.createLocal=function(e){
+this._updateHashes(e,true)
+};
+ZmContactList.prototype._updateHashes=function(t,r){
+this._app.updateCache(t,r);
+for(var o=0;
+o<ZmContact.EMAIL_FIELDS.length;
+o++){
+var h=ZmContact.EMAIL_FIELDS[o];
+for(var n=1;
+true;
+n++){
+var a=ZmContact.getAttributeName(h,n);
+var e=ZmContact.getAttr(t,a);
+if(!e){
+break
+}
+if(r){
+this._emailToContact[e.toLowerCase()]=t
+}else{
+delete this._emailToContact[e.toLowerCase()]
+}}}
+if(appCtxt.get(ZmSetting.VOICE_ENABLED)||this._alwaysUpdateHashes){
+for(var o=0;
+o<ZmContact.PHONE_FIELDS.length;
+o++){
+var h=ZmContact.PHONE_FIELDS[o];
+for(var n=1;
+true;
+n++){
+var a=ZmContact.getAttributeName(h,n);
+var e=ZmContact.getAttr(t,a);
+if(!e){
+break
+}
+var s=this._getPhoneDigits(e);
+if(s){
+if(r){
+this._phoneToContact[e]={
+contact:t,field:a}
+}else{
+delete this._phoneToContact[e]
+}}}}}};
+ZmContactList.prototype._getPhoneDigits=function(e){
+return e.replace(/[^\d]/g,"")
+};
+ZmContactList.prototype._sortIndex=function(e){
+var t=this._vector.getArray();
+for(var o=0;
+o<t.length;
+o++){
+if(ZmContact.compareByFileAs(t[o],e)>0){
+return o
+}}
+return t.length
+};
+ZmContactList.prototype.getIdHash=function(){
+return this._idHash
+};
+ZmContactList.prototype._handleResponseModifyItem=function(t,e){}
+}
+if(AjxPackage.define("zimbraMail.abook.view.ZmContactsHelper")){
+ZmContactsHelper=function(){};
+ZmContactsHelper.search=function(a){
+var t=a.obj;
+if(t._searchButton){
+t._searchButton.setEnabled(false)
+}
+a.sortBy=a.ascending?ZmSearch.NAME_ASC:ZmSearch.NAME_DESC;
+a.types=AjxVector.fromArray([ZmItem.CONTACT]);
+a.offset=a.offset||0;
+a.limit=ZmContactsApp.SEARCHFOR_MAX;
+a.contactSource=t._contactSource;
+a.field="contact";
+var e=new ZmSearch(a);
+e.execute({
+callback:a.respCallback,errorCallback:a.errorCallback}
+)
+};
+ZmContactsHelper._processSearchResponse=function(t,c){
+var e=t.getResults(ZmItem.CONTACT);
+var l=[];
+var d=e.getArray();
+for(var s=0;
+s<d.length;
+s++){
+var h=d[s];
+if(h.isGroup()&&!h.isDL){
+var n=h.getGroupMembers().good.toString(AjxEmailAddress.SEPARATOR);
+ZmContactsHelper._addContactToList(l,h,n,true)
+}else{
+var r=h.isGal?[h.getEmail()]:h.getEmails();
+for(var o=0;
+o<r.length;
+o++){
+ZmContactsHelper._addContactToList(l,h,r[o])
+}
+if(c&&r.length==0){
+ZmContactsHelper._addContactToList(l,h,null)
+}}}
+return l
+};
+ZmContactsHelper._addContactToList=function(a,e,o,i){
+var t=ZmContactsHelper._wrapContact(e,o,i);
+a.push(t)
+};
+ZmContactsHelper._wrapContact=function(a,o,s){
+o=o||a.getEmail();
+var t=a.getFileAs();
+var e=(t!=o)?t:"";
+var n=a.isGal?ZmContact.GROUP_GAL_REF:ZmContact.GROUP_CONTACT_REF;
+var h=a.isGal?(a.ref||a.id):a.id;
+var r=a.getFullNameForDisplay();
+var i=new AjxEmailAddress(o,n,e,r,s);
+i.value=h;
+i.id=Dwt.getNextId();
+i.__contact=a;
+i.icon=a.getIcon();
+if(a.isDL){
+i.isGroup=true;
+i.canExpand=a.canExpand;
+var l=window.parentAppCtxt||window.appCtxt;
+l.setIsExpandableDL(o,i.canExpand)
+}
+return i
+};
+ZmContactsHelper._wrapInlineContact=function(t){
+var e=AjxEmailAddress.parse(t);
+if(!e){
+e=new AjxEmailAddress(t,null,t)
+}
+e.type=ZmContact.GROUP_INLINE_REF;
+e.value=t;
+e.id=Dwt.getNextId();
+return e
+};
+ZmContactsHelper._getEmailField=function(t,e,a,i,o){
+if(i==ZmItem.F_TYPE){
+t[e++]=AjxImg.getImageHtml(a.icon)
+}else{
+if(i==ZmItem.F_NAME){
+t[e++]='<span style="white-space:nowrap">';
+t[e++]=AjxStringUtil.htmlEncode(a.name||ZmMsg.noName);
+t[e++]="</span>"
+}else{
+if(i==ZmItem.F_EMAIL){
+t[e++]=AjxStringUtil.htmlEncode(a.address)
+}else{
+if(i==ZmItem.F_DEPARTMENT){
+if(a.__contact){
+t[e++]=AjxStringUtil.htmlEncode(ZmContact.getAttr(a.__contact,ZmContact.F_department))
+}}}}}
+return e
+}
+}
+if(AjxPackage.define("zimbraMail.abook.view.ZmContactPicker")){
+ZmContactPicker=function(e){
+DwtDialog.call(this,{
+parent:appCtxt.getShell(),title:ZmMsg.selectAddresses,id:"ZmContactPicker"}
+);
+this._buttonInfo=e;
+this._initialized=false;
+this._emailListOffset=0;
+this._serverContactOffset=0;
+this._ascending=true;
+this._emailList=new AjxVector();
+this._detailedSearch=appCtxt.get(ZmSetting.DETAILED_CONTACT_SEARCH_ENABLED);
+this._ignoreSetDragBoundries=true;
+this.setSize(Dwt.DEFAULT,this._getDialogHeight());
+this._searchErrorCallback=new AjxCallback(this,this._handleErrorSearch)
+};
+ZmContactPicker.prototype=new DwtDialog;
+ZmContactPicker.prototype.constructor=ZmContactPicker;
+ZmContactPicker.prototype.isZmContactPicker=true;
+ZmContactPicker.prototype.toString=function(){
+return"ZmContactPicker"
+};
+ZmContactPicker.DIALOG_HEIGHT=460;
+ZmContactPicker.SEARCH_BASIC="search";
+ZmContactPicker.SEARCH_NAME="name";
+ZmContactPicker.SEARCH_EMAIL="email";
+ZmContactPicker.SEARCH_DEPT="dept";
+ZmContactPicker.SEARCH_PHONETIC="phonetic";
+ZmContactPicker.SHOW_ON_GAL=[ZmContactPicker.SEARCH_BASIC,ZmContactPicker.SEARCH_NAME,ZmContactPicker.SEARCH_EMAIL,ZmContactPicker.SEARCH_DEPT];
+ZmContactPicker.SHOW_ON_NONGAL=[ZmContactPicker.SEARCH_BASIC,ZmContactPicker.SEARCH_NAME,ZmContactPicker.SEARCH_PHONETIC,ZmContactPicker.SEARCH_EMAIL];
+ZmContactPicker.ALL=[ZmContactPicker.SEARCH_BASIC,ZmContactPicker.SEARCH_NAME,ZmContactPicker.SEARCH_PHONETIC,ZmContactPicker.SEARCH_EMAIL,ZmContactPicker.SEARCH_DEPT];
+ZmContactPicker.prototype.popup=function(r,n,h,o){
+if(!this._initialized){
+this._initialize(o);
+this._initialized=true
+}else{
+if(appCtxt.multiAccounts&&this._account!=o){
+this._account=o;
+this._resetSelectDiv()
+}}
+this._emailListOffset=0;
+var t=this._searchInSelect?this._searchInSelect.getValue():ZmContactsApp.SEARCHFOR_CONTACTS;
+this._chooser.sourceListView.setSortByAsc(ZmItem.F_NAME,true);
+this._chooser.reset();
+if(r){
+this._chooser._setActiveButton(r)
+}
+if(n){
+for(var a in n){
+this._chooser.addItems(n[a],DwtChooserListView.TARGET,true,a)
+}}
+for(var s in this._searchField){
+var l=this._searchField[s];
+l.disabled=false;
+l.value=(AjxUtil.isObject(h)?h[s]:h)||""
+}
+this._prevButton.setEnabled(false);
+this._nextButton.setEnabled(false);
+this.search(null,true,true);
+DwtDialog.prototype.popup.call(this);
+this._resizeChooser();
+if((this.getLocation().x<0||this.getLocation().y<0)){
+this.setLocation(0,30);
+var d=Dwt.getWindowSize();
+var c=this.getSize();
+var e=document.getElementById(this._dragHandleId);
+DwtDraggable.setDragBoundaries(e,100-c.x,d.x-100,0,d.y-100)
+}
+var i=this._searchField[ZmContactPicker.SEARCH_BASIC]||this._searchField[ZmContactPicker.SEARCH_NAME];
+appCtxt.getKeyboardMgr().grabFocus(i)
+};
+ZmContactPicker.prototype._resetResults=function(){
+this._emailList.removeAll();
+this._serverContactOffset=0;
+this._emailListOffset=0
+};
+ZmContactPicker.prototype.popdown=function(){
+for(var e in this._searchField){
+this._searchField[e].disabled=true
+}
+this._contactSource=null;
+this._resetResults();
+DwtDialog.prototype.popdown.call(this)
+};
+ZmContactPicker.prototype.search=function(u,n,l,a,h,r){
+if(r==undefined){
+this._resetResults()
+}
+if(n===null||n===undefined){
+n=this._ascending
+}else{
+this._ascending=n
+}
+var s;
+var b=[];
+var m="";
+var e=[];
+var p=[];
+var t=[];
+if(this._detailedSearch){
+var o=this.getSearchFieldValue(ZmContactPicker.SEARCH_NAME);
+var y=this.getSearchFieldValue(ZmContactPicker.SEARCH_EMAIL);
+var f=this.getSearchFieldValue(ZmContactPicker.SEARCH_DEPT);
+var k=this.getSearchFieldValue(ZmContactPicker.SEARCH_PHONETIC);
+var q=this._searchInSelect&&(this._searchInSelect.getValue()==ZmContactsApp.SEARCHFOR_GAL);
+if(o&&!q){
+var x=o.split(/\s+/);
+for(var w=0;
+w<x.length;
+w++){
+var d=x[w];
+p.push("#"+ZmContact.F_firstName+":"+d);
+p.push("#"+ZmContact.F_lastName+":"+d);
+p.push("#"+ZmContact.F_middleName+":"+d);
+p.push("#"+ZmContact.F_nickname+":"+d)
+}
+s="("+p.join(" OR ")+")"
+}else{
+if(o&&q){
+t.push([{
+attr:ZmContact.F_firstName,op:"has",value:o}
+,{
+attr:ZmContact.F_lastName,op:"has",value:o}
+,{
+attr:ZmContact.F_middleName,op:"has",value:o}
+,{
+attr:ZmContact.F_nickname,op:"has",value:o}
+,{
+attr:ZmContact.F_phoneticFirstName,op:"has",value:o}
+,{
+attr:ZmContact.F_phoneticLastName,op:"has",value:o}
+])
+}
+s=""
+}
+if(y){
+if(q){
+t.push([{
+attr:ZmContact.F_email,op:"has",value:y}
+,{
+attr:ZmContact.F_email2,op:"has",value:y}
+,{
+attr:ZmContact.F_email3,op:"has",value:y}
+,{
+attr:ZmContact.F_email4,op:"has",value:y}
+,{
+attr:ZmContact.F_email5,op:"has",value:y}
+,{
+attr:ZmContact.F_email6,op:"has",value:y}
+,{
+attr:ZmContact.F_email7,op:"has",value:y}
+,{
+attr:ZmContact.F_email8,op:"has",value:y}
+,{
+attr:ZmContact.F_email9,op:"has",value:y}
+,{
+attr:ZmContact.F_email10,op:"has",value:y}
+,{
+attr:ZmContact.F_email11,op:"has",value:y}
+,{
+attr:ZmContact.F_email12,op:"has",value:y}
+,{
+attr:ZmContact.F_email13,op:"has",value:y}
+,{
+attr:ZmContact.F_email14,op:"has",value:y}
+,{
+attr:ZmContact.F_email15,op:"has",value:y}
+,{
+attr:ZmContact.F_email16,op:"has",value:y}
+])
+}else{
+m="to:"+y+"*"
+}}
+if(f&&q){
+t.push({
+attr:ZmContact.F_department,op:"has",value:f}
+)
+}
+if(k&&!q){
+var c=k.split(/\s+/);
+for(var w=0;
+w<c.length;
+w++){
+e.push("#"+ZmContact.F_phoneticFirstName+":"+c[w]);
+e.push("#"+ZmContact.F_phoneticLastName+":"+c[w])
+}}}else{
+s=this.getSearchFieldValue(ZmContactPicker.SEARCH_BASIC)
+}
+if(this._searchInSelect){
+var g=this._searchInSelect.getValue();
+this._contactSource=(g==ZmContactsApp.SEARCHFOR_CONTACTS||g==ZmContactsApp.SEARCHFOR_PAS)?ZmItem.CONTACT:ZmId.SEARCH_GAL;
+if(g==ZmContactsApp.SEARCHFOR_PAS){
+b.push(ZmSearchController.generateQueryForShares(ZmId.ITEM_CONTACT)||"is:local")
+}else{
+if(g==ZmContactsApp.SEARCHFOR_CONTACTS){
+b.push("is:local")
+}else{
+if(g==ZmContactsApp.SEARCHFOR_GAL){
+n=true
+}}}}else{
+this._contactSource=appCtxt.get(ZmSetting.CONTACTS_ENABLED,null,this._account)?ZmItem.CONTACT:ZmId.SEARCH_GAL;
+if(this._contactSource==ZmItem.CONTACT){
+b.push("is:local")
+}}
+if(this._contactSource==ZmItem.CONTACT&&s!=""&&!s.startsWith("(")){
+s=s.replace(/\"/g,'\\"');
+s='"'+s+'"'
+}
+if(e.length){
+s=s+" ("+e.join(" OR ")+")"
+}
+if(m.length){
+s=s+" "+m
+}
+if(this._searchIcon){
+this._searchIcon.className="DwtWait16Icon"
+}
+if(this._chooser){
+this._chooser.sourceListView.sortingEnabled=(this._contactSource==ZmItem.CONTACT)
+}
+var v={
+obj:this,ascending:n,query:s,queryHint:b.join(" "),conds:t,offset:r||0,lastId:a,lastSortVal:h,respCallback:(new AjxCallback(this,this._handleResponseSearch,[l])),errorCallback:this._searchErrorCallback,accountName:(this._account&&this._account.name),expandDL:true};
+ZmContactsHelper.search(v)
+};
+ZmContactPicker.prototype._contentHtml=function(o){
+var n;
+if(appCtxt.multiAccounts){
+var a=appCtxt.accountList.visibleAccounts;
+for(var t=0;
+t<a.length;
+t++){
+var o=a[t];
+if(appCtxt.get(ZmSetting.CONTACTS_ENABLED,null,o)&&(appCtxt.get(ZmSetting.GAL_ENABLED,null,o)||appCtxt.get(ZmSetting.SHARING_ENABLED,null,o))){
+n=true;
+break
+}}}else{
+n=(appCtxt.get(ZmSetting.CONTACTS_ENABLED)&&(appCtxt.get(ZmSetting.GAL_ENABLED)||appCtxt.get(ZmSetting.SHARING_ENABLED)))
+}
+var e={
+id:this._htmlElId,showSelect:n,detailed:this._detailedSearch};
+return(AjxTemplate.expand("abook.Contacts#ZmContactPicker",e))
+};
+ZmContactPicker.prototype._resetSelectDiv=function(){
+this._searchInSelect.clearOptions();
+if(appCtxt.multiAccounts){
+var o=appCtxt.accountList.visibleAccounts;
+var h=ZmOrganizer.ITEM_ORGANIZER;
+h=ZmOrganizer.ITEM_ORGANIZER[ZmItem.CONTACT];
+for(var a=0;
+a<o.length;
+a++){
+this._searchInSelect.addOption(o[a].displayName,false,o[a].id);
+var n=appCtxt.getFolderTree(o[a]);
+var r=[];
+r=r.concat(n.getByType(h));
+for(var t=0;
+t<r.length;
+t++){
+var s=r[t];
+if(s.noSuchFolder){
+continue
+}
+this._searchInSelect.addOption(s.getName(),false,s.id,"ImgContact")
+}
+if(o[a].isZimbraAccount&&!o[a].isMain){
+if(appCtxt.get(ZmSetting.CONTACTS_ENABLED,null,this._account)){
+if(appCtxt.get(ZmSetting.SHARING_ENABLED,null,this._account)){
+this._searchInSelect.addOption(ZmMsg.searchPersonalSharedContacts,false,ZmContactsApp.SEARCHFOR_PAS,"ImgContact")
+}}
+if(appCtxt.get(ZmSetting.GAL_ENABLED,null,this._account)){
+this._searchInSelect.addOption(ZmMsg.GAL,true,ZmContactsApp.SEARCHFOR_GAL,"ImgContact")
+}
+if(!appCtxt.get(ZmSetting.INITIALLY_SEARCH_GAL,null,this._account)||!appCtxt.get(ZmSetting.GAL_ENABLED,null,this._account)){
+this._searchInSelect.setSelectedValue(ZmContactsApp.SEARCHFOR_CONTACTS)
+}}}
+for(var e=0;
+e<o.length;
+e++){
+this._searchInSelect.enableOption(o[e].id,false)
+}}else{
+if(appCtxt.get(ZmSetting.CONTACTS_ENABLED,null,this._account)){
+this._searchInSelect.addOption(ZmMsg.contacts,false,ZmContactsApp.SEARCHFOR_CONTACTS);
+if(appCtxt.get(ZmSetting.SHARING_ENABLED,null,this._account)){
+this._searchInSelect.addOption(ZmMsg.searchPersonalSharedContacts,false,ZmContactsApp.SEARCHFOR_PAS)
+}}
+if(appCtxt.get(ZmSetting.GAL_ENABLED,null,this._account)){
+this._searchInSelect.addOption(ZmMsg.GAL,true,ZmContactsApp.SEARCHFOR_GAL)
+}
+if(!appCtxt.get(ZmSetting.INITIALLY_SEARCH_GAL,null,this._account)||!appCtxt.get(ZmSetting.GAL_ENABLED,null,this._account)){
+this._searchInSelect.setSelectedValue(ZmContactsApp.SEARCHFOR_CONTACTS)
+}}};
+ZmContactPicker.prototype.getSearchFieldValue=function(e){
+if(!e&&!this._detailedSearch){
+e=ZmContactPicker.SEARCH_BASIC
+}
+var t=this._searchField[e];
+return t&&AjxStringUtil.trim(t.value)||""
+};
+ZmContactPicker.prototype._getDialogHeight=function(){
+return ZmContactPicker.DIALOG_HEIGHT-(appCtxt.isChildWindow?100:0)
+};
+ZmContactPicker.prototype._getSectionHeight=function(e){
+return Dwt.getSize(document.getElementById(this._htmlElId+e)).y
+};
+ZmContactPicker.prototype._resizeChooser=function(){
+var e=this._getDialogHeight()-this._getSectionHeight("_handle")-this._getSectionHeight("_searchTable")-this._getSectionHeight("_paging")-this._getSectionHeight("_buttonsSep")-this._getSectionHeight("_buttons")-30;
+this._chooser.resize(this.getSize().x-25,e)
+};
+ZmContactPicker.prototype._initialize=function(s){
+this.setContent(this._contentHtml(s));
+this._searchIcon=document.getElementById(this._htmlElId+"_searchIcon");
+this._searchButton=new DwtButton({
+parent:this,parentElement:(this._htmlElId+"_searchButton")}
+);
+this._searchButton.setText(ZmMsg.search);
+this._searchButton.addSelectionListener(new AjxListener(this,this._searchButtonListener));
+var c=this._htmlElId+"_listSelect";
+var d=document.getElementById(c);
+if(d){
+this._searchInSelect=new DwtSelect({
+parent:this,parentElement:c,id:Dwt.getNextId("ZmContactPickerSelect_"),legendId:this._htmlElId+"_listSelectLbl"}
+);
+this._resetSelectDiv();
+this._searchInSelect.addChangeListener(new AjxListener(this,this._searchTypeListener))
+}else{
+this.setSize("600")
+}
+this._chooser=new ZmContactChooser({
+parent:this,buttonInfo:this._buttonInfo}
+);
+this._chooser.reparentHtmlElement(this._htmlElId+"_chooser");
+var h=new AjxListener(this,this._pageListener);
+this._prevButton=new DwtButton({
+parent:this,parentElement:(this._htmlElId+"_pageLeft")}
+);
+this._prevButton.setText(ZmMsg.previous);
+this._prevButton.setImage("LeftArrow");
+this._prevButton.addSelectionListener(h);
+this._nextButton=new DwtButton({
+parent:this,style:DwtLabel.IMAGE_RIGHT,parentElement:(this._htmlElId+"_pageRight")}
+);
+this._nextButton.setText(ZmMsg.next);
+this._nextButton.setImage("RightArrow");
+this._nextButton.addSelectionListener(h);
+var e=document.getElementById(this._htmlElId+"_paging");
+if(e){
+Dwt.setSize(e,this._chooser.sourceListView.getSize().x)
+}
+this.setButtonListener(DwtDialog.OK_BUTTON,new AjxListener(this,this._okButtonListener));
+this.setButtonListener(DwtDialog.CANCEL_BUTTON,new AjxListener(this,this._cancelButtonListener));
+var a={};
+var o={};
+this.mapFields(a,o);
+this._searchField={};
+for(var r in a){
+var l=Dwt.byId(a[r]);
+if(l){
+this._searchField[r]=l;
+Dwt.setHandler(l,DwtEvent.ONKEYUP,ZmContactPicker._keyPressHdlr)
+}}
+this._searchRow={};
+for(var t in o){
+var u=Dwt.byId(o[t]);
+if(u){
+this._searchRow[t]=u
+}}
+this._updateSearchRows(this._searchInSelect&&this._searchInSelect.getValue()||ZmContactsApp.SEARCHFOR_CONTACTS);
+this._keyPressCallback=new AjxCallback(this,this._searchButtonListener);
+this.sharedContactGroups=[];
+this._tabGroup=new DwtTabGroup(this.toString());
+this._tabGroup.removeAllMembers();
+for(var n=0;
+n<ZmContactPicker.ALL.length;
+n++){
+l=Dwt.byId(a[ZmContactPicker.ALL[n]]);
+if(Dwt.getVisible(l)){
+this._tabGroup.addMember(l)
+}}
+this._tabGroup.addMember(this._searchButton);
+this._tabGroup.addMember(this._searchInSelect);
+this._tabGroup.addMember(this._chooser.getTabGroupMember());
+this._tabGroup.addMember(this._prevButton);
+this._tabGroup.addMember(this._nextButton);
+for(var n=0;
+n<this._buttonList.length;
+n++){
+this._tabGroup.addMember(this._button[this._buttonList[n]])
+}};
+ZmContactPicker.prototype.mapFields=function(t,e){
+if(this._detailedSearch){
+t[ZmContactPicker.SEARCH_NAME]=this._htmlElId+"_searchNameField";
+t[ZmContactPicker.SEARCH_EMAIL]=this._htmlElId+"_searchEmailField";
+t[ZmContactPicker.SEARCH_DEPT]=this._htmlElId+"_searchDepartmentField";
+t[ZmContactPicker.SEARCH_PHONETIC]=this._htmlElId+"_searchPhoneticField";
+e[ZmContactPicker.SEARCH_NAME]=this._htmlElId+"_searchNameRow";
+e[ZmContactPicker.SEARCH_PHONETIC]=this._htmlElId+"_searchPhoneticRow";
+e[ZmContactPicker.SEARCH_EMAIL]=this._htmlElId+"_searchEmailRow";
+e[ZmContactPicker.SEARCH_DEPT]=this._htmlElId+"_searchDepartmentRow"
+}else{
+t[ZmContactPicker.SEARCH_BASIC]=this._htmlElId+"_searchField";
+e[ZmContactPicker.SEARCH_BASIC]=this._htmlElId+"_searchRow"
+}};
+ZmContactPicker.prototype._searchButtonListener=function(e){
+this._resetResults();
+this.search()
+};
+ZmContactPicker.prototype._handleResponseSearch=function(e,u){
+var a=u.getResponse();
+var c=a.getAttribute("more");
+var l=a.getAttribute("paginationSupported")!==false;
+this._serverHasMoreAndPaginationSupported=c&&l;
+var o=a.getAttribute("offset");
+this._serverContactOffset=o||0;
+var t=a.getAttribute("info");
+var n=t&&t[0].wildcard[0].expanded=="0";
+if(!e&&!l&&(c||n)){
+var r=appCtxt.getMsgDialog();
+r.setMessage(ZmMsg.errorSearchNotExpanded);
+r.popup();
+if(n){
+return
+}}
+var h=ZmContactsHelper._processSearchResponse(a,this._includeContactsWithNoEmail);
+var i=AjxVector.fromArray(h);
+if(l){
+this._emailList.addList(h)
+}else{
+this._emailList=i
+}
+var s=this.getSubList();
+if(this.toString()==="ZmContactPicker"){
+s=this.loadSharedGroupContacts(s)||s
+}
+this._showResults(s)
+};
+ZmContactPicker.prototype._showResults=function(e){
+var a=e||this.getSubList();
+if(a.size()<ZmContactsApp.SEARCHFOR_MAX&&this._serverHasMoreAndPaginationSupported){
+this.search(null,null,null,null,null,this._serverContactOffset+ZmContactsApp.SEARCHFOR_MAX);
+return
+}
+if(this._searchIcon){
+this._searchIcon.className=""
+}
+this._searchButton.setEnabled(true);
+if(a.size()==0&&this._emailListOffset==0){
+this._setResultsInView(a);
+this._nextButton.setEnabled(false);
+this._prevButton.setEnabled(false);
+this._setNoResultsHtml();
+return
+}
+if(a.size()==0){
+this._emailListOffset-=ZmContactsApp.SEARCHFOR_MAX;
+this._emailListOffset=Math.max(0,this._emailListOffset)
+}
+var t=this._serverHasMoreAndPaginationSupported||(this._emailListOffset+ZmContactsApp.SEARCHFOR_MAX)<this._emailList.size();
+this._prevButton.setEnabled(this._emailListOffset>0);
+this._nextButton.setEnabled(t);
+this._resetSearchColHeaders();
+this._setResultsInView(a)
+};
+ZmContactPicker.prototype.loadSharedGroupContacts=function(d){
+var a,t,u,p,c,l,s,n,h,f,e,r,o;
+t=d.getArray();
+a=d.size();
+n=[];
+for(c=0;
+c<a;
+c++){
+p=t[c];
+u=p.__contact;
+if(u.isGroup()&&u.isShared()){
+if(this.sharedContactGroups.indexOf(p.value)!==-1){
+return
+}
+this.sharedContactGroups.push(p.value);
+n.push(p.value)
+}}
+h=n.length;
+f={
+BatchRequest:{
+GetContactsRequest:[],_jsns:"urn:zimbra",onerror:"continue"}};
+e=f.BatchRequest;
+r=e.GetContactsRequest;
+for(l=0,s=0;
+l<h;
+l++){
+r.push({
+cn:{
+id:n[l]}
+,_jsns:"urn:zimbraMail",derefGroupMember:"1",requestId:s++}
+)
+}
+var m=new AjxCallback(this,this.handleSharedContactResponse,[d]);
+o=appCtxt.getAppController().sendRequest({
+jsonObj:f,asyncMode:true,callback:m}
+)
+};
+ZmContactPicker.prototype.handleSharedContactResponse=function(d,s){
+var c,y,e,m,n,l,r,o,a,u,h,g,p,f,t,n;
+if(s&&s.getResponse()&&s.getResponse().BatchResponse){
+c=s.getResponse().BatchResponse.GetContactsResponse
+}
+if(!c){
+return
+}
+y=c.length;
+e=d.getArray();
+m=d.size();
+for(o=0;
+o<m;
+o++){
+n=[];
+for(r=0;
+r<y;
+r++){
+a=c[r];
+u=a.cn[0];
+if(u.m){
+for(l=0;
+l<u.m.length;
+l++){
+h=u.m[l];
+g=false;
+if(h.type==ZmContact.GROUP_GAL_REF){
+g=true
+}
+if(h.cn&&h.cn.length>0){
+p=h.cn[0];
+p.ref=p.ref||(g&&h.value);
+f=ZmContact.createFromDom(p,{
+list:this.list,isGal:g}
+);
+f.isDL=g&&f.attr[ZmContact.F_type]==="group";
+appCtxt.cacheSet(h.value,f);
+t=e[o];
+if(t.value===u.id){
+n.push('"'+f.getFullName()+'" <'+f.getEmails()+">;");
+d._array[o].address=n.join("")
+}}}
+ZmContact.prototype._loadFromDom(u)
+}}}
+this._showResults(d)
+};
+ZmContactPicker.prototype._setResultsInView=function(e){
+this._chooser.setItems(e)
+};
+ZmContactPicker.prototype._setNoResultsHtml=function(e){
+this._chooser.sourceListView._setNoResultsHtml()
+};
+ZmContactPicker.prototype._updateSearchRows=function(e){
+var a=(e==ZmContactsApp.SEARCHFOR_GAL)?ZmContactPicker.SHOW_ON_GAL:ZmContactPicker.SHOW_ON_NONGAL;
+for(var t in this._searchRow){
+Dwt.setVisible(this._searchRow[t],AjxUtil.indexOf(a,t)!=-1)
+}
+for(var t in this._searchField){
+var n=this._searchField[t];
+if(this._tabGroup.contains(n)){
+this._tabGroup.removeMember(n)
+}}
+for(var o=0;
+o<a.length;
+o++){
+this._tabGroup.addMember(this._searchField[a[o]])
+}
+this._resizeChooser()
+};
+ZmContactPicker.prototype._handleErrorSearch=function(){
+this._searchButton.setEnabled(true);
+return false
+};
+ZmContactPicker.prototype._pageListener=function(e){
+if(e.item==this._prevButton){
+this._emailListOffset-=ZmContactsApp.SEARCHFOR_MAX;
+this._emailListOffset=Math.max(0,this._emailListOffset)
+}else{
+this._emailListOffset+=ZmContactsApp.SEARCHFOR_MAX
+}
+this._showResults()
+};
+ZmContactPicker.prototype.getSubList=function(){
+var i=this._emailList.size();
+var t=this._emailListOffset+ZmContactsApp.SEARCHFOR_MAX;
+if(t>i){
+t=i
+}
+var e=(this._emailListOffset<t)?this._emailList.getArray().slice(this._emailListOffset,t):[];
+return AjxVector.fromArray(e)
+};
+ZmContactPicker.prototype._searchTypeListener=function(t){
+var e=t._args.oldValue;
+var a=t._args.newValue;
+if(e!=a){
+this._updateSearchRows(a);
+this._searchButtonListener()
+}};
+ZmContactPicker.prototype._resetSearchColHeaders=function(){
+var e=this._chooser.sourceListView;
+var o=this._chooser.targetListView;
+e.headerColCreated=false;
+o.headerColCreated=false;
+var s=this._searchInSelect&&(this._searchInSelect.getValue()==ZmContactsApp.SEARCHFOR_GAL);
+var t=0;
+for(var a=0;
+a<e._headerList.length;
+a++){
+var n=e._headerList[a]._field;
+if(n==ZmItem.F_NAME){
+t=a
+}
+if(n==ZmItem.F_DEPARTMENT){
+e._headerList[a]._visible=s&&this._detailedSearch
+}}
+var r=s?null:ZmItem.F_NAME;
+e._headerList[t]._sortable=r;
+e.createHeaderHtml(r);
+for(a=0;
+a<o._headerList.length;
+a++){
+if(o._headerList[a]._field==ZmItem.F_DEPARTMENT){
+o._headerList[a]._visible=s&&this._detailedSearch
+}}
+o.createHeaderHtml()
+};
+ZmContactPicker.prototype._okButtonListener=function(e){
+var t=this._chooser.getItems();
+DwtDialog.prototype._buttonListener.call(this,e,[t])
+};
+ZmContactPicker.prototype._cancelButtonListener=function(e){
+DwtDialog.prototype._buttonListener.call(this,e);
+this.popdown()
+};
+ZmContactPicker._keyPressHdlr=function(a){
+var t=DwtControl.getTargetControl(a);
+var e=DwtKeyEvent.getCharCode(a);
+if(t._keyPressCallback&&(e==13||e==3)){
+t._keyPressCallback.run();
+return false
+}
+return true
+};
+ZmContactChooser=function(e){
+DwtChooser.call(this,e)
+};
+ZmContactChooser.prototype=new DwtChooser;
+ZmContactChooser.prototype.constructor=ZmContactChooser;
+ZmContactChooser.prototype._createSourceListView=function(){
+return new ZmContactChooserSourceListView(this)
+};
+ZmContactChooser.prototype._createTargetListView=function(){
+return new ZmContactChooserTargetListView(this,(this._buttonInfo.length>1))
+};
+ZmContactChooser.prototype._isDuplicate=function(e,t){
+return t.containsLike(e,e.getAddress)
+};
+ZmContactChooserSourceListView=function(e){
+DwtChooserListView.call(this,{
+parent:e,type:DwtChooserListView.SOURCE}
+);
+this.setScrollStyle(Dwt.CLIP)
+};
+ZmContactChooserSourceListView.prototype=new DwtChooserListView;
+ZmContactChooserSourceListView.prototype.constructor=ZmContactChooserSourceListView;
+ZmContactChooserSourceListView.prototype.toString=function(){
+return"ZmContactChooserSourceListView"
+};
+ZmContactChooserSourceListView.prototype.getToolTipContent=function(a){
+if(this._hoveredItem){
+var t={
+address:this._hoveredItem.address,contact:this._hoveredItem.__contact,ev:a,noRightClick:true};
+var e=new AjxCallback(this,function(i){
+appCtxt.getToolTipMgr().getToolTip(ZmToolTipMgr.PERSON,t,i)
+}
+);
+return{
+callback:e}
+}else{
+return""
+}};
+ZmContactChooserSourceListView.prototype._getHeaderList=function(){
+var e=[];
+e.push(new DwtListHeaderItem({
+field:ZmItem.F_TYPE,icon:"Folder",width:ZmMsg.COLUMN_WIDTH_FOLDER_CN}
+));
+e.push(new DwtListHeaderItem({
+field:ZmItem.F_NAME,text:ZmMsg._name,width:ZmMsg.COLUMN_WIDTH_NAME_CN,resizeable:true}
+));
+e.push(new DwtListHeaderItem({
+field:ZmItem.F_DEPARTMENT,text:ZmMsg.department,width:ZmMsg.COLUMN_WIDTH_DEPARTMENT_CN,resizeable:true}
+));
+e.push(new DwtListHeaderItem({
+field:ZmItem.F_EMAIL,text:ZmMsg.email,resizeable:true}
+));
+return e
+};
+ZmContactChooserSourceListView.prototype._resetColWidth=function(){
+if(!this.headerColCreated){
+return
+}
+var a=this._getLastColumnIndex();
+if(a){
+var t=this._headerList[a];
+var e=document.getElementById(t._id);
+if(e){
+var i=e.firstChild;
+e.style.width=i.style.width=(t._width||"")
+}}};
+ZmContactChooserSourceListView.prototype._calcRelativeWidth=function(a){
+var t=this._headerList[a];
+if(!t._width||(t._width&&t._width=="auto")){
+var e=document.getElementById(t._id);
+return(e)?(e.clientWidth-(AjxEnv.isIE?Dwt.SCROLLBAR_WIDTH:5)):null
+}
+return t._width
+};
+ZmContactChooserSourceListView.prototype._mouseOverAction=function(t,i){
+DwtChooserListView.prototype._mouseOverAction.call(this,t,i);
+var a=t.target.id||i.id;
+var e=this.getItemFromElement(i);
+this._hoveredItem=(a&&e)?e:null;
+return true
+};
+ZmContactChooserSourceListView.prototype._getCellContents=function(t,e,i,o,s,n){
+if(o==ZmItem.F_EMAIL&&AjxEnv.isIE){
+var a=AjxStringUtil.getWidth(i.address);
+t[e++]="<div style='float; left; overflow: visible; width: "+a+";'>";
+e=ZmContactsHelper._getEmailField(t,e,i,o,s,n);
+t[e++]="</div>"
+}else{
+e=ZmContactsHelper._getEmailField(t,e,i,o,s,n)
+}
+return e
+};
+ZmContactChooserSourceListView.prototype._getCellAttrText=function(e,t,a){
+if(t==ZmItem.F_EMAIL){
+return"style='position: relative; overflow: visible;'"
+}};
+ZmContactChooserTargetListView=function(e,t){
+this._showType=t;
+DwtChooserListView.call(this,{
+parent:e,type:DwtChooserListView.TARGET}
+);
+this.setScrollStyle(Dwt.CLIP)
+};
+ZmContactChooserTargetListView.prototype=new DwtChooserListView;
+ZmContactChooserTargetListView.prototype.constructor=ZmContactChooserTargetListView;
+ZmContactChooserTargetListView.prototype.toString=function(){
+return"ZmContactChooserTargetListView"
+};
+ZmContactChooserTargetListView.prototype._getHeaderList=function(){
+var t=[];
+var e=this._view;
+if(this._showType){
+t.push(new DwtListHeaderItem({
+field:ZmItem.F_TYPE,icon:"ContactsPicker",width:ZmMsg.COLUMN_WIDTH_TYPE_CN}
+))
+}
+t.push(new DwtListHeaderItem({
+field:ZmItem.F_NAME,text:ZmMsg._name,width:ZmMsg.COLUMN_WIDTH_NAME_CN,resizeable:true}
+));
+t.push(new DwtListHeaderItem({
+field:ZmItem.F_DEPARTMENT,text:ZmMsg.department,width:ZmMsg.COLUMN_WIDTH_DEPARTMENT_CN,resizeable:true}
+));
+t.push(new DwtListHeaderItem({
+field:ZmItem.F_EMAIL,text:ZmMsg.email,resizeable:true}
+));
+return t
+};
+ZmContactChooserTargetListView.prototype._mouseOverAction=ZmContactChooserSourceListView.prototype._mouseOverAction;
+ZmContactChooserTargetListView.prototype._getCellContents=function(t,e,i,o,s,n){
+if(o==ZmItem.F_TYPE){
+i.setType(i._buttonId);
+t[e++]=ZmMsg[i.getTypeAsString()];
+t[e++]=":"
+}else{
+if(o==ZmItem.F_EMAIL&&AjxEnv.isIE){
+var a=AjxStringUtil.getWidth(i.address)+10;
+t[e++]="<div style='float; left;  width: "+a+";'>";
+e=ZmContactsHelper._getEmailField(t,e,i,o,s,n);
+t[e++]="</div>"
+}else{
+e=ZmContactsHelper._getEmailField(t,e,i,o,s)
+}}
+return e
+};
+ZmContactChooserTargetListView.prototype._resetColWidth=function(){
+if(!this.headerColCreated){
+return
+}
+var a=this._getLastColumnIndex();
+if(a){
+var t=this._headerList[a];
+var e=document.getElementById(t._id);
+if(e){
+var i=e.firstChild;
+e.style.width=i.style.width=(t._width||"")
+}}};
+ZmContactChooserTargetListView.prototype._calcRelativeWidth=function(a){
+var t=this._headerList[a];
+if(!t._width||(t._width&&t._width=="auto")){
+var e=document.getElementById(t._id);
+return(e)?(e.clientWidth-(AjxEnv.isIE?Dwt.SCROLLBAR_WIDTH:5)):null
+}
+return t._width
+};
+ZmContactChooserTargetListView.prototype._getCellAttrText=function(e,t,a){
+if(t==ZmItem.F_EMAIL){
+return"style='position: relative; overflow: visible;'"
+}}
+}}
+if(AjxPackage.define("abook.Contacts")){
+AjxTemplate.register("abook.Contacts#ZmEditContactView",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<div id='";
+e[a++]=o.id;
+e[a++]="_DEBUG'></div><table role=\"presentation\" valign='top' width='100%'>";
+e[a++]=AjxTemplate.expand("#ZmEditContactView_header",o);
+e[a++]=AjxTemplate.expand("#ZmEditContactView_body",o);
+e[a++]="</table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactView"}
+,false);
+AjxTemplate.register("abook.Contacts",AjxTemplate.getTemplate("abook.Contacts#ZmEditContactView"),AjxTemplate.getParams("abook.Contacts#ZmEditContactView"));
+AjxTemplate.register("abook.Contacts#ZmEditContactView_header",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<tr valign='top' class='contactHeaderRow'><td class='contactHeaderCell' align='center'><div id='";
+e[a++]=o.id;
+e[a++]="_IMAGE' tabindex='100'></div><div id='";
+e[a++]=o.id;
+e[a++]="_REMOVE_IMAGE_row' style='padding-left:7px;font-size:.8em;white-space:nowrap;'><a id='";
+e[a++]=o.id;
+e[a++]="_VIEW_IMAGE' href='#view' tabindex='101'>";
+e[a++]=ZmMsg.view;
+e[a++]="</a>\n";
+e[a++]="\t\t\t\t\t|\n";
+e[a++]="\t\t\t\t\t<a id='";
+e[a++]=o.id;
+e[a++]="_REMOVE_IMAGE' href='#remove' tabindex='102'>";
+e[a++]=ZmMsg.remove;
+e[a++]="</a></div></td><td class='contactHeaderCell' valign='bottom'><div style='padding:.125em;'><div id='";
+e[a++]=o.id;
+e[a++]="_FULLNAME'></div></div>";
+if(appCtxt.get(ZmSetting.TAGGING_ENABLED)){
+e[a++]="<div id='";
+e[a++]=o.id;
+e[a++]="_TAG' class='contactHeaderCellRow'></div>"
+}
+e[a++]=AjxTemplate.expand("#ZmEditContactView_headerName",o);
+e[a++]=AjxTemplate.expand("#ZmEditContactView_headerJobInfo",o);
+e[a++]="</td><td class='contactHeaderCell'><table role=\"presentation\" class='ZPropertySheet' cellspacing='6'><tr><td style='text-align:right;white-space:nowrap;'>";
+e[a++]=ZmMsg.fileAsLabel;
+e[a++]="</td><td><div id='";
+e[a++]=o.id;
+e[a++]="_FILE_AS' tabindex='400'></div></td></tr><tr><td style='text-align:right;white-space:nowrap;'>";
+e[a++]=ZmMsg.locationLabel;
+e[a++]="</td><td><div id='";
+e[a++]=o.id;
+e[a++]="_FOLDER' tabindex='401'></div></td></tr>";
+if(appCtxt.multiAccounts){
+e[a++]="<tr><td style='text-align:right;'>";
+e[a++]=ZmMsg.accountLabel;
+e[a++]="</td><td><div id='";
+e[a++]=o.id;
+e[a++]="_ACCOUNT' tabindex='402'></div></td></tr>"
+}
+e[a++]="</table></td></tr>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactView_header"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactView_headerName",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<div id='";
+e[a++]=o.id;
+e[a++]="_NAME_row' class='contactHeaderCellRow'><table role=\"presentation\">";
+if(appCtxt.get(ZmSetting.PHONETIC_CONTACT_FIELDS)){
+e[a++]="<tr id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_row'><td id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_PREFIX' class='inlineInput'></td><td id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_FIRST_row' class='inlineInput'><div id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_FIRST' tabindex='190'></div></td><td id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_MIDDLE' class='inlineInput'></td><td id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_MAIDEN' class='inlineInput'></td><td id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_LAST_row' class='inlineInput'><div id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_LAST' tabindex='191'></div></td><td id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_SUFFIX' class='inlineInput'></td></tr>"
+}
+e[a++]="<tr><td id='";
+e[a++]=o.id;
+e[a++]="_PREFIX_row' class='inlineInput'><div id='";
+e[a++]=o.id;
+e[a++]="_PREFIX' tabindex='200'></div></td><td class='inlineInput'><div id='";
+e[a++]=o.id;
+e[a++]="_FIRST' tabindex='201'></div></td><td id='";
+e[a++]=o.id;
+e[a++]="_MIDDLE_row' class='inlineInput'><div id='";
+e[a++]=o.id;
+e[a++]="_MIDDLE' tabindex='202'></div></td><td id='";
+e[a++]=o.id;
+e[a++]="_MAIDEN_row' class='inlineInput'><table role=\"presentation\"><tr><td class='inlineInputWrapper'>(</td><td><div id='";
+e[a++]=o.id;
+e[a++]="_MAIDEN' tabindex='203'></div></td><td class='inlineInputWrapper'>)</td></tr></table></td><td class='inlineInput'><div id='";
+e[a++]=o.id;
+e[a++]="_LAST' tabindex='204'></div></td><td id='";
+e[a++]=o.id;
+e[a++]="_SUFFIX_row' class='inlineInput'><table role=\"presentation\"><tr><td class='inlineInputWrapper'>,</td><td><div id='";
+e[a++]=o.id;
+e[a++]="_SUFFIX' tabindex='205'></div></td></tr></table></td><td><div id='";
+e[a++]=o.id;
+e[a++]="_DETAILS' tabindex='206'></div></td></tr></table></div><div id='";
+e[a++]=o.id;
+e[a++]="_NICKNAME_row' class='contactHeaderCellRow'><table role=\"presentation\"><tr><td class='inlineInputWrapper'>&ldquo;</td><td><div id='";
+e[a++]=o.id;
+e[a++]="_NICKNAME' tabindex='250'></div></td><td class='inlineInputWrapper'>&rdquo;</td></tr></table></div>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactView_headerName"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactView_headerJobInfo",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<div id='";
+e[a++]=o.id;
+e[a++]="_JOB_row' class='contactHeaderCellRow'><table role=\"presentation\"><tr><td id='";
+e[a++]=o.id;
+e[a++]="_TITLE_row' class='inlineInput'><div id='";
+e[a++]=o.id;
+e[a++]="_TITLE' tabindex='301'></div></td><td id='";
+e[a++]=o.id;
+e[a++]="_TITLE_DEPARTMENT_SEP' class='inlineInputWrapper'>&ndash;</td><td id='";
+e[a++]=o.id;
+e[a++]="_DEPARTMENT_row' class='inlineInput'><div id='";
+e[a++]=o.id;
+e[a++]="_DEPARTMENT' tabindex='302'></div></td></tr></table></div><div id='";
+e[a++]=o.id;
+e[a++]="_COMPANY_row' class='contactHeaderCellRow'><table role=\"presentation\">";
+if(appCtxt.get(ZmSetting.PHONETIC_CONTACT_FIELDS)){
+e[a++]="<tr id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_COMPANY_row'><td><div id='";
+e[a++]=o.id;
+e[a++]="_PHONETIC_COMPANY' tabindex='304'></div></td></tr>"
+}
+e[a++]="<tr><td><div id='";
+e[a++]=o.id;
+e[a++]="_COMPANY' tabindex='305'></div></td></tr></table></div>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactView_headerJobInfo"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactView_body",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<tr><td class=rowLabel>";
+e[a++]=ZmMsg.emailLabel;
+e[a++]="</td><td class=rowValue><div id='";
+e[a++]=o.id;
+e[a++]="_EMAIL' tabindex='500'></div></td></tr><tr><td class=rowLabel>";
+e[a++]=ZmMsg.phoneLabel;
+e[a++]="</td><td class=rowValue><div id='";
+e[a++]=o.id;
+e[a++]="_PHONE' tabindex='600'></div></td></tr><tr><td class=rowLabel>";
+e[a++]=ZmMsg.imLabel;
+e[a++]="</td><td class=rowValue><div id='";
+e[a++]=o.id;
+e[a++]="_IM' tabindex='700'></div></td></tr><tr><td class=rowLabel>";
+e[a++]=ZmMsg.addressLabel;
+e[a++]="</td><td class=rowValue><div id='";
+e[a++]=o.id;
+e[a++]="_ADDRESS' tabindex='800'></div></td></tr><tr><td class=rowLabel>";
+e[a++]=ZmMsg.urlLabel;
+e[a++]="</td><td class=rowValue><div id='";
+e[a++]=o.id;
+e[a++]="_URL' tabindex='900'></div></td></tr><tr><td class=rowLabel>";
+e[a++]=ZmMsg.otherLabel;
+e[a++]="</td><td class=rowValue><div id='";
+e[a++]=o.id;
+e[a++]="_OTHER' tabindex='1000'></div></td></tr><tr><td class=rowLabel>";
+e[a++]=ZmMsg.notesLabel;
+e[a++]="</td><td class=rowValue><div id='";
+e[a++]=o.id;
+e[a++]="_NOTES' tabindex='1100'></div></td></tr>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactView_body"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactViewRows",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]='<table role="presentation"><tbody id=\'';
+e[a++]=o.id;
+e[a++]="_rows' tabindex='100'></tbody></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactViewRows"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactViewDetailsButton",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<span class='ScreenReaderOnly'>";
+e[a++]=ZmMsg.chooseFields;
+e[a++]="</span><span aria-hidden='true' id='";
+e[a++]=o.id;
+e[a++]="_title' class='ZButtonBorder ZWidgetTitle'></span>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactViewDetailsButton"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactViewInputSelect",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table role=\"presentation\" class='inputTable'><tr><td class='inputElement'><div id='";
+e[a++]=o.id;
+e[a++]="_input' tabindex='100'></div></td><td><div id='";
+e[a++]=o.id;
+e[a++]="_select' tabindex='200'></div></td></tr></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactViewInputSelect"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactViewInputDoubleSelect",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table role=\"presentation\" class='inputTable'><tr><td class='inputElement'><div id='";
+e[a++]=o.id;
+e[a++]="_input' tabindex='100'></div></td><td><div id='";
+e[a++]=o.id;
+e[a++]="_select' tabindex='200'></div></td><td><div id='";
+e[a++]=o.id;
+e[a++]="_select2' tabindex='300'></div></td></tr></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactViewInputDoubleSelect"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactViewOther",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table role=\"presentation\" class='inputTable'><tr><td class='inputElement'><div id='";
+e[a++]=o.id;
+e[a++]="_input' tabindex='100'></div></td><td class='inputElement' style='width:47px;'><div id='";
+e[a++]=o.id;
+e[a++]="_picker' tabindex='200'></div></td><td><div id='";
+e[a++]=o.id;
+e[a++]="_select' tabindex='300'></div></td></tr></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactViewOther"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactViewAddressRow",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table role=\"presentation\" class='inputTable'><tr id='";
+e[a++]=o.id;
+e[a++]="_row' class='DwtFormRow' valign='top'><td><div id='";
+e[a++]=o.id;
+e[a++]="' tabindex='100'></div></td><td><div id='";
+e[a++]=o.id;
+e[a++]="_add' class='DwtFormRowAdd' tabindex='200'></div></td><td><div id='";
+e[a++]=o.id;
+e[a++]="_remove' class='DwtFormRowRemove' tabindex='300'></div></td></tr></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactViewAddressRow"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactViewAddressSelect",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table role=\"presentation\" class='inputTable'><tr valign='top'><td class='inputElement'><div id='";
+e[a++]=o.id;
+e[a++]="_input' tabindex='100' style=\"padding:1px 3px;\"></div></td><td><div id='";
+e[a++]=o.id;
+e[a++]="_select' tabindex='200'></div></td></tr></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactViewAddressSelect"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmEditContactViewAddress",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table role=\"presentation\" class='addressTable' width='100%'><tr><td><div id='";
+e[a++]=o.id;
+e[a++]="_STREET' tabindex='100'></div></td></tr></table><table role=\"presentation\" class='addressTable' width='100%' style='margin-bottom:3px;'><tr><td><div id='";
+e[a++]=o.id;
+e[a++]="_CITY' tabindex='200'></div></td><td>,&nbsp;</td><td><div id='";
+e[a++]=o.id;
+e[a++]="_STATE' tabindex='300'></div></td><td>&nbsp;&nbsp;</td><td><div id='";
+e[a++]=o.id;
+e[a++]="_ZIP' tabindex='400'></div></td></tr></table><table role=\"presentation\" class='addressTable' width='100%'><tr><td><div id='";
+e[a++]=o.id;
+e[a++]="_COUNTRY' tabindex='500'></div></td></tr></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmEditContactViewAddress","class":"DwtForm ZmEditContactViewAddress"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitView",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table role=\"presentation\" width='100%' height='100%' class='ZPropertySheet' cellspacing='6'><col width='230'></col><tr><td id='";
+e[a++]=o.id;
+e[a++]="_alphabetbar'></td></tr><tr height='100%'><td valign='top'><div id='";
+e[a++]=o.id;
+e[a++]="_splitview' style='position:relative;width:100%;height:100%;'><div id='";
+e[a++]=o.id;
+e[a++]="_listview' style='position:absolute;width:230px;height:100%;left:0;'></div><div id='";
+e[a++]=o.id;
+e[a++]="_sash' style='position:absolute;width:8px;height:100%;left:230px;'></div><div id='";
+e[a++]=o.id;
+e[a++]="_contentCell' style='position:absolute;left:238px;'><div class='ZmContactInfoView' id='";
+e[a++]=o.id;
+e[a++]="_content'></div></div></div></td></tr></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#SplitView"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitView_content",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table id='";
+e[a++]=o.id;
+e[a++]="_details' class='contactContentTable'>";
+e[a++]=AjxTemplate.expand("abook.Contacts#SplitView_header",o);
+e[a++]=ZmContactSplitView.showContactEmails(o);
+e[a++]=ZmContactSplitView.showContactPhones(o);
+e[a++]=ZmContactSplitView.showContactIMs(o);
+e[a++]=ZmContactSplitView.showContactAddresses(o);
+e[a++]=ZmContactSplitView.showContactUrls(o);
+e[a++]=ZmContactSplitView.showContactOther(o);
+e[a++]=ZmContactSplitView.showContactNotes(o);
+e[a++]=ZmContactSplitView.showContactDLMembers(o);
+e[a++]="</table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#SplitView_content"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitView_group",function(e,i,h,r){
+var n=Boolean(r);
+h=(typeof h=="string"?{
+id:h}
+:h)||{};
+r=r||[];
+var s=r.length;
+var p=h.imageUrl;
+var t=h.defaultImageUrl;
+var d=h.email;
+var m=h.title;
+var a=h.fullName;
+var l=h.phone;
+var f=h.location;
+var c=h.imgClassName||"Person_48";
+var g="id='"+h.quickAddId+"'";
+var o=h.isEdit;
+var u="id='"+h.delButtonId+"'";
+r[s++]="<table role=\"presentation\" class='contactGroupTable'><tr>";
+if(p){
+r[s++]="<td class='contactGroupTableImage' width='48'><img src='";
+r[s++]=p;
+r[s++]="'\n";
+r[s++]="\t\t\t";
+if(AjxEnv.isIE){
+r[s++]="\n";
+r[s++]="\t\t\t\theight='48'\n";
+r[s++]="\t\t\t"
+}else{
+r[s++]="\n";
+r[s++]="\t\t\t\tstyle='max-width:48px;max-height:48px;'\n";
+r[s++]="\t\t\t"
+}
+if(t){
+r[s++]="\n";
+r[s++]="\t\t\t\tonerror='this.onerror=null;this.src=\"";
+r[s++]=h.defaultImageUrl;
+r[s++]="\";'\n";
+r[s++]="\t\t\t"
+}
+r[s++]="\n";
+r[s++]="\t\t\tborder='0'></td>"
+}else{
+r[s++]="<td class='contactGroupTableImage' width='48'>";
+r[s++]=AjxImg.getImageHtml(c);
+r[s++]="</td>"
+}
+r[s++]="<td class='contactGroupTableContent'>";
+if(a){
+r[s++]="<div><strong>";
+r[s++]=a;
+r[s++]="</strong></div>"
+}
+if(m){
+r[s++]="<div><span>";
+r[s++]=m;
+r[s++]="</span></div>"
+}
+if(d){
+r[s++]="<div>";
+r[s++]=d;
+if(h.isInline){
+r[s++]=AjxImg.getImageHtml("Plus","",g)
+}
+r[s++]="</div>"
+}
+if(l){
+r[s++]="<div>";
+r[s++]=l;
+r[s++]="</div>"
+}
+if(f){
+r[s++]="<div>";
+r[s++]=f;
+r[s++]="</div>"
+}
+r[s++]="</td>";
+if(o){
+r[s++]="<td width='36' valign='top'>";
+r[s++]=AjxImg.getImageHtml("Delete","",u);
+r[s++]="</td>"
+}
+r[s++]="</tr></table>";
+return n?r.length:r.join("")
+}
+,{
+id:"abook.Contacts#SplitView_group"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitView_header",function(t,i,h,r){
+var n=Boolean(r);
+h=(typeof h=="string"?{
+id:h}
+:h)||{};
+r=r||[];
+var s=r.length;
+var c=h.contact;
+var m=c.getImageUrl();
+var a=c.isDistributionList()?ZmMsg.distributionList:c.isGroup()?ZmMsg.group:ZmMsg.contact;
+var e=h.defaultImageUrl;
+var u=appCtxt.multiAccounts&&c.account&&c.account.getDisplayName();
+var l=h.id+"_tags_contact";
+var d=c.isDistributionList()?"Group_48":c.isGroup()?"GroupPerson_48":"Person_48";
+var o=h.isEdit;
+r[s++]="<tr class='headerRow' id='";
+r[s++]=h.id;
+r[s++]="_headerRow'>";
+if(m){
+r[s++]="<td class='rowLabel'><div class='headerRowImage'><img src='";
+r[s++]=m;
+r[s++]="'\n";
+r[s++]="\t\t\t\t";
+if(AjxEnv.isIE){
+r[s++]="\n";
+r[s++]="\t\t\t\t\theight='48'\n";
+r[s++]="\t\t\t\t"
+}else{
+r[s++]="\n";
+r[s++]="\t\t\t\t\tstyle='max-width:48px;max-height:48px;'\n";
+r[s++]="\t\t\t\t"
+}
+if(e){
+r[s++]="\n";
+r[s++]="\t\t\t\t\tonerror='this.onerror=null;this.src=\"";
+r[s++]=h.defaultImageUrl;
+r[s++]="\";'\n";
+r[s++]="\t\t\t\t"
+}
+r[s++]="\n";
+r[s++]="\t\t\t\t\tborder=0 alt='";
+r[s++]=a;
+r[s++]="'></div></td>"
+}else{
+r[s++]="<td class='rowLabel'><div class='headerRowImage'>";
+r[s++]=AjxImg.getImageHtml({
+imageName:d,altText:a}
+);
+r[s++]="</div></td>"
+}
+r[s++]="<td class='rowValue'>";
+r[s++]=AjxTemplate.expand("#SplitView_headerName",h);
+r[s++]=AjxTemplate.expand("#SplitView_headerJobInfo",h);
+if(h.dlInfo&&h.dlInfo.description){
+r[s++]="<div>";
+r[s++]=AjxStringUtil.htmlEncode(h.dlInfo.description);
+r[s++]="</div>"
+}
+if(!o){
+r[s++]="<div class='contactHeaderTags' id='";
+r[s++]=l;
+r[s++]="'></div>"
+}
+r[s++]="</td><td class='rowType' valign='top'>";
+if(u){
+r[s++]="<table role=\"presentation\" class='ZPropertySheet' cellspacing='6'><tr><td class='contactLocation'>";
+r[s++]=ZmMsg.accountLabel;
+r[s++]="</td><td class='companyFolder'>";
+r[s++]=AjxStringUtil.htmlEncode(u);
+r[s++]="</td></tr></table>"
+}
+if(!o){
+if(h.addrbook){
+r[s++]=AjxImg.getImageHtml({
+imageName:h.addrbook.getIconWithColor(),altText:ZmMsg.locationLabel}
+);
+r[s++]="&nbsp;";
+r[s++]=h.addrbook.getName()
+}else{
+r[s++]=AjxImg.getImageHtml("GAL");
+r[s++]="&nbsp;";
+r[s++]=ZmMsg.GAL
+}}else{
+r[s++]="<table role=\"presentation\" class='ZPropertySheet' cellspacing='6'><tr><td id='";
+r[s++]=h.id;
+r[s++]="_locationLabel' class='contactLocation'>";
+r[s++]=ZmMsg.locationLabel;
+r[s++]="</td><td id='";
+r[s++]=h.id;
+r[s++]="_LOCATION_FOLDER'></td></tr></table>"
+}
+r[s++]="</td></tr>";
+return n?r.length:r.join("")
+}
+,{
+id:"abook.Contacts#SplitView_header"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitView_headerName",function(e,a,r,s){
+var o=Boolean(s);
+r=(typeof r=="string"?{
+id:r}
+:r)||{};
+s=s||[];
+var n=s.length;
+var l=r.contact;
+var c=appCtxt.get(ZmSetting.PHONETIC_CONTACT_FIELDS);
+var t=l.getFullNameForDisplay(c);
+if(!c){
+t=AjxStringUtil.htmlEncode(t)
+}
+var h=l.getAttr(ZmContact.F_nickname);
+var i=r.isEdit;
+if(i&&r.contact.isDistributionList()){
+t=""
+}
+s[n++]="<div id='";
+s[n++]=r.id;
+s[n++]="_contactName' class='contactHeader ";
+s[n++]=r.isInTrash?"Trash":"";
+s[n++]="'>";
+s[n++]=t;
+s[n++]="</div>";
+if(h&&!i){
+s[n++]="<div class='contactHeader'>&ldquo;";
+s[n++]=AjxStringUtil.htmlEncode(h);
+s[n++]="&rdquo;</div>"
+}else{
+if(i){
+s[n++]="<div class='contactHeader2'>";
+if(r.contact.isDistributionList()){
+s[n++]="<table role=\"presentation\"><tr><td class='contactHeader2'>";
+if(r.usernameEditable){
+s[n++]="<div id='";
+s[n++]=r.id;
+s[n++]="_groupNameParent'></div>"
+}else{
+s[n++]=AjxStringUtil.htmlEncode(r.username)
+}
+s[n++]="</td><td class='contactHeader2'>&nbsp;@\n";
+s[n++]="\t\t\t";
+if(r.domainEditable){
+s[n++]="<input type='text' autocomplete='off' size='20' id='";
+s[n++]=r.id;
+s[n++]="_groupNameDomain' class='Text'>"
+}else{
+s[n++]=AjxStringUtil.htmlEncode(r.domain)
+}
+s[n++]="</td></tr></table>"
+}else{
+s[n++]="<div id='";
+s[n++]=r.id;
+s[n++]="_groupNameParent'></div>"
+}
+s[n++]="</div><div id='";
+s[n++]=r.id;
+s[n++]="_tags' style='padding-top:5px;'></div>"
+}}
+return o?s.length:s.join("")
+}
+,{
+id:"abook.Contacts#SplitView_headerName"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitView_headerJobInfo",function(e,a,r,n){
+var i=Boolean(n);
+r=(typeof r=="string"?{
+id:r}
+:r)||{};
+n=n||[];
+var o=n.length;
+var h=r.contact;
+var c=appCtxt.get(ZmSetting.PHONETIC_CONTACT_FIELDS);
+var d=h.getAttr(ZmContact.F_company);
+var u=h.getAttr(ZmContact.F_jobTitle);
+var s=h.getAttr(ZmContact.F_department);
+if(u||s){
+n[o++]="<div class='contactHeader2'>";
+if(u){
+n[o++]="<span>";
+n[o++]=AjxStringUtil.htmlEncode(u);
+n[o++]="</span>"
+}
+if(s){
+if(u){
+n[o++]="\n";
+n[o++]="\t\t\t\t&nbsp;&ndash;&nbsp;\n";
+n[o++]="\t\t\t"
+}
+n[o++]="<span>";
+n[o++]=AjxStringUtil.htmlEncode(s);
+n[o++]="</span>"
+}
+n[o++]="</div>"
+}
+if(d){
+var l=c&&h.getAttr(ZmContact.F_phoneticCompany);
+var t=AjxStringUtil.htmlRubyEncode(d,l);
+n[o++]="<div class='contactHeader2'>";
+n[o++]=t;
+n[o++]="</div>"
+}
+return i?n.length:n.join("")
+}
+,{
+id:"abook.Contacts#SplitView_headerJobInfo"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitView_dlmember-collapsed",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<td ";
+e[a++]=o.expandTdText;
+e[a++]=">";
+e[a++]=o.html.join("");
+e[a++]="</td><td class=rowLabel>";
+e[a++]=o.contact.canExpand?ZmMsg.membersLabel:"";
+e[a++]="</td><td colspan='2' class='rowValue'>";
+e[a++]=o.value;
+e[a++]="</td>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#SplitView_dlmember-collapsed"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitView_dlmember-expanded",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<td ";
+e[a++]=o.first?o.expandTdText:"";
+e[a++]=">";
+e[a++]=o.html.join("");
+e[a++]="</td><td class='rowLabel'>";
+e[a++]=o.first?ZmMsg.membersLabel:"";
+e[a++]="</td><td colspan='2' class='rowValue'>";
+e[a++]=o.value;
+e[a++]="</td>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#SplitView_dlmember-expanded"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitView_address_value",function(a,s,n,t){
+var o=Boolean(t);
+n=(typeof n=="string"?{
+id:n}
+:n)||{};
+t=t||[];
+var i=t.length;
+t[i++]="<tr valign='top'><td class='rowLabel'><!-- only show the first label visually --><label for='";
+t[i++]=n.labelId;
+t[i++]="' class='";
+t[i++]=n.first?"":"ScreenReaderOnly";
+t[i++]="'>\n";
+t[i++]="\t\t\t\t";
+t[i++]=n.label;
+t[i++]="\n";
+t[i++]="\t\t\t</label></td><td id='";
+t[i++]=n.labelId;
+t[i++]="' class='rowValue'>";
+var e=n.address;
+if(e.Street){
+t[i++]="<div>";
+t[i++]=e.Street;
+t[i++]="</div>"
+}
+if(e.City||e.State||e.PostalCode){
+t[i++]="<div><span>";
+t[i++]=e.City;
+t[i++]="</span>";
+if(e.City&&e.State){
+t[i++]=", "
+}
+t[i++]="<span>";
+t[i++]=e.State;
+t[i++]="</span>";
+if(e.City||e.State){
+t[i++]="&nbsp;"
+}
+t[i++]="<span>";
+t[i++]=e.PostalCode;
+t[i++]="</span></div>"
+}
+if(e.Country){
+t[i++]="<div>";
+t[i++]=e.Country;
+t[i++]="</div>"
+}
+t[i++]="</td><td class='rowType'><label for='";
+t[i++]=n.labelId;
+t[i++]="'>\n";
+t[i++]="\t\t\t\t&nbsp;";
+t[i++]=n.type;
+t[i++]="</label></td></tr>";
+return o?t.length:t.join("")
+}
+,{
+id:"abook.Contacts#SplitView_address_value"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitView_list_item",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<tr valign='top'>";
+if(o.isDL){
+e[a++]="<td><div class='ImgBlank_16'></div></td>"
+}
+e[a++]="<td class='rowLabel' id='";
+e[a++]=o.labelId;
+e[a++]="_label'><!-- only show the first label visually --><label for='";
+e[a++]=o.labelId;
+e[a++]="_label' class='";
+e[a++]=o.first?"":"ScreenReaderOnly";
+e[a++]="'>\n";
+e[a++]="\t\t\t";
+e[a++]=o.label;
+e[a++]="\n";
+e[a++]="\t\t</label></td><td id='";
+e[a++]=o.labelId;
+e[a++]="_value' ";
+e[a++]=o.type?"":"colspan='2'";
+e[a++]=" class='rowValue' aria-labelledby='";
+e[a++]=o.labelId;
+e[a++]="_label ";
+e[a++]=o.labelId;
+e[a++]="_type'>";
+e[a++]=o.value;
+e[a++]="</td>";
+if(o.type){
+e[a++]="<td id='";
+e[a++]=o.labelId;
+e[a++]="_type' class='rowType'><label for='";
+e[a++]=o.labelId;
+e[a++]="_label'>\n";
+e[a++]="\t\t\t\t&nbsp;";
+e[a++]=o.type;
+e[a++]="\n";
+e[a++]="\t\t\t</label></td>"
+}
+e[a++]="</tr>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#SplitView_list_item"}
+,false);
+AjxTemplate.register("abook.Contacts#SplitViewGroup",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table class='contactContentTable'>";
+e[a++]=AjxTemplate.expand("abook.Contacts#SplitView_header",o);
+e[a++]="</table>";
+if(o.dlInfo){
+e[a++]="<table role=\"presentation\" class='contactHeaderSubTable NoneBg ZPropertySheet' width='100%' cellspacing='6'><tr><td><ul id='";
+e[a++]=o.id;
+e[a++]="_subscriptionMsg' style='margin:.5em 0;padding-left:53px;'></ul></td><td id='";
+e[a++]=o.id;
+e[a++]="_subscriptionButton'></td></tr></table>"
+}
+e[a++]="<div class='contactGroupList' style='overflow:auto;'>";
+e[a++]=ZmContactSplitView.showContactGroup(o);
+e[a++]="</div>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#SplitViewGroup"}
+,false);
+AjxTemplate.register("abook.Contacts#SimpleView-NoResults",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table role=\"presentation\" width='100%'><tr><td class='NoResults'>";
+e[a++]=AjxMsg.noResults;
+e[a++]="</td></tr></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#SimpleView-NoResults"}
+,false);
+AjxTemplate.register("abook.Contacts#GroupView",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table class='ZPropertySheet'>";
+e[a++]=AjxTemplate.expand("abook.Contacts#SplitView_header",o);
+e[a++]="</table>";
+e[a++]=AjxTemplate.expand("abook.Contacts#GroupViewMembers",o);
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#GroupView"}
+,false);
+AjxTemplate.register("abook.Contacts#DlView",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table class='ZPropertySheet'>";
+e[a++]=AjxTemplate.expand("abook.Contacts#SplitView_header",o);
+e[a++]="</table><div id='";
+e[a++]=o.id;
+e[a++]="_tabViewContainer'></div>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#DlView"}
+,false);
+AjxTemplate.register("abook.Contacts#DlPropertiesView",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+if(o.contact.isDistributionList()){
+e[a++]="<table role=\"presentation\" width='100%' class='ZmEditContactView'><tr><td class='rowLabel'>";
+e[a++]=ZmMsg.displayNameLabel;
+e[a++]="</td><td class='rowValue'><div class='DwtInputField'><input type='text' autocomplete='off' id='";
+e[a++]=o.id;
+e[a++]="_dlDisplayName' class='Text' style='width:45em;'></div></td></tr><tr><td class='rowLabel'>";
+e[a++]=ZmMsg.descriptionLabel;
+e[a++]="</td><td class='rowValue'><div class='DwtInputField'><textarea rows='4' id='";
+e[a++]=o.id;
+e[a++]="_dlDesc' style='width:45em;'></textarea></div></td></tr><tr><td class='rowLabel'>";
+e[a++]=ZmMsg.directoryLabel;
+e[a++]="</td><td class='rowValue rowCheckGroup'><input type='checkbox' id='";
+e[a++]=o.id;
+e[a++]="_dlHideInGal'><label for='";
+e[a++]=o.id;
+e[a++]="_dlHideInGal'>";
+e[a++]=ZmMsg.hiddenInGlobal;
+e[a++]="</label></td></tr><tr><td class='rowLabel'>";
+e[a++]=ZmMsg.mailLabel;
+e[a++]="</td><td class='rowValue rowRadioGroup'><input type='radio' name='mailPolicy' id='";
+e[a++]=o.id;
+e[a++]="_dlMailPolicyANYONE'><label for='";
+e[a++]=o.id;
+e[a++]="_dlMailPolicyANYONE'>";
+e[a++]=ZmMsg.mailAnyone;
+e[a++]="</label></td></tr><tr><td class='rowLabel'></td><td class='rowValue'><input type='radio' name='mailPolicy' id='";
+e[a++]=o.id;
+e[a++]="_dlMailPolicyMEMBERS'><label for='";
+e[a++]=o.id;
+e[a++]="_dlMailPolicyMEMBERS'>";
+e[a++]=ZmMsg.mailOnlyMembers;
+e[a++]="</label></td></tr><tr><td class='rowLabel'></td><td class='rowValue'><input type='radio' name='mailPolicy' id='";
+e[a++]=o.id;
+e[a++]="_dlMailPolicyINTERNAL'><label for='";
+e[a++]=o.id;
+e[a++]="_dlMailPolicyINTERNAL'>";
+e[a++]=ZmMsg.mailOnlyInternal;
+e[a++]="</label></td></tr><tr><td class='rowLabel'></td><td class='rowValue'><input type='radio' name='mailPolicy' id='";
+e[a++]=o.id;
+e[a++]="_dlMailPolicySPECIFIC'><label for='";
+e[a++]=o.id;
+e[a++]="_dlMailPolicySPECIFIC'>";
+e[a++]=ZmMsg.mailOnlySpecific;
+e[a++]="</label></td></tr><tr><td class='rowLabel'></td><td class='rowValue'><div class='DwtInputField'><input type='text' autocomplete='off' id='";
+e[a++]=o.id;
+e[a++]="_dlListSpecificMailers' class='Text' style='margin-left:2em;width:43em;'></div></td></tr><tr><td class='rowLabel'>";
+e[a++]=ZmMsg.newSubscriptionsLabel;
+e[a++]="</td><td class='rowValue rowRadioGroup'><input type='radio' name='subscriptionPolicy' id='";
+e[a++]=o.id;
+e[a++]="_dlSubscriptionPolicyACCEPT'><label for='";
+e[a++]=o.id;
+e[a++]="_dlSubscriptionPolicyACCEPT'>";
+e[a++]=ZmMsg.policyAccept;
+e[a++]="</label></td></tr><tr><td class='rowLabel'></td><td class='rowValue'><input type='radio' name='subscriptionPolicy' id='";
+e[a++]=o.id;
+e[a++]="_dlSubscriptionPolicyAPPROVAL'><label for='";
+e[a++]=o.id;
+e[a++]="_dlSubscriptionPolicyAPPROVAL'>";
+e[a++]=ZmMsg.policyApproval;
+e[a++]="</label></td></tr><tr><td class='rowLabel'></td><td class='rowValue'><input type='radio' name='subscriptionPolicy' id='";
+e[a++]=o.id;
+e[a++]="_dlSubscriptionPolicyREJECT'><label for='";
+e[a++]=o.id;
+e[a++]="_dlSubscriptionPolicyREJECT'>";
+e[a++]=ZmMsg.policyReject;
+e[a++]="</label></td></tr><tr><td class='rowLabel'>";
+e[a++]=ZmMsg.unsubscriptionsRequestLabel;
+e[a++]="</td><td class='rowValue rowRadioGroup' ><input type='radio' name='unsubscriptionPolicy' id='";
+e[a++]=o.id;
+e[a++]="_dlUnsubscriptionPolicyACCEPT'><label for='";
+e[a++]=o.id;
+e[a++]="_dlUnsubscriptionPolicyACCEPT'>";
+e[a++]=ZmMsg.policyAccept;
+e[a++]="</label></td></tr><tr><td class='rowLabel'></td><td class='rowValue'><input type='radio' name='unsubscriptionPolicy' id='";
+e[a++]=o.id;
+e[a++]="_dlUnsubscriptionPolicyAPPROVAL'><label for='";
+e[a++]=o.id;
+e[a++]="_dlUnsubscriptionPolicyAPPROVAL'>";
+e[a++]=ZmMsg.policyApproval;
+e[a++]="</label></td></tr><tr><td class='rowLabel'></td><td class='rowValue'><input type='radio' name='unsubscriptionPolicy' id='";
+e[a++]=o.id;
+e[a++]="_dlUnsubscriptionPolicyREJECT'><label for='";
+e[a++]=o.id;
+e[a++]="_dlUnsubscriptionPolicyREJECT'>";
+e[a++]=ZmMsg.policyReject;
+e[a++]="</label></td></tr><tr><td class='rowLabel'>";
+e[a++]=ZmMsg.listOwnersLabel;
+e[a++]="</td><td class='rowValue'><div class='DwtInputField'><input type='text' autocomplete='off' id='";
+e[a++]=o.id;
+e[a++]="_dlListOwners' class='Text' style='width:45em;'></div></td></tr><tr><td class='rowLabel'>";
+e[a++]=ZmMsg.notesLabel;
+e[a++]="</td><td class='rowValue'><div class='DwtInputField'><textarea rows='4' id='";
+e[a++]=o.id;
+e[a++]="_dlNotes' style='width:45em;'></textarea></div></td></tr></table>"
+}
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#DlPropertiesView"}
+,false);
+AjxTemplate.register("abook.Contacts#GroupViewMembers",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table role=\"presentation\" width='100%' height='100%' class='ZPropertySheet' cellspacing='6'><tr><!-- content: left pane --><td width='50%' valign='top'><div class='groupMembers' id='";
+e[a++]=o.id;
+e[a++]="_groupMembers'></div></td><!-- content: right pane --><td width='50%' valign='top'><table role=\"presentation\" width='100%'><tr id='";
+e[a++]=o.id;
+e[a++]="_searchFieldsRow'><td width='50'>&nbsp;</td><td><table role=\"presentation\" class='ZPropertySheet' cellspacing='6'>";
+if(o.detailed){
+e[a++]="<tr id='";
+e[a++]=o.id;
+e[a++]="_searchNameRow'><td align='right'>";
+e[a++]=ZmMsg.nameLabel;
+e[a++]="</td><td><input type='text' id='";
+e[a++]=o.id;
+e[a++]="_searchNameField'></td><td id='";
+e[a++]=o.id;
+e[a++]="_searchButton' valign='top' rowspan='3'></td></tr>";
+if(appCtxt.get(ZmSetting.PHONETIC_CONTACT_FIELDS)){
+e[a++]="<tr id='";
+e[a++]=o.id;
+e[a++]="_searchPhoneticRow'><td align='right'>";
+e[a++]=ZmMsg.phoneticNameLabel;
+e[a++]="</td><td><input type='text' id='";
+e[a++]=o.id;
+e[a++]="_searchPhoneticField'></td></tr>"
+}
+e[a++]="<tr id='";
+e[a++]=o.id;
+e[a++]="_searchEmailRow'><td align='right'>";
+e[a++]=ZmMsg.emailAddrLabel;
+e[a++]="</td><td><input type='text' id='";
+e[a++]=o.id;
+e[a++]="_searchEmailField'></td></tr><tr id='";
+e[a++]=o.id;
+e[a++]="_searchDepartmentRow'><td align='right'>";
+e[a++]=ZmMsg.departmentLabel;
+e[a++]="</td><td><input type='text' id='";
+e[a++]=o.id;
+e[a++]="_searchDepartmentField'></td></tr>"
+}else{
+e[a++]="<tr id='";
+e[a++]=o.id;
+e[a++]="_searchRow'><td align='right'>";
+e[a++]=ZmMsg.findLabel;
+e[a++]="</td><td><input type='text' id='";
+e[a++]=o.id;
+e[a++]="_searchField'></td><td id='";
+e[a++]=o.id;
+e[a++]="_searchButton'></td></tr>"
+}
+if(o.showSearchIn){
+e[a++]="<tr><td align='right'>";
+e[a++]=ZmMsg.searchIn;
+e[a++]="</td><td colspan='2' id='";
+e[a++]=o.id;
+e[a++]="_listSelect'></td></tr>"
+}
+e[a++]="</table></td></tr><tr><td width='50'><table role=\"presentation\" width='100%' class='ZPropertySheet' cellspacing='6'><tr><td id='";
+e[a++]=o.id;
+e[a++]="_addButton'></td></tr><tr><td id='";
+e[a++]=o.id;
+e[a++]="_addAllButton'></td></tr></table></td><td><div id='";
+e[a++]=o.id;
+e[a++]="_listView'></div><table role=\"presentation\" width='100%' class='ZPropertySheet' cellspacing='6'><tr id='";
+e[a++]=o.id;
+e[a++]="_navButtonsRow'><td width='100%'></td><td id='";
+e[a++]=o.id;
+e[a++]="_prevButton'></td><td id='";
+e[a++]=o.id;
+e[a++]="_nextButton'></td></tr></table></td></tr><tr id='";
+e[a++]=o.id;
+e[a++]="_manualAddRow'><td width='50'><table role=\"presentation\" width='100%' class='ZPropertySheet' cellspacing='6'><tr><td id='";
+e[a++]=o.id;
+e[a++]="_addNewButton'></td></tr></table></td><td><table role=\"presentation\" width='100%' class='ZPropertySheet' cellspacing='6'><tr><td>";
+e[a++]=ZmMsg.enterAddrBelow;
+e[a++]="</td></tr><tr><td><textarea class='groupMembers' id='";
+e[a++]=o.id;
+e[a++]="_addNewField'></textarea></td></tr></table></td></tr></table></td></tr></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#GroupViewMembers"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmAlphabetBar",function(t,r,s,e){
+var n=Boolean(e);
+s=(typeof s=="string"?{
+id:s}
+:s)||{};
+e=e||[];
+var o=e.length;
+e[o++]='<center><table role="presentation" id=\'';
+e[o++]=s.id;
+e[o++]="_alphabet' width='80%' class='AlphabetBarTable'' cellspacing='0'><tr>";
+for(var a=0;
+a<s.numLetters;
+a++){
+e[o++]='<td _idx="';
+e[o++]=a;
+e[o++]="\"\trole='button'\n";
+e[o++]="\t\t\t\t\t\tclass='DwtButton AlphabetBarCell'";
+if(s.alphabet[a].length>1){
+e[o++]=" colspan='";
+e[o++]=s.alphabet[a].length/2+1;
+e[o++]="' "
+}
+e[o++]=" >";
+e[o++]=s.alphabet[a];
+e[o++]="</td>"
+}
+e[o++]="</tr></table></center>";
+return n?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmAlphabetBar"}
+,false);
+AjxTemplate.register("abook.Contacts#Tooltip",function(e,t,r,s){
+var a=Boolean(s);
+r=(typeof r=="string"?{
+id:r}
+:r)||{};
+s=s||[];
+var o=s.length;
+s[o++]="<table role=\"presentation\" width='250'><tr><td colspan='2' valign='top'><div style='border-bottom:1px solid black;margin-bottom:2px;'><table role=\"presentation\" width='100%'><tr valign='bottom'><td style='font-weight:bold;'>";
+s[o++]=AjxStringUtil.htmlEncode(r.entryTitle);
+s[o++]="</td><td align='right'>";
+s[o++]=AjxImg.getImageHtml(r.contact.getIcon());
+s[o++]="</td></tr></table></div></td></tr>";
+if(r.contact.isGroup()){
+var n=r.contact.getGroupMembers().good.getArray();
+for(var h=0;
+h<n.length;
+h++){
+s[o++]="<tr><td width=20>";
+s[o++]=AjxImg.getImageHtml("Message");
+s[o++]="</td><td>";
+s[o++]=AjxStringUtil.htmlEncode(n[h].toString());
+s[o++]="</td></tr>"
+}}else{
+s[o++]=AjxTemplate.expand("abook.Contacts#AddTooltipEntry",{
+data:r,field:"fullName"}
+);
+var c=ZmMsg.contactTooltipWorkInfoOrder.split(",");
+var h;
+for(h=0;
+h<c.length;
+h++){
+s[o++]=AjxTemplate.expand("abook.Contacts#AddTooltipEntry",{
+data:r,field:c[h]}
+)
+}
+s[o++]=AjxTemplate.expand("abook.Contacts#AddTooltipEntry",{
+data:r,field:"mobilePhone"}
+);
+s[o++]=AjxTemplate.expand("abook.Contacts#AddTooltipEntry",{
+data:r,field:"workPhone"}
+);
+s[o++]=AjxTemplate.expand("abook.Contacts#AddTooltipEntry",{
+data:r,field:"homePhone"}
+);
+if(r.contact.isGal){
+var l=r.contact.getEmails();
+for(var h=0;
+h<l.length&&l.length<=3;
+h++){
+s[o++]=AjxTemplate.expand("abook.Contacts#AddTooltipEntry",{
+data:r,field:"email",val:l[h]}
+)
+}
+s[o++]=AjxTemplate.expand("abook.Contacts#AddTooltipEntry",{
+data:r,field:"notes",truncate:500}
+)
+}else{
+s[o++]=AjxTemplate.expand("abook.Contacts#AddTooltipEntry",{
+data:r,field:"email",val:r.contact._lookupEmail||r.email}
+)
+}}
+if(r.hint){
+s[o++]="<tr><td colspan='2'><div class='TooltipHint'><hr color=black size=1>";
+s[o++]=r.hint;
+s[o++]="</div></td></tr>"
+}
+s[o++]="</table>";
+return a?s.length:s.join("")
+}
+,{
+id:"abook.Contacts#Tooltip"}
+,false);
+AjxTemplate.register("abook.Contacts#TooltipNotInAddrBook",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+if(o.hint){
+e[a++]="<table role=\"presentation\" width='250'><tr><td valign='top'>";
+if(appCtxt.get(ZmSetting.CONTACTS_ENABLED)){
+e[a++]="<div style='border-bottom:1px solid black;'><table role=\"presentation\" width='100%'><tr valign='bottom'><td style='font-weight:bold;'>";
+e[a++]=ZmMsg.newContact;
+e[a++]="</td><td align='right'>";
+e[a++]=AjxImg.getImageHtml("NewContact");
+e[a++]="</td></tr></table></div>"
+}
+e[a++]="<div class='TooltipNotInAddrBook'>";
+e[a++]=AjxStringUtil.htmlEncode(o.addrstr);
+e[a++]="</div><hr color='black' size='1'><div class='TooltipHint'>";
+e[a++]=o.hint;
+e[a++]="</div></td></tr></table>"
+}else{
+e[a++]="<span style='font-weight:bold;'> ";
+e[a++]=ZmMsg.emailLabel;
+e[a++]=" </span>";
+e[a++]=AjxStringUtil.htmlEncode(o.addrstr)
+}
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#TooltipNotInAddrBook"}
+,false);
+AjxTemplate.register("abook.Contacts#AddTooltipEntry",function(a,r,n,t){
+var o=Boolean(t);
+n=(typeof n=="string"?{
+id:n}
+:n)||{};
+t=t||[];
+var i=t.length;
+if(n.val==null){
+var e=appCtxt.get(ZmSetting.PHONETIC_CONTACT_FIELDS);
+n.val=n.field=="fullName"?n.data.contact.getFullNameForDisplay(e):n.data.contact.getAttr(n.field)
+}
+if(n.val!=null&&n.val!=""){
+t[i++]="<tr valign='top'><td class='ZmTooltipLabel'>";
+t[i++]=AjxMessageFormat.format(ZmMsg.makeLabel,AjxStringUtil.htmlEncode(ZmContact._AB_FIELD[n.field]));
+t[i++]="</td>";
+if(n.truncate){
+t[i++]="<td>";
+t[i++]=AjxMessageFormat.format(ZmMsg.makeLabel,AjxStringUtil.htmlEncode(n.val.substring(0,n.truncate)));
+t[i++]="</td>"
+}else{
+var s="";
+if(n.field=="fullName"){
+s=e?n.val:AjxStringUtil.htmlEncode(n.val)
+}else{
+s=AjxStringUtil.htmlEncode(n.val)
+}
+t[i++]="<td style='white-space:nowrap;'>";
+t[i++]=s;
+t[i++]="</td>"
+}
+t[i++]="</tr>"
+}
+return o?t.length:t.join("")
+}
+,{
+id:"abook.Contacts#AddTooltipEntry"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmContactPicker",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<div class='ZmContactPicker'><table role=\"presentation\" width='100%'><tr><td width='600'><table role=\"presentation\" class='ZPropertySheet' cellspacing='6' id='";
+e[a++]=o.id;
+e[a++]="_searchTable'>";
+if(o.detailed){
+e[a++]="<tr id='";
+e[a++]=o.id;
+e[a++]="_searchNameRow'><td align='right'><span id='";
+e[a++]=o.id;
+e[a++]="_searchNameFieldLbl'>";
+e[a++]=ZmMsg.nameLabel;
+e[a++]="</span></td><td><input type='text' placeholder=\"";
+e[a++]=ZmMsg.contactPickerHint;
+e[a++]="\" autocomplete='off' size='30' nowrap id='";
+e[a++]=o.id;
+e[a++]="_searchNameField' aria-labelledby='";
+e[a++]=o.id;
+e[a++]="_searchNameFieldLbl'></td><td id='";
+e[a++]=o.id;
+e[a++]="_searchButton' rowspan='3' valign='top'></td><td width='20' valign='middle'><div id='";
+e[a++]=o.id;
+e[a++]="_searchIcon' class='ImgSearch'></div></td></tr>";
+if(appCtxt.get(ZmSetting.PHONETIC_CONTACT_FIELDS)){
+e[a++]="<tr id='";
+e[a++]=o.id;
+e[a++]="_searchPhoneticRow'><td align='right'><span id='";
+e[a++]=o.id;
+e[a++]="_searchPhoneticNameFieldLbl'>";
+e[a++]=ZmMsg.phoneticNameLabel;
+e[a++]="</span></td><td><input type='text' placeholder=\"";
+e[a++]=ZmMsg.contactPickerPhoneticHint;
+e[a++]="\" autocomplete='off' size='30' nowrap id='";
+e[a++]=o.id;
+e[a++]="_searchPhoneticField' aria-labelledby='";
+e[a++]=o.id;
+e[a++]="_searchPhoneticNameFieldLbl'></td></tr>"
+}
+e[a++]="<tr id='";
+e[a++]=o.id;
+e[a++]="_searchEmailRow'><td align='right'><span id='";
+e[a++]=o.id;
+e[a++]="_searchEmailFieldLbl'>";
+e[a++]=ZmMsg.emailAddrLabel;
+e[a++]="</span></td><td><input type='text' placeholder=\"";
+e[a++]=ZmMsg.contactPickerEmailHint;
+e[a++]="\"autocomplete='off' size='30' nowrap id='";
+e[a++]=o.id;
+e[a++]="_searchEmailField' aria-labelledby='";
+e[a++]=o.id;
+e[a++]="_searchEmailFieldLbl'></td></tr><tr id='";
+e[a++]=o.id;
+e[a++]="_searchDepartmentRow'><td align='right'><span id='";
+e[a++]=o.id;
+e[a++]="_searchDepartmentFieldLbl'>";
+e[a++]=ZmMsg.departmentLabel;
+e[a++]="</span></td><td><input type='text' placeholder=\"";
+e[a++]=ZmMsg.contactPickerDepartmentHint;
+e[a++]="\" autocomplete='off' size='30' nowrap id='";
+e[a++]=o.id;
+e[a++]="_searchDepartmentField' aria-labelledby='";
+e[a++]=o.id;
+e[a++]="_searchDepartmentFieldLbl'></td></tr>"
+}else{
+e[a++]="<tr id='";
+e[a++]=o.id;
+e[a++]="_searchRow'><td><input type='text' placeholder=\"";
+e[a++]=ZmMsg.contactPickerHint;
+e[a++]="\" autocomplete='off' nowrap id='";
+e[a++]=o.id;
+e[a++]="_searchField' style='width:25em;' aria-label='";
+e[a++]=ZmMsg.search;
+e[a++]="'></td><td id='";
+e[a++]=o.id;
+e[a++]="_searchButton'></td><td width='20' valign='middle'><div id='";
+e[a++]=o.id;
+e[a++]="_searchIcon' class='ImgSearch'></div></td></tr>"
+}
+e[a++]="</table></td><td align='right' valign='bottom'>";
+if(o.showSelect){
+e[a++]="<table role=\"presentation\" class='ZPropertySheet' cellspacing='6'><tr><td class='Label nobreak' id='";
+e[a++]=o.id;
+e[a++]="_listSelectLbl'>";
+e[a++]=ZmMsg.showNames;
+e[a++]="</td><td id='";
+e[a++]=o.id;
+e[a++]="_listSelect'></td></tr></table>"
+}
+e[a++]="</td></tr></table><div id='";
+e[a++]=o.id;
+e[a++]="_chooser'></div><div id='";
+e[a++]=o.id;
+e[a++]="_paging' style='margin-left:5px;'><table role=\"presentation\" width='100%'><tr><td id='";
+e[a++]=o.id;
+e[a++]="_pageLeft'></td><td id='";
+e[a++]=o.id;
+e[a++]="_pageRight' align='right'></td></tr></table></div></div>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmContactPicker"}
+,false);
+AjxTemplate.register("abook.Contacts#ZmContactSearch",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<div id='";
+e[a++]=o.id;
+e[a++]="_preamble'></div><table role=\"presentation\" width='100%'><tr><td><table role=\"presentation\"><tr><td width='20' valign='middle'><div id='";
+e[a++]=o.id;
+e[a++]="_searchIcon' class='ImgSearch'></div></td><td><input type='text' autocomplete='off' size='30' nowrap id='";
+e[a++]=o.id;
+e[a++]="_searchField'>&nbsp;</td><td id='";
+e[a++]=o.id;
+e[a++]="_searchButton'></td></tr></table></td><td align='right'>";
+if(o.showSelect){
+e[a++]="<table role=\"presentation\"><tr><td class='Label nobreak'>";
+e[a++]=ZmMsg.showNames;
+e[a++]="&nbsp;</td><td id='";
+e[a++]=o.id;
+e[a++]="_folders'></td></tr></table>"
+}
+e[a++]="</td></tr></table><div id='";
+e[a++]=o.id;
+e[a++]="_results' class='contactSearchResultsDiv'></div>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#ZmContactSearch"}
+,false);
+AjxTemplate.register("abook.Contacts#QuickAddPrompt",function(t,n,o,e){
+var i=Boolean(e);
+o=(typeof o=="string"?{
+id:o}
+:o)||{};
+e=e||[];
+var a=e.length;
+e[a++]="<table role=\"presentation\" class='ZPropertySheet' cellspacing='6'><tr><td class='ZmFieldLabelRight'>";
+e[a++]=ZmMsg.firstNameLabel;
+e[a++]="</td><td><div id='";
+e[a++]=o.id;
+e[a++]="_FIRST_NAME'></div></td></tr><tr><td class='ZmFieldLabelRight'>";
+e[a++]=ZmMsg.lastNameLabel;
+e[a++]=" </td><td><div id='";
+e[a++]=o.id;
+e[a++]="_LAST_NAME'></div></td></tr><tr><td class='ZmFieldLabelRight'>";
+e[a++]=ZmMsg.emailLabel;
+e[a++]="</td><td><div id='";
+e[a++]=o.id;
+e[a++]="_EMAIL'></div></td></tr><tr><td class='ZmFieldLabelRight'>";
+e[a++]=ZmMsg.addressBookLabel;
+e[a++]=" </td><td><div id='";
+e[a++]=o.id;
+e[a++]="_ADDR_BOOK'></div></td></tr></table>";
+return i?e.length:e.join("")
+}
+,{
+id:"abook.Contacts#QuickAddPrompt"}
+,false)
+};

@@ -1,0 +1,89 @@
+﻿@using BatDongSan.Models.DanhMuc;
+@{       
+    int page_ = Convert.ToInt32(ViewData["page"]);
+    int total_ = Convert.ToInt32(ViewData["total"]);
+    int stt = 0;
+
+    var danhSach = ViewData["chamCong"] as List<sp_PB_MayChamCongResult>;
+    if (danhSach != null)
+    {
+        foreach (var item in danhSach)
+        {            
+
+    <tr>
+        <td align="center">
+            @(++stt)
+        </td>
+        <td>
+            @item.maMayChamCong
+        </td>
+        <td>
+            @item.tenMay
+        </td>
+        <td>
+            @item.tenCongTruongVp
+        </td>
+        <td>@item.ghiChu </td>
+
+
+        <td align="left">
+            <i class="fa fa-calendar"></i>&nbsp;Ngày thêm: @Html.Encode(String.Format("{0:dd/MM/yyyy}", item.ngayThem))<br />
+            <i class="fa fa-user" style="color: blue"></i>&nbsp;@item.nguoiThem
+        </td>
+
+        <td style="text-align: center" class="btnXoaNVLKView">
+
+            <a href="javascript:void(0)" onclick="XoaChamCongPB('@item.maMayChamCong','@item.maPhongBan')"><i class="fa fa-times" aria-hidden="true"></i></a>
+
+        </td>
+
+
+
+
+    </tr>
+   
+        }
+
+
+    }
+   
+
+<tr>
+    <td colspan="7" align="left">
+        @{
+                
+            if (page_ > 1)
+            {
+        
+            <a class="pageFirst" href="javascript:void(0)" onclick="javascript:OnCriteriaMayCCPB(1);">First</a> <a class="pagePrevious" href="javascript:void(0)" onclick="javascript:OnCriteriaMayCCPB(@(page_ - 1));">
+                Previous</a>
+       
+            }
+
+
+            if (page_ - 2 >= 1)
+            { 
+            <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaMayCCPB(@(page_ - 2));">
+                @(page_ - 2) </a> <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaPC(@(page_ - 1));">
+                    @(page_ - 1) </a>
+            } <span class="pageActive">@page_</span>
+            if (page_ + 2 <= total_)
+            { 
+            <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaMayCCPB(@(page_ + 1) );">
+                @(page_ + 1) </a> <a class="pageCurrent" href="javascript:void(0)" onclick="javascript:OnCriteriaMayCCPB(@(page_ + 2));">
+                    @(page_ + 2) </a>
+            }
+
+            if (page_ < total_)
+            { 
+        
+            <a class="pageNext" href="javascript:void(0)" onclick="javascript:OnCriteriaMayCCPB(@(page_ + 1));">Next</a> <a class="pageLast" href="javascript:void(0)" onclick="javascript:OnCriteriaMayCCPB(@total_);">
+                Last</a>
+        
+            }
+        
+            <span>Tổng số dòng :</span><strong>@ViewBag.totalRow</strong>
+        }
+    </td>
+</tr>
+}

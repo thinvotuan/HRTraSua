@@ -1,0 +1,194 @@
+﻿@using BatDongSan.Models.NhanSu;
+@{
+    ViewBag.Title = "Chi tiết bảng lương";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var bangLuongNV = ViewBag.BangLuongNV as sp_NS_BangTongHopCongThangResult;
+    if (bangLuongNV == null)
+    {
+        bangLuongNV = new sp_NS_BangTongHopCongThangResult();
+    }
+    var listCTPC = ViewBag.ListPhuCap as List<sp_NS_BangLuongNhanVien_PhuCapResult>;
+}
+<script>
+    $(document).ready(function () {
+        $("#btnTroVe").click(function () {
+            var url = "@Url.Action("Index")";
+            location.href = url;
+        });
+
+    });
+    function PrintView() {
+        var el_style = document.getElementById('print-preview').style;
+        el_style.width = '100%';
+        $(".header_salary").css("margin-bottom", "0px");
+        $(".wrapper_salary").css({ margin: "0px", padding: "0px", "box-shadow": "none" });
+        $(".header_salary ul li,.bs-callout-info,.detail_salary").css("padding", "0px");
+        $(".bs-callout-info").css("padding-left", "2px");
+        $(".wrapper_salary tr td").css({ padding: "0px", border: "0px", "border-bottom": "1px solid #ccc", "border-right": "1px solid #ccc" });
+        $(".bs-callout-info").css("font-size", "12px");
+        $(".removePrint").remove();
+        var tt = $('#print-preview').html();
+        var t = window;
+        t.document.write(tt);
+        t.print();
+        var url = window.location.href;
+        location.href = url;
+    }
+
+</script>
+@{
+    var noiDung = (string)ViewBag.NoiDung;
+    string noiCongTac = string.Empty;
+    string loaiCongTac = string.Empty;
+    var item = ViewData["chiTiet"] as tbl_NS_BangLuongNhanVien;
+
+    BatDongSan.Models.HeThong.Sys_User user1 = new BatDongSan.Models.HeThong.Sys_User();
+    if (Session["User"] != null)
+    {
+        user1 = (BatDongSan.Models.HeThong.Sys_User)Session["User"];
+    }  
+    
+}
+<div id="print-preview" style="width: 99%; padding: 5px">
+    <div id="container" class="custome_fieldSet">
+
+        <div class="wrapper_salary" style="width: 700px; margin: 20px auto; display: block; float: none; box-shadow: 2px 2px 2px #ccc; box-sizing: border-box; padding: 10px;">
+            <div class="header_salary" style="width: 100%; clear: both; float: none; margin-bottom: 10px;">
+                <ul style="font-size: 20px; text-align: center; margin: 0px; padding: 0px;">
+                    <li style="display: block; clear: both; float: none; padding: 8px; font-size: 25px; background: #e8a1a1; border-radius: 2px; box-shadow: 0px 3px 0px #eee; text-transform: uppercase; text-shadow: 1px 3px #ccc;">Phiếu lương cá nhân</li>
+                    <li style="display: block; clear: both; float: none; padding: 8px;">Tháng @bangLuongNV.thang Năm @bangLuongNV.nam </li>
+                </ul>
+
+            </div>
+            <div class="detail_salary" style="clear: both; float: none; padding-bottom: 20px;">
+                <table class="tbl colorize" style="width: 100%; max-width: 700px; margin: 0px auto;">
+                    <tbody>
+                        <tr>
+                            <td colspan="2">
+                                <div class="form-group bs-callout bs-callout-info" style="overflow: hidden; margin-bottom: 1px;">
+                                    <h4 class="col-md-12 tieudeGroup" style="color: #1b809e; margin: 0px;"><b></b>Họ và tên <span style="color: red; font-style: italic"></span></h4>
+                                </div>
+                            </td>
+                            <td style="text-align: right; font-size: large; font-weight: bold;"><b>@bangLuongNV.hoTen</b></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <div class="form-group bs-callout bs-callout-info" style="overflow: hidden; margin-bottom: 1px;">
+                                    <h4 class="col-md-12 tieudeGroup" style="color: #1b809e; margin: 0px;"><b>A.</b> Tổng lương theo số giờ tính lương<span style="color: red; font-style: italic"></span></h4>
+                                </div>
+                            </td>
+
+                            <td style="text-align: right; font-size: large;"><b>@String.Format("{0:###,##0}", (double?)bangLuongNV.thanhTien ?? 0)</b></td>
+                        </tr>
+
+                        <tr>
+                            <td style="width: 50px;"></td>
+                            <td style="font-size: 15px">Số giờ công tính lương:</td>
+                            <td style="font-weight: 700; text-align: right">
+                                <p>
+                                    @String.Format("{0:###,##0.##}", (double?)bangLuongNV.ngayQuet ?? 0)<br>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="form-group bs-callout bs-callout-info" style="overflow: hidden; margin-bottom: 1px;">
+                                    <h4 class="col-md-12 tieudeGroup" style="color: #1b809e; margin: 0px;"><b>B.</b> Các khoản phụ cấp<span style="color: red; font-style: italic"></span></h4>
+                                </div>
+
+                            </td>
+                            <td style="text-align: right; font-size: large;"><b>@String.Format("{0:###,##0.##}", (bangLuongNV.thanhTienPhuCap + bangLuongNV.tienPhuCap))</b></td>
+                        </tr>
+
+                        <tr>
+                            <td style="width: 50px;"></td>
+                            <td style="font-size: 15px">Phụ cấp ăn:</td>
+                            <td style="font-weight: 700; text-align: right">@String.Format("{0:###,##0.##}", (double?)bangLuongNV.thanhTienPhuCap ?? 0)</td>
+                        </tr>
+                        @{                                                     
+                            if (listCTPC != null && listCTPC.Count > 0)
+                            {
+                                var chiTiet = listCTPC.Where(d => d.soTienPhuCap > 0).ToList();                              
+                                foreach (var it in chiTiet)
+                                {
+                            <tr>
+                                <td style="width: 50px;"></td>
+                                <td style="font-size: 15px">@it.tenLoaiThuNhapKhac:</td>
+                                <td style="font-weight: 700; text-align: right">@String.Format("{0:###,##0.##}", (double?)it.soTienPhuCap ?? 0)</td>
+                            </tr>
+                                }
+                            }
+                        }
+
+                        <tr>
+                            <td colspan="2">
+                                <div class="form-group bs-callout bs-callout-info" style="overflow: hidden; margin-bottom: 1px;">
+                                    <h4 class="col-md-12 tieudeGroup" style="color: #1b809e; margin: 0px;"><b>C.</b> Tổng lương và phụ cấp (A+B)<span style="color: red; font-style: italic"></span></h4>
+                                </div>
+
+                            </td>
+                            <td style="text-align: right; font-size: large;"><b>@String.Format("{0:###,##0.##}", (bangLuongNV.thanhTien + bangLuongNV.thanhTienPhuCap + bangLuongNV.tienPhuCap))</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="form-group bs-callout bs-callout-info" style="overflow: hidden; margin-bottom: 1px;">
+                                    <h4 class="col-md-12 tieudeGroup" style="color: #1b809e; margin: 0px;"><b>D.</b> Các khoản khấu trừ<span style="color: red; font-style: italic"></span></h4>
+                                </div>
+                            </td>
+                            <td style="text-align: right; font-size: large;"><b>@String.Format("{0:###,##0.##}", (bangLuongNV.tienTamUng + bangLuongNV.khauTruKhac))</b></td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td style="">Tạm ứng:</td>
+                            <td style="text-align: right">@String.Format("{0:###,##0.##}", (double?)bangLuongNV.tienTamUng ?? 0)</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="">Khấu trừ khác:</td>
+                            <td style="text-align:right">@String.Format("{0:###,##0.##}", bangLuongNV.khauTruKhac)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="form-group bs-callout bs-callout-info" style="overflow: hidden; margin-bottom: 1px;">
+                                    <h4 class="col-md-12 tieudeGroup" style="color: #1b809e; margin: 0px;"><b>E.</b> Thực nhận lương tháng (C-D)(Nếu Âm sẽ thu vào lương Tháng Sau)<span style="color: red; font-style: italic"></span></h4>
+                                </div>
+                            </td>
+                            <td style="text-align: right; font-size: large;"><b>@String.Format("{0:###,##0.##}", (double?)bangLuongNV.tongTienThucNhanLuong ?? 0)</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div style="float: right; clear: both">
+    <input type="button" class="btn btn-info" value="Print" onclick="PrintView()" />
+    <button class="btn btn-info" type="button" style="" id="btnTroVe">
+        Trở về
+    </button>
+</div>
+
+
+<style>
+    td {
+        border: 1px solid #ccc;
+    }
+
+    .bs-callout {
+        padding: 2px;
+        border: 0px solid #eee;
+        border-left-width: 3px;
+        border-radius: 0px;
+        border-left-color: #e8a1a1;
+    }
+
+    .form-horizontal .form-group {
+        margin: 0px 0px !important;
+    }
+</style>

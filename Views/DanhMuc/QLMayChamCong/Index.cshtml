@@ -1,0 +1,508 @@
+﻿@using BatDongSan.Models.DBChamCong
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var LstCongTrinh = ViewBag.LstCongTrinh as List<Sys_SiteConection>;
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        OnCriteriaPC(0);
+        $(".tabToggle").click(function () {
+            $(".tabToggle").removeClass("ui-tabs-selected ui-state-active activeColorTab");
+            $(".contentToggle").hide(600);
+            var index = $(".tabToggle").index(this);
+            $(".tabToggle").eq(index).addClass("ui-tabs-selected ui-state-active activeColorTab");
+            $(".contentToggle").eq(index).show(600);
+            OnCriteriaPC(0);
+        });
+        $(".btnSaveNCV").click(function () {
+            goSubmitNhomCV();
+        });
+        $("#btnRefesh").click(function () {
+            location.reload();
+        });
+
+        $("#btnAddNVC").click(function () {
+            var row = $("#tbl-nhomCV >tbody>tr:first").clone();
+            var rowCount = $("#tbl-nhomCV >tbody>tr").length + 1;
+            row.find("input").val("");
+            row.find("td:eq(0)").html(rowCount);
+            row.find("td:last").find("button").addClass("btnXoa");
+            $("#tbl-nhomCV >tbody").append(row);
+
+        });
+        $("#btnAddMCC").click(function () {
+            var row = $("#noiDungCopy table tr").clone();
+            var rowCount = $("#tbl-nhomMCC >tbody>tr").length + 1;
+            row.find("input").val("");
+            row.find("td:eq(0)").html(rowCount);
+            row.find("td:last").find("button").addClass("btnXoaMCC");
+            $("#tbl-nhomMCC >tbody").prepend(row);
+
+        });
+
+        $(document).on("click", ".btnXoa", function () {
+            
+                    var rowCount = $("#tbl-nhomCV > tbody>tr").length;
+                    if (rowCount > 1) {
+                        $(this).parents("tr")[0].remove();
+                    }
+             
+        })
+        $(document).on("click", ".btnXoaMayCC", function () {
+           
+                    var rowCount = $("#tbl-nhomMCC > tbody>tr").length;
+                    if (rowCount > 1) {
+                        $(this).parents("tr")[0].remove();
+                    }
+                
+         
+        })
+        $("#btnSearch").click(function () {
+            OnCriteriaPC(0);
+
+        });
+        $("select").change(function () {
+            OnCriteriaPC(0);
+        });
+        $(document).on("change",".MachineName,.remark,.siteCongTrinh", function () {
+            var idMachine = $(this).parent().parent().attr("id");
+            var idjquery = "#" + idMachine;
+
+            var maChineName = $(idjquery + " .MachineName").val();
+            var siteCongTrinh = $(idjquery + " .siteCongTrinh").val();
+            var remark = $(idjquery + " .remark").val();
+            $.ajax({
+                type: "POST",
+                url: '/QLMayChamCong/CapNhatMayCC/',
+                data: {
+                    idMachine: idMachine,
+                    maChineName: maChineName,
+                    remark: remark,
+                    siteCongTrinh: siteCongTrinh
+                },
+                success: function (result) {
+
+                    if (result == 1) {
+                        Alert.success("Cập nhật thành công máy chấm công: " + maChineName, "Thông báo", { displayDuration: 2000 });
+
+
+                    }
+                    else {
+
+                        Alert.error("Có lỗi xãy ra trong quá trình xử lý.", "Thông báo", { displayDuration: 2000 });
+                    }
+                }
+            });
+
+
+        });
+        $(document).on("click", ".btnSaveMayCC", function () {
+            var selected = $(this).parents('tr')[0];
+            var machineId = $(selected).find('[name="machineId"]').val();
+            var    MachineName = $(selected).find('[name="MachineName"]').val();
+            var    siteCongTrinh = $(selected).find('[name="siteCongTrinh"]').val();
+            var    typeMaChine = $(selected).find('[name="typeMaChine"]').val();
+            var     remark = $(selected).find('[name="remark"]').val();
+            if (machineId == "" || MachineName == "" || siteCongTrinh == "" || typeMaChine == "") {
+                Alert.error("Vui lòng nhập đầy đủ các trường.", "Thông báo", { displayDuration: 2000 });
+                return false;
+            }
+            bootbox.confirm("Bạn có chắc chắn lưu không?", function (result) {
+              
+                if (result == true || result == "true") {
+                    $.ajax({
+                        type: "POST",
+                        url: '/QLMayChamCong/ThemMoiMayCC/',
+                        data: {
+                            idMachine: machineId,
+                            maChineName: MachineName,
+                            remark: remark,
+                            siteCongTrinh: siteCongTrinh,
+                            typeMaChine: typeMaChine
+                        },
+                        success: function (result) {
+
+                         
+                                Alert.success("Cập nhật thành công máy chấm công: " + MachineName, "Thông báo", { displayDuration: 2000 });
+
+
+                         
+                        }
+                    });
+                    
+                }
+            });
+            
+        })
+        $(".ImportMayCCToHR").click(function () {
+            bootbox.confirm("Import máy chấm công?", function (result) {
+                if (result) {
+                    $.ajax({
+                        type: "POST",
+                        url: '/QLMayChamCong/InportMayCCToHR/',
+                        data: {
+
+                        },
+                        success: function (result) {
+
+                            if (result == 1) {
+                                Alert.success("Cập nhật thành công", "Thông báo", { displayDuration: 2000 });
+
+
+                            }
+                            else {
+
+                                Alert.error("Có lỗi xãy ra trong quá trình xử lý.", "Thông báo", { displayDuration: 2000 });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        $(".ImportDuLieuChamCong").click(function () {
+            bootbox.confirm("Import dữ liệu quét vân tay?", function (result) {
+                if (result) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: '/QLMayChamCong/InportDuLieuQuetVanTay/',
+                        data: {
+
+                        },
+                        success: function (result) {
+
+                            if (result == 1) {
+                                Alert.success("Import dữ liệu thành công", "Thông báo", { displayDuration: 2000 });
+
+
+                            }
+                            else {
+
+                                Alert.error("Có lỗi xãy ra trong quá trình xử lý.", "Thông báo", { displayDuration: 2000 });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+    })
+   
+
+    function goSubmitNhomCV() {
+        $(".btnSaveNCV").hide();
+        var imageUrl = '<div align="center"><img src="/Content/Images/loading.gif "/></div>';
+
+        $(".infor_NhomCongViec").html(imageUrl).css('display', 'block');
+
+        $.post('@Url.Action("SaveCongTrinh")', ($('#frmNhomCongViec').serialize()), function (data) {
+            $(".btnSaveNCV").show();
+            $(".infor_NhomCongViec").html('');
+            Alert.success("Cập nhật thành công", "Thông báo", { displayDuration: 2000 });
+        });
+    }
+    function enterToSeacrh(event) {
+        if (event.keyCode == 13)
+            OnCriteriaPC(0);
+    }
+    function OnCriteriaPC(page) {
+        $("#pageCurrNew").val(page);
+        var maCongTrinh = $("#maCongTrinh").val();
+        var searchText = $('#pref-search').val().replace(/\ /g, '+');
+        var url = '@Url.Action("ViewIndex", "QLMayChamCong")' + "?searchString=" + searchText + "&maCongTrinh=" + maCongTrinh + "&_page=" + page;
+            var imageUrl = '<div  align="center"><img src="@Url.Content("~/Content/Images/loading.gif") "/></div>';
+
+        $('#contentMayCC').html('<tr><td colspan="12">' + imageUrl + '</td></tr>');
+            $('#contentMayCC').load(url, function () {
+               
+            });
+        }
+</script>
+<style>
+    .makeCustome tr td
+    {
+        border-left: 1px solid #ccc;
+    }
+
+    .makeCustome tr span.clsTieuDe
+    {
+        color: green;
+    }
+    
+    .pageActive, .pageCurrent:hover, .pageNext:hover, .pageLast:hover, .pageFirst:hover, .pagePrevious:hover
+    {
+        padding: 7px 11px;
+        background-color: #4D8AFF;
+        color: #FFFFFF;
+        display: inline-block;
+        border: 1px solid #80ABFF;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .pageCurrent, .pageNext, .pageLast, .pageFirst, .pagePrevious
+    {
+        padding: 7px 11px;
+        background-color: #fff;
+        display: inline-block;
+        border: 1px solid #80ABFF;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+</style>
+<div id="tabs" style="" class="ui-tabs">
+    <ul class="ui-tabs-nav">
+        <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+            <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active activeColorTab tabToggle">
+                <a href="#"><span><i class="fa fa-object-group" aria-hidden="true"></i>Danh sách máy chấm công</span></a>
+
+            </li>
+
+            <li class="ui-state-default ui-corner-top tabToggle">
+                <a href="#"><span><i class="fa fa-users" aria-hidden="true"></i>Danh sách công trình / VP</span></a></li>
+        </ul>
+
+    </ul>
+</div>
+<div id="container">
+    <div class="contentToggle">
+        <div id="filterPanel">
+            <table class="table table-condensed TableMobile TableHeaderMobile MinWithSelect">
+                <tbody>
+
+                    <tr class="background_tr">
+                        <td style="width: 15%"><b>Chọn công trình/VP</b></td>
+                        <td style="width: 35%">
+                            @Html.DropDownList("maCongTrinh", ViewBag.listSite as SelectList, new { @class = "form-control", style = "width: 100%" })
+                        </td>
+
+                        <td><b>Tìm kiếm</b></td>
+                        <td>
+                            <div style="display: inline-flex; width: 100%">
+                                <input type="text" class="form-control input-sm" style="width: 100%" id="pref-search" value="" onkeypress="enterToSeacrh(event)">
+                                <div style="float: right">
+                                    <button id="btnSearch" type="button" class="btn btn-primary btn-sm btnTimKiem" style="border: 1px double; margin-left: 5px">
+                                        <span class="glyphicon glyphicon-search"></span>Tìm kiếm
+                                    </button>
+                                </div>
+                            </div>
+
+                        </td>
+                        <td>
+                            <input type="button" class="btn btn-primary btn-sm ImportMayCCToHR" value="Import máy chấm công To HR" />
+                        </td>
+
+                    </tr>
+
+
+                </tbody>
+            </table>
+
+        </div>
+         <div id="noiDungCopy" style="display:none">
+             <table>
+    <tr>
+                        <td style="text-align: center">
+                           
+                        </td>
+                        <td>
+                             <input type="text" value="" class=" form-control" name="machineId"/>
+                        </td>
+                        <td>
+                            <input type="text" value="" class=" form-control" name="MachineName"/>
+                        </td>
+                        <td>
+                            <select class="form-control" name="siteCongTrinh">
+                                @{
+                            foreach (var item in LstCongTrinh)
+                            {
+                                    <option value="@item.siteId">
+                                        @item.siteName
+                                    </option>
+                            
+                                
+                            }
+                                }
+
+                            </select>
+                        </td>
+
+                        
+                            <td style="text-align:center">
+
+                            </td>
+
+
+                        <td style="text-align:center">
+                            <select id="typeMaChine" class="form-control" name="typeMaChine">
+                                <option value="1">Máy vào</option>
+                                <option value="2">Máy ra</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" value="" class=" form-control" name="remark" />
+                        </td>
+                        <td style="text-align: center">
+                            <button type="button" class="btn btn-success btn-xs btnSaveMayCC"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                            
+                            
+                                </td>
+
+                    </tr>
+                 </table>
+        </div>
+        <table class="table table-striped table-hover table-condensed" id="tbl-nhomMCC">
+            <thead>
+                <tr>
+                    <th>STT
+                    </th>
+                    <th>Mã máy
+                    </th>
+                    <th>Tên máy
+                    </th>
+                    <th>Tên công trường/VP.
+                    </th>
+                    <th>Trạng thái
+                    </th>
+
+
+                    <th>Loại máy
+                    </th>
+                    <th>ghi chú
+                    </th>
+                    <th>
+                         <button type="button" id="btnAddMCC" class="btn btn-primary btn-xs">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                </button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="contentMayCC">
+
+            </tbody>
+
+        </table>
+
+    </div>
+    <div class="contentToggle" style="display: none">
+        <div id="filterPanel2">
+            <table class="table table-condensed TableMobile TableHeaderMobile MinWithSelect">
+                <tbody>
+
+                    <tr class="background_tr">
+                        
+                       
+                        <td style="text-align:right">
+                            <button id="btnRefesh" type="button" class="btn btn-primary btn-sm" style="border: 1px double; margin-left: 5px">
+                                        <span class="glyphicon glyphicon-search"></span>Refresh
+                                    </button>
+                    <button class="btn btn-info btnAdd btnSubmit btnSaveNCV" type="button">Lưu </button>
+
+                        </td>
+
+                    </tr>
+
+
+                </tbody>
+            </table>
+
+        </div>
+        <div class="content_NhomCongViec">
+            <div class="infor_NhomCongViec" style="display: none"></div>
+            <form id="frmNhomCongViec" method="post">
+                <table id="tbl-nhomCV" class="table table-striped table-hover table-condensed makeCustome">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>siteId / siteName</th>
+
+                            <th>siteIP/ port</th>
+                            <th>loginName/pdw</th>
+
+                            <th>databaseName</th>
+                            <th>siteAddress</th>
+                            <th>remark</th>
+                            <th>Khác</th>
+                            <th>
+                                <button type="button" id="btnAddNVC" class="btn btn-primary btn-xs">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            if (LstCongTrinh != null && LstCongTrinh.Count > 0)
+                            {
+                                int i = 0;
+                                foreach (var item in LstCongTrinh)
+                                {
+                                    i++;
+                            <tr>
+                                <td style="text-align: center" class="setSizeSTT">@i</td>
+                                <td>
+                                    <div>
+                                        <span class="clsTieuDe">siteId:</span>
+                                        <span>
+                                            <input name="siteId"  class="form-control" value="@item.siteId"  /></span>
+                                    </div>
+                                    <span class="clsTieuDe">siteName:</span>
+                                    <span>
+                                        <input name="siteName"  class="form-control" value="@item.siteName"/>
+                                    </span>
+                                </td>
+
+
+                                <td><span class="clsTieuDe">siteIP:</span>
+                                    <input name="siteIP"  class="form-control" value="@item.siteIP"/>
+                                    <span class="clsTieuDe">port:</span>
+                                    <input name="port"  class="form-control" value="@item.port"/>
+
+                                </td>
+
+                                <td><span class="clsTieuDe">loginName:</span>
+                                    <input name="loginName"  class="form-control" value="@item.loginName"/>
+
+                                    <span class="clsTieuDe">pdw:</span>
+                                    <input name="pdw"  class="form-control" value="@item.pdw"/>
+                                </td>
+
+                                <td>
+
+                                    <input name="databaseName"  class="form-control" value="@item.databaseName"/></td>
+                                <td>
+
+                                    <input name="siteAddress"  class="form-control" value="@item.siteAddress"/></td>
+                                <td>
+
+                                    <input name="remark"  class="form-control" value="@item.remark"/></td>
+                                <td>
+
+                                    @item.nguoiLap<br />
+                                    @item.ngayLap
+
+                                </td>
+                                <td style="text-align: center">
+                                    <button type="button" class="btn btn-warning btn-xs btnXoa"><span class="glyphicon glyphicon-minus"></span></button>
+                                </td>
+                            </tr>
+                                }
+
+                            }
+                     
+                            
+                        }
+
+                    </tbody>
+
+                </table>
+                <div style="width: 100%; text-align: right">
+                    <button class="btn btn-info btnAdd btnSubmit btnSaveNCV" type="button">Lưu </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

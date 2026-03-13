@@ -1,0 +1,340 @@
+﻿@using BatDongSan.Models.QuanLyCaLamViec
+@model PhanCaModel
+@{
+    ViewBag.Title = "Details";
+    
+}
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/moment.min.js"></script>
+<script src="~/Scripts/vi.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/additional-methods.min.js"></script>
+<script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+<script src="~/Scripts/autoNumeric.js"></script>
+<script src="~/Scripts/batdongsan.validate.js"></script>
+<link rel="stylesheet" href="~/Content/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" href="~/Content/summernote/summernote.css" />
+<script src="~/Content/summernote/summernote.js"></script>
+<script src="~/Scripts/batdongsan.uploadfile.js"></script>
+
+<style>
+    .anchor-delete {
+        font-style: italic;
+        color: #389bf1;
+    }
+
+    .numberinputInt, .numberinput {
+        text-align: right;
+    }
+
+    .parentDCLColor {
+        background-color: #cfda22;
+        font-size: 15px;
+    }
+</style>
+
+<script>
+    $(function () {
+        $(".datepicker").datetimepicker({
+            locale: 'vi',
+            format: 'HH:mm'
+        });
+        $(".btnSubmit").click(function () {
+            var form = document.getElementById('form-submit');
+            if (form.checkValidity()) {
+                var F = $("#form-submit");
+                F.action = '@Url.Action("Details", "CaLamViec")';
+                F.submit();
+            }
+        });
+
+        $(".btnTroVe2").click(function () {
+            location.href = "@Url.Action("Index", "CaLamViec")";
+        });
+
+        $(".btnXacNhan").click(function () {
+            bootbox.confirm("Bạn có muốn xác nhận ca làm việc này không?", function (result) {
+                if (result) {
+                    $.ajax({
+                        url: "@Url.Action("XacNhanCaLamViec", "CaLamViec")" + "?maCaLamViec=" + $("#MaCa").val(),
+                        type: "POST",
+                        dataType: "json",
+                        success: function (result) {
+                            if (result == "") {
+                                Alert.success("Cập nhật thành công.", "Thông báo", { displayDuration: 4000 });
+                                window.location.reload();
+                            }
+                            else {
+                                Alert.error("Xác nhận thất bại.", "Thông báo", { displayDuration: 4000 });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $('#btnNhanVien, #btnSearch').click(function () {
+            var searchString = $("#searchString").val();
+            var url = '@Url.Action("GetMoreUsers", "CaLamViec")' + "?nhomUser=" + "&searchString=" + searchString;
+            beginPaging();
+            $('#filter-panel .panel-default').load(url, function () {
+                successPaging();
+            });
+        });
+
+        $("#myModal").on("hidden.bs.modal", function () {
+            $("#filter-panel .panel-default").html("");
+        });
+
+        $(document).on('click', '.anchor-delete', function () {
+            var parentMaPhieu = $(this).closest('tr').attr('class');
+            $(this).closest('tr').remove();
+            resetSoThuTu();
+        });
+
+        $(document).on("click", ".sanphamcb", function () {
+            if (false == $(this).prop("checked")) { //if this item is unchecked
+                $("[name=check-all]").prop('checked', $(this).prop("checked")); //change "select all" checked status to false
+            }
+        });
+
+
+        $(document).on("click", "[name=check-all]", function () {
+            $('#filter-panel input:checkbox').not(this).prop('checked', this.checked);
+        });
+
+
+
+    });
+
+    function enterToSeacrh(event) {
+        if (event.keyCode == 13)
+            $("#btnSearch").click();
+    }
+
+    function beginPaging(args) {
+        // Animate         
+        $('#content').fadeOut('fast');
+    }
+
+    function successPaging() {
+        // Animate        
+        $('#content').fadeIn('fast');
+    }
+
+    function DeleteRow(id_tbody, index, sTT) {
+        var table = document.getElementById(id_tbody);
+        var maNCC = $('#' + id_tbody + ' tr:eq(' + index + ')').find("a").html();
+        var tenNCC = $('#' + id_tbody + ' tr:eq(' + index + ')').find("td:eq(" + 2 + ")").html();
+
+        table.deleteRow(index);
+
+        for (var i = 0; i < table.rows.length; i++) {
+            if (sTT == null)
+                $('#' + id_tbody + ' tr:eq(' + i + ')').find("td:last").html("<a href='javascript:void(0);' onclick='DeleteRow(\"" + id_tbody + "\"," + i + ")'>Xóa</a>");
+            else {
+                $('#' + id_tbody + ' tr:eq(' + i + ')').find("td:first").html(i + 1);
+                $('#' + id_tbody + ' tr:eq(' + i + ')').find("td:last").html("<a href='javascript:void(0);' onclick='DeleteRow(\"" + id_tbody + "\"," + i + ", true)'>Xóa</a>");
+            }
+        }
+    }
+
+    function ChonNhanVien() {
+        var chks = document.getElementsByName("ChekChonSPK");
+        var table = document.getElementById("tbody");
+        var maNhanVienPopUps = document.getElementsByName("maNhanVienPopUp");
+        var hoTenNhanVienPopUps = document.getElementsByName("tenNhanVienPopUp");
+        var tenChucDanhPopUps = document.getElementsByName("tenChucDanhPopUp");
+
+        var idTbody = "tbody";
+        var rowsLength = $("#tbody").find('tr').length;
+        for (var i = 0; i < chks.length; i++) {
+            if (chks.item(i).checked) {
+                if (checkMaNhanVien(maNhanVienPopUps.item(i).value) == "2") {
+                    var idRandom = Math.floor(Math.random() * 10000);
+                    var stringBuilder = "";
+                    rowsLength++;
+                    stringBuilder += "<tr id='" + idRandom + "'>";
+                    stringBuilder += "<td class='sothutu' align='center'>" + rowsLength + "</td>";
+                    stringBuilder += "<td style='text-align:left'><a style='color:#519ee5' href='/NhanVien/Details/'" + maNhanVienPopUps.item(i).value + "' target='_blank'>" + maNhanVienPopUps.item(i).value + "</a></br><i class='fa fa-user'></i>" + hoTenNhanVienPopUps.item(i).value + "<input name='maNhanVien' id='maNhanVien" + idRandom + "' style='text-align:right' class='form-control' type='hidden' value='" + maNhanVienPopUps.item(i).value + "' style='width:100%;'  alt='" + idRandom + "'/>";
+                    stringBuilder += "</td>";
+                    stringBuilder += "<td style='text-align:left'><i class='fa fa-ticket'></i>" + tenChucDanhPopUps.item(i).value + "<input name='tenChucDanh' id='tenChucDanh" + idRandom + "' style='text-align:right' class='form-control' type='hidden' value='" + tenChucDanhPopUps.item(i).value + "' style='width:100%;'  alt='" + idRandom + "'/>";
+                    stringBuilder += "</td>";
+                    stringBuilder += "<td align ='center'><a href='javascript:void(0);' class='anchor-delete'><i class='fa fa-times-circle btnCloseX'></i></a></td>";
+                    stringBuilder += "</tr>";
+                    if ($("#tbody tr").length > 0) {
+                        $("#tbody").find("tr").end().append(stringBuilder)
+                    } else {
+                        $("#tbody").html(stringBuilder);
+                    }
+                }
+            }
+        }
+    }
+
+
+    function checkMaNhanVien(maNhanVienPopUp) {
+        var flag = "2";
+        $.each($("[name='maNhanVien']"), function (i) {
+            if ($(this).val() == maNhanVienPopUp) {
+                flag = "1";
+            }
+        });
+        return flag;
+    }
+
+    function resetSoThuTu() {
+        $('#tbl-users  .sothutu').each(function (i) {
+            $(this).html(i + 1);
+        })
+    }
+</script>
+<form class="form-horizontal" method="post" role="form" id="form-submit" enctype="multipart/form-data">
+    <div id="container">
+        <fieldset>
+            <legend style="display: inline">Chi tiết ca làm việc</legend>
+            <div class="panel with-nav-tabs panel-primary">
+                <table style="position: relative" class="table table-striped table-hover table-condensed TableMobileChild">
+                    <tr>
+                        <td class="tdtitle">Mã ca                       
+                        </td>
+                        <td>
+                            @Model.MaCa
+                            @Html.HiddenFor(model => model.MaCa, new { @class = "form-control", @required = "true", @readonly = "readonly" })
+                        </td>
+                        <td class="tdtitle">Tên ca                       
+                        </td>
+                        <td>
+                            @Model.TenCa
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdtitle col-md-2">Thời gian bắt đầu                      
+                        </td>
+                        <td class="col-md-4 setTdDestok">
+                            @string.Format("{0:HH:mm}", Model.ThoiGianTu)
+                        </td>
+                        <td class="tdtitle col-md-2">Thời gian kết thúc
+                        </td>
+                        <td class="col-md-4">
+                            @string.Format("{0:HH:mm}", Model.ThoiGianDen)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdtitle">Ghi chú                        
+                        </td>
+                        <td colspan="3">
+                            @Html.Raw(Model.GhiChu)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div id="tabs" style="width: 30%; height: auto; border: none; float: left; box-sizing: border-box; overflow: hidden; clear: none;" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+                                <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+                                    <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active ">
+                                        <a><span><i class="fa fa-yelp" aria-hidden="true"></i>Thông tin nhân viên</span></a></li>
+                                </ul>
+                            </div>
+                            <div style="float: right">
+                                <button class="btn btn-info" type="button" data-toggle="modal" id="btnNhanVien" data-target="#myModal">Thêm nhân viên</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div id="containerNhanVien">
+                                <table class="table table-striped table-hover table-condensed  TableMobile IndexNhanVienPNP" id="tbl-users">
+                                    <thead>
+                                        <tr id="trtop">
+                                            <th>STT</th>
+                                            <th>Nhân viên</th>
+                                            <th>Chức danh</th>
+                                            <th style="width: 40px"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody">
+                                        @{
+                                            int stt = 0;
+                                            int xoaSo = 0;
+                                            var danhSach = ViewBag.ListNhanVien as List<PhanCaNhanVienModel>;
+                                            if (danhSach != null && danhSach.Count > 0)
+                                            {
+                                                foreach (var item in danhSach)
+                                                {
+                                                    stt = stt + 1;
+                                            <tr>
+                                                <td class="sothutu" style="text-align: center">@stt</td>
+                                                <td>
+                                                    <input name="maNhanVien" type="hidden" value="@item.MaNhanVien"><a style="color:#519ee5" href="@Url.Action("Details", "NhanVien", new { id = item.MaNhanVien })" target="_blank">@item.MaNhanVien</a><br>
+                                                    <i class="fa fa-user" aria-hidden="true"></i>@item.HoTenNhanVien</td>
+                                                <td>
+                                                    <i class="fa fa-ticket" aria-hidden="true"></i>@item.TenChucDanh
+                                                </td>
+                                                <td style="text-align: center">
+                                                    <a href='javascript:void(0);' class='anchor-delete'><i class='fa fa-times-circle btnCloseX'></i></a>
+                                                </td>
+                                            </tr>
+
+                                             
+                                                }
+                                            }}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+
+
+                <div style="padding: 5px; float: right">
+                    @if (Model.TrangThai == 0)
+                    {                        
+                        <button class="btn btn-info btnXacNhan" type="button">Xác nhận </button>
+                    }
+                    @if (Model.TrangThai == 1)
+                    {
+                        <button class="btn btn-info btnSubmit btnThemeSave" type="button">Lưu </button>
+                    }
+                    <button class="btn btn-info btnTroVe2" type="button">Trở về </button>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</form>
+
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="container" style="width: 98%">
+                    <div class="row">
+                        <div style="position: relative">
+                            <input type="text" id="searchString" class="form-control" style="padding-right: 30px; border-radius: 50px" placeholder="Search" onkeyup="enterToSeacrh(event)">
+                            <i class="fa fa-search" id="btnSearch" style="position: absolute; cursor: pointer; top: 0px; right: 0px;"></i>
+                        </div>
+                        <div id="filter-panel" class="filter-panel" style="padding-top: 10px;">
+                            <div class="panel panel-default" style="border: none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="ChonNhanVien()">
+                    <span class="glyphicon glyphicon-ok"></span>&nbsp;Đồng ý
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+

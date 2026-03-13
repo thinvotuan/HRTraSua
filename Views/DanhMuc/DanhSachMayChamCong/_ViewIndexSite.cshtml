@@ -1,0 +1,69 @@
+﻿@using BatDongSan.Models.DBChamCong
+@model IList<Sys_SiteConection>
+
+
+            @{
+                var danhSach = ViewBag.ListSite as List<Sys_SiteConection>;
+                if (danhSach != null)
+                {
+                    int stt = 1;
+                    foreach (var data in danhSach)
+                    {
+                        
+                
+                <tr>
+                    <td style="text-align:center">
+                        @stt
+                    </td>
+                    <td>
+                       @data.siteId
+                    </td>
+                    <td style="color:green">
+                        @data.siteName
+                    </td>
+                    <td>
+                        @data.siteAddress
+                    </td>
+                    <td>
+                        @data.siteIP
+                    </td>
+                    <td>
+                        @data.port
+                    </td>
+                     <td>
+                        @data.databaseName
+                    </td>
+                    <td>
+                        @data.loginName
+                    </td>
+                    <td>
+                        @data.pdw
+                    </td>
+                   
+                     <td>
+                        @data.remark
+                    </td>
+                    <td>
+                        @{
+                            if(data.ngayLap != null)
+                            {
+                        <i class="fa fa-user" aria-hidden="true"></i>@data.nguoiLap
+                        <br /><i class="fa fa-clock-o" aria-hidden="true"></i>@String.Format("{0: dd/MM/yyyy}", data.ngayLap)
+                        }
+                        }
+                            </td>
+                   
+
+                   
+                    <td style="text-align:center; width:150px;">
+                         <button class="btn btn-warning btn-xs btnEdit btnEditSite" type="button" data-toggle="modal" data-target="#customModalSite" value="@data.siteId">Sửa</button>
+            <button class="btn btn-warning btn-xs btnDelete btnDeleteSite" type="button" value="@data.siteId">Xóa</button>
+                    </td>
+
+                   
+                </tr>
+                        stt++;
+                    }
+                }
+            }
+        

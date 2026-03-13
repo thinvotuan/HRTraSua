@@ -1,0 +1,166 @@
+﻿@using BatDongSan.Models.NhanSu
+@{
+    ViewBag.Title = "Lịch sử nhân viên";
+    Layout = "~/Views/Shared/_popup.cshtml";
+
+    var dataPhongBans = ViewBag.lichSuPhongBan as List<sp_NS_LichSuNhanVienResult>;
+    var dataChucDanhs = ViewBag.lichSuChucDanh as List<sp_NS_LichSuNhanVienResult>;
+    var dataPhanCas = ViewBag.lichSuPhanCa as List<sp_NS_LichSuNhanVienResult>;
+}
+<style>
+    #contentTimeLine .boxTimeLine
+    {
+        max-width: 500px;
+        width: 100%;
+    }
+
+        #contentTimeLine .boxTimeLine .TLRight
+        {
+            max-width: 450px;
+            width: 100%;
+        }
+
+    .box_lichsuCD
+    {
+        margin-top: 10px;
+        
+        padding: 10px 0px;
+    }
+
+    .box_lichsuPC
+    {
+        margin-top: 10px;
+    }
+    .wrapper_lichSuNhanVien tr td,.wrapper_lichSuNhanVien tr th
+    {
+        width:30%;
+    }
+</style>
+
+<div id="container">
+    <div class="wrapper_lichSuNhanVien">
+        <div class="box_lichsuPB">
+            <div class="title">
+                <div class="form-group bs-callout bs-callout-info" style="overflow: hidden; margin-bottom: 1px;">
+                    <h4 class="col-md-12 tieudeGroup" style="color: #1b809e; margin: 0px;"><b></b>
+                        Lịch sử phòng ban <span style="color: red; font-style: italic"></span></h4>
+                </div>
+            </div>
+            <div class="content_LSPB">
+                <table class="table table-striped table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Họ tên</th>
+
+                            <th>Ngày chuyển</th>
+                            <th>Phòng ban</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @{
+                            if (dataPhongBans != null)
+                            {
+                                foreach (var item in dataPhongBans)
+                                {
+                            <tr>
+                                <td>@item.hoTen</td>
+                                <td  style="text-align:center">@String.Format("{0: dd/MM/yyyy HH:mm:ss}", item.ngayChuyenDen)</td>
+                                <td>@item.tenPhongBanChuyenDen</td>
+                            </tr>
+                                }
+                            }
+                        }
+
+                    </tbody>
+                </table>
+
+
+
+            </div>
+        </div>
+        <div class="box_lichsuCD">
+            <div class="title">
+                <div class="form-group bs-callout bs-callout-info" style="overflow: hidden; margin-bottom: 1px;">
+                    <h4 class="col-md-12 tieudeGroup" style="color: #1b809e; margin: 0px;"><b></b>
+                        Lịch sử chức danh <span style="color: red; font-style: italic"></span></h4>
+                </div>
+            </div>
+            <div class="content_LSPB">
+                <table class="table table-striped table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Họ tên</th>
+
+                            <th>Ngày chuyển</th>
+                            <th>Chức danh</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @{
+                            if (dataChucDanhs != null)
+                            {
+                                foreach (var item in dataChucDanhs)
+                                {
+                            <tr>
+                                <td>@item.hoTen</td>
+                                <td  style="text-align:center">@String.Format("{0: dd/MM/yyyy HH:mm:ss}", item.ngayChuyenDen)</td>
+                                <td>@item.tenPhongBanChuyenDen</td>
+                            </tr>
+                                }
+                            }
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="box_lichsuPC">
+            <div class="title">
+                <div class="form-group bs-callout bs-callout-info" style="overflow: hidden; margin-bottom: 1px;">
+                    <h4 class="col-md-12 tieudeGroup" style="color: #1b809e; margin: 0px;"><b></b>
+                        Lịch sử phân ca <span style="color: red; font-style: italic"></span></h4>
+                </div>
+            </div>
+            <div class="content_LSPB">
+
+                <table class="table table-striped table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Họ tên</th>
+
+                            <th>Ngày chuyển</th>
+                            <th>Phân ca</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @{
+                            if (dataPhanCas != null)
+                            {
+                                foreach (var item in dataPhanCas)
+                                {
+                            <tr>
+                                <td>@item.hoTen</td>
+                                <td style="text-align:center">@String.Format("{0: dd/MM/yyyy HH:mm:ss}", item.ngayChuyenDen)</td>
+                                <td>@item.tenPhongBanChuyenDen</td>
+                            </tr>
+                                }
+                            }
+                        }
+
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+

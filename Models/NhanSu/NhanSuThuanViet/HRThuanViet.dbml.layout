@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="HRThuanViet">
+  <DataContextMoniker Name="/HRThuanVietDataContext" />
+  <nestedChildShapes>
+    <classShape Id="ba6725a2-0527-436a-8414-600bc54e78cf" absoluteBounds="2.125, 2.5, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/HRThuanVietDataContext/tbl_NS_ChamCong" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ae27fcab-f75f-466b-8385-582d7b0efa05" absoluteBounds="2.14, 2.96, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

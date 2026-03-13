@@ -1,0 +1,28 @@
+﻿@using BatDongSan.Models.NhanSu
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+    int stt = 1;
+    var lstThangMuoi = ViewBag.lstThangMuoi as List<tbl_NS_NhanVien_Thuong>;
+}
+@{
+    foreach (var item in lstThangMuoi){                             
+   
+    <tr>
+        <td align="center">
+            @(stt++)
+        </td>
+        
+        <td>@item.maNhanVien<br /><i class="fa fa-user" aria-hidden="true"></i>@item.tenNhanVien</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.00}", item.motThangLuong)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.00}", item.thuong17Trieu)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.00}", item.diemKPI)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.00}", item.thuongKPI)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.00}", item.tong)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.00}", item.thueTNCN)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.00}", item.thue10)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.00}", item.thucNhan)</td>
+        <td style="text-align: right">@String.Format("{0:###,##0.00}", item.chuyenDot1??0)</td>
+         <td style="text-align: right">@String.Format("{0:###,##0.00}", item.chuyenDot2??0)</td>
+    </tr>
+}}

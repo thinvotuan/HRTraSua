@@ -1,0 +1,87 @@
+﻿@using BatDongSan.Models.QuanLyCaLamViec
+@model PhanCaModel
+@{
+    ViewBag.Title = "Create";
+    
+}
+
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/moment.min.js"></script>
+<script src="~/Scripts/vi.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/additional-methods.min.js"></script>
+<script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+<script src="~/Scripts/autoNumeric.js"></script>
+<script src="~/Scripts/batdongsan.validate.js"></script>
+<link rel="stylesheet" href="~/Content/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" href="~/Content/summernote/summernote.css" />
+<script src="~/Content/summernote/summernote.js"></script>
+<script src="~/Scripts/batdongsan.uploadfile.js"></script>
+<script>
+    $(function () {
+        $(".datepicker").datetimepicker({
+            locale: 'vi',
+            format: 'HH:mm'
+        });
+        $(".btnSubmit").click(function () {
+            var form = document.getElementById('form-submit');
+            if (form.checkValidity()) {
+                var F = $("#form-submit");
+                F.action = '@Url.Action("Create", "CaLamViec")';
+                F.submit();
+            }
+        });
+
+        $(".btnTroVe2").click(function () {
+            location.href = "@Url.Action("Index", "CaLamViec")";
+        });
+    });
+</script>
+<form class="form-horizontal" method="post" role="form" id="form-submit" enctype="multipart/form-data">
+    <div id="container">
+        <fieldset>
+            <legend style="display: inline">Thêm mới ca làm việc</legend>
+            <div class="panel with-nav-tabs panel-primary">
+                <table style="position: relative" class="table table-striped table-hover table-condensed TableMobileChild">
+                    <tr>
+                        <td class="tdtitle">Mã ca                       
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => model.MaCa, new { @class = "form-control", @required = "true", @readonly = "readonly" })
+                        </td>
+                        <td class="tdtitle">Tên ca                       
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => model.TenCa, new { @class = "form-control", @required = "true" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdtitle col-md-2">Thời gian bắt đầu                      
+                        </td>
+                        <td class="col-md-4 setTdDestok">
+                            @Html.TextBoxFor(model => model.ThoiGianTu, new { @class = "form-control datepicker", @required = "required" })
+                        </td>
+                        <td class="tdtitle col-md-2">Thời gian kết thúc
+                        </td>
+                        <td class="col-md-4">
+                            @Html.TextBoxFor(model => model.ThoiGianDen, new { @class = "form-control datepicker", @required = "required" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tdtitle">Ghi chú                        
+                        </td>
+                        <td colspan="3">
+                            @Html.TextAreaFor(model => model.GhiChu, new { @class = "form-control", @rows = "3" })
+                        </td>
+                    </tr>
+                </table>
+
+                <div style="padding: 5px; float: right">
+                    <button class="btn btn-info btnSubmit btnThemeSave" type="button">Lưu </button>
+                    <button class="btn btn-info btnTroVe2" type="button">Trở về </button>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</form>
+

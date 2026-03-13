@@ -1,0 +1,570 @@
+﻿@using BatDongSan.Models.NhanSu
+@{
+    ViewBag.Title = "Index";
+
+    string numberFormat = "#,###,###,##0.####";
+   
+}
+<style>
+    #maPhieuTinNhiem {
+        border: none;
+        background: transparent !important;
+        text-align: center;
+    }
+
+    header, .headerDestopk {
+        z-index: 1;
+    }
+
+        header:hover, .headerDestopk:hover {
+            z-index: 2;
+        }
+</style>
+<script type="text/javascript">
+
+    $().ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        $(".mouseOver2 img.smallImg").hover(function () {
+            $(".Img1").remove();
+
+            var valImg = $(this).attr("src");
+            $(this).after('<img src="' + valImg + '" class="Img1">');
+
+
+
+        });
+        $(".titleBuoc").html("Bước 2: Thực hiện đánh giá nhân viên đã chọn");
+        //alert("edit");
+        $(".btnBlack").click(function () {
+            $(".btnBlack").hide();
+            $("#Loadding,.heThongDangXuLy").show();
+            $(".ShowFinish").hide();
+
+            $("#Finishing,.LuuThanhCong").show();
+
+
+            //var Url = '@Url.Action("Edit/", "DanhGiaTinNhiem")';
+            // $('#CreateDanhGia').load(Url, function () {
+            $("#Loadding,.heThongDangXuLy").hide(); $("#Finishing,.LuuThanhCong").hide();
+            $(".ShowFinish").show();
+            //Tro ve
+            $(".titleBuoc").html("Bước 1: Chọn nhân viên đánh giá");
+            $.post('@Url.Action("UpdateBuocDuyet")', function (data) {
+                $(".btn_wrapper_line").show();
+                $("#DanhSach").addClass("setActiveDiv");
+                $("#CreateDanhGia").removeClass("setActiveDiv");
+            });
+            //End
+            //   });
+
+
+
+        });
+
+
+
+
+        setTimeout(function () { $("#divMsg").hide() }, 5000);
+        $(".diem").bind("keyup", function () {
+
+            if ($(this).val() > 10)
+                $(this).val(10);
+            var maNV = $(this).attr("alt").trim();
+            var tong1 = getNumber($("#" + maNV + "_xepLoai_1").val()) * 1;
+            var tong2 = getNumber($("#" + maNV + "_xepLoai_2").val()) * 2;
+            var tong3 = getNumber($("#" + maNV + "_xepLoai_3").val()) * 2;
+            var tong4 = getNumber($("#" + maNV + "_xepLoai_4").val()) * 1.5;
+            var tong5 = getNumber($("#" + maNV + "_xepLoai_5").val()) * 1;
+            var tong6 = getNumber($("#" + maNV + "_xepLoai_6").val()) * 3;
+            var tong7 = getNumber($("#" + maNV + "_xepLoai_7").val()) * 1.5;
+            var tongDiem = 0;
+            var heSo = 0;
+            if (tong1 > 0) {
+                heSo += 1;
+                tongDiem += tong1;
+            }
+            if (tong2 > 0) {
+                heSo += 2;
+                tongDiem += tong2;
+            }
+            if (tong3 > 0) {
+                heSo += 2;
+                tongDiem += tong3;
+            }
+            if (tong4 > 0) {
+                heSo += 1.5;
+                tongDiem += tong4;
+            }
+            if (tong5 > 0) {
+                heSo += 1;
+                tongDiem += tong5;
+            }
+            if (tong6 > 0) {
+                heSo += 3;
+                tongDiem += tong6;
+            }
+            if (tong7 > 0) {
+                heSo += 1.5;
+                tongDiem += tong7;
+            }
+
+            if (tongDiem == 0) {
+                $("#" + maNV + "_diemTong").val(0);
+            }
+            else {
+                $("#" + maNV + "_diemTong").val(parseFloat(tongDiem / heSo).toFixed(2));
+            }
+        });
+        // Update when change 
+        $(".diem").bind("change", function () {
+            if ($(this).val() > 10)
+                $(this).val(10);
+            var maNV = $(this).attr("alt").trim();
+            var TenNV = $(this).attr("altHoTen").trim();
+            var tong1 = getNumber($("#" + maNV + "_xepLoai_1").val());
+            var tong2 = getNumber($("#" + maNV + "_xepLoai_2").val());
+            var tong3 = getNumber($("#" + maNV + "_xepLoai_3").val());
+            var tong4 = getNumber($("#" + maNV + "_xepLoai_4").val());
+            var tong5 = getNumber($("#" + maNV + "_xepLoai_5").val());
+            var tong6 = getNumber($("#" + maNV + "_xepLoai_6").val());
+            var tong7 = getNumber($("#" + maNV + "_xepLoai_7").val());
+            var tongDiem = getNumber($("#" + maNV + "_diemTong").val()).toFixed(2);
+            var url = '@Url.Action("CapNhatDiemNVDanhGia", "DanhGiaTinNhiem")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: {
+                    maNhanVien: maNV,
+                    tong1: tong1,
+                    tong2: tong2,
+                    tong3: tong3,
+                    tong4: tong4,
+                    tong5: tong5,
+                    tong6: tong6,
+                    tong7: tong7,
+                    tongDiem: tongDiem
+                },
+                success: function (result) {
+
+                    if (result == "true") {
+                        Alert.success("Đã cập nhật đánh giá nhân viên: " + TenNV, "Thông báo", { displayDuration: 4000 });
+
+                    }
+                    else {
+                        Alert.success("Có lỗi xãy ra trong quá trình xử lý.", "Thông báo", { displayDuration: 4000 });
+                        location.reload();
+                    }
+                }
+            });
+        });
+        // cap nhat nhan xet
+        $(".txtNhanXet").bind("change", function () {
+            var txtNhanXet = $(this).val();
+            var maNhanVien = $(this).parent().attr("attrNV");
+            var TenNV = $(this).parent().attr("altHoTen");
+
+            var url = '@Url.Action("CapNhatNhanXetNVDanhGia", "DanhGiaTinNhiem")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: {
+                    maNhanVien: maNhanVien,
+                    txtNhanXet: txtNhanXet
+                },
+                success: function (result) {
+
+                    if (result == "true") {
+                        Alert.success("Đã cập nhật nhận xét nhân viên: " + TenNV, "Thông báo", { displayDuration: 4000 });
+
+                    }
+                    else {
+                        Alert.success("Có lỗi xãy ra trong quá trình xử lý.", "Thông báo", { displayDuration: 4000 });
+                        location.reload();
+                    }
+                },
+                error: function (result) {
+                    Alert.success("Có lỗi xãy ra trong quá trình xử lý.", "Thông báo", { displayDuration: 4000 });
+                    location.reload();
+                }
+            });
+        });
+    });
+
+    function checkForm() {
+        var flag = true;
+        //            if (isEmpty($("#Name"), ""))
+        //                flag = false;
+        return flag;
+    }
+
+    function ValidateKeypress(numcheck, e) {
+        var keynum, keychar, numcheck;
+        if (window.event) {//IE
+            keynum = e.keyCode;
+        }
+        else if (e.which) {// Netscape/Firefox/Opera
+            keynum = e.which;
+        }
+        if (keynum == 8 || keynum == 127 || keynum == null || keynum == 9 || keynum == 0 || keynum == 13) return true;
+        keychar = String.fromCharCode(keynum);
+        var result = numcheck.test(keychar);
+        return result;
+    }
+    function moveScroll() {
+        var scroll = $(window).scrollTop();
+        var header_top = $("header").height();
+
+        var anchor_top = $("#gridSource").offset().top;
+        var anchor_bottom = $("#bottom_anchor").offset().top;
+        if (scroll > anchor_top && scroll < anchor_bottom) {
+            clone_table = $("#clone");
+            if (clone_table.length == 0) {
+                clone_table = $("#gridSource").clone();
+                clone_table.attr('id', 'clone');
+                clone_table.css({
+                    position: 'fixed',
+                    'pointer-events': 'none',
+                    top: 0,
+
+                });
+                clone_table.width($("#gridSource").width());
+                $("#table-container").append(clone_table);
+                $("#clone").css({ visibility: 'hidden' });
+                $("#clone thead").css({ visibility: 'visible' });
+            }
+        } else {
+            $("#clone").remove();
+        }
+    }
+    $(window).scroll(moveScroll);
+
+
+    function HoanThanhDanhGia() {
+        bootbox.confirm("Khi xác nhận đều này, phiếu đánh giá của bạn sẽ không được hiệu chỉnh.\nBạn có chắc chắn hoàn thành đánh giá này không?", function (result) {
+            if (result) {
+
+                $("#Loadding,.heThongDangXuLy").show(); $(".ShowFinish").hide();
+                $.ajax({
+                    type: "POST",
+                    url: "/DanhGiaTinNhiem/HoanThanhDanhGia",
+                    data: {
+
+                    },
+
+                    success: function (result) {
+                        if (result == "true") {
+                            bootbox.alert("Cảm ơn bạn đã tham gia đánh giá!", function () {
+                                var Url = '@Url.Action("ThongBao/", "DanhGiaTinNhiem")';
+                                location.href = Url;
+                            });
+                        }
+                        else {
+                            Alert.error("Có lỗi xãy ra trong quá trình xử lý.", "Thông báo", { displayDuration: 2000 });
+                            location.reload();
+
+                        }
+                    },
+                    error: function (result) {
+
+                        Alert.error("Có lỗi xãy ra trong quá trình xử lý.", "Thông báo", { displayDuration: 2000 });
+                        location.reload();
+                    }
+                });
+
+            }
+        });
+    }
+</script>
+
+<style type="text/css">
+    #clone thead {
+        background: #bcd475;
+    }
+
+    .tooltip.top .tooltip-arrow {
+        border-top-color: #04828f;
+    }
+
+    .tooltip-inner {
+        background-color: #04828f;
+        opacity: 1;
+        border: 1px solid #fff;
+    }
+
+    .tooltip.top {
+        opacity: 1;
+    }
+
+    .hoverTen:hover, .hoverTen:hover b {
+        color: #04828f !important;
+    }
+
+    .heThongDangXuLy {
+        padding: 5px;
+        background: rgb(226, 144, 72);
+        border-radius: 3px;
+        color: #fff;
+        box-sizing: border-box;
+        margin: 5px auto;
+        line-height: 1.7;
+    }
+</style>
+<div style="float: left; color: #25828e; font-size: 14px;">
+    Hệ thống sẽ tự động cập nhật khi có sự thay đổi.
+</div>
+<form method="post" id="frmEdit">
+
+    <div class="myatable03 mtxxs">
+        <div class="heThongDangXuLy" style="display: none">
+            <div>
+                <img src="@Url.Content("~/Content/Images/loading.gif") " /><br />
+                <i>Hệ thống đang xử lý....</i>
+            </div>
+        </div>
+        <div class="LuuThanhCong" style="display: none">
+            <div>
+                <img src="/Content/Images/finishing.png "><br>
+                <i>Đã lưu thành công....</i>
+            </div>
+        </div>
+        <div style="float: right" class="ShowFinish">
+
+
+            <button type="button" class="btnBlack"><i class="fa fa-reply-all" aria-hidden="true"></i>Quay về</button>
+            @{if (ViewData["TrangThaiHoanThanh"] == "0")
+              {
+@*<button type="button" class="btnSave"><i class="fa fa-floppy-o" aria-hidden="true"></i>Lưu tạm</button>*@
+                <button type="button" class="btnHoanThanh" onclick="HoanThanhDanhGia()"><i class="fa fa-paper-plane" aria-hidden="true"></i>Hoàn thành đánh giá</button>
+              }}
+
+        </div>
+        <table style="width: 100%" class="WorkTicketForm TableMobileChild">
+            @{
+                var CapUser = Convert.ToInt32(ViewData["CapBacUser"]);
+                var lsCapBac = ViewData["lsCapBac"] as List<DanhSachNhanVienDaChonModel>; ;
+                var lsNV = ViewData["lsNhanVienPhongBan"] as List<DanhSachNhanVienDaChonModel>;
+                List<tbl_NS_TieuChi> lsTieuChi = ViewData["lsDanhMucTieuChi"] as List<tbl_NS_TieuChi>;
+                List<sp_NS_PhieuDanhGia_EditResult> lsDanhGiaChiTiet = ViewData["lsDanhGiaChiTiet"] as
+                                   List<sp_NS_PhieuDanhGia_EditResult>;
+            }
+            <tr style="display: none">
+
+                <td colspan="4">
+                    @Html.TextBox("maPhieuTinNhiem", lsDanhGiaChiTiet.Select(d => d.maPhieuDanhGia).FirstOrDefault(), new { @readonly = "readonly" })
+                    @Html.Hidden("id", lsDanhGiaChiTiet.Select(d => d.maPhieuDanhGia).FirstOrDefault())
+                </td>
+
+
+            </tr>
+            <tr style="background: #C17A7A; color: #fff; font-size: 14px;">
+
+                <td style="width: 50%" colspan="2">Phiếu Đánh giá năm 2017
+                </td>
+
+                <td style="width: 25%">Người lập: @ViewData["tenNguoiLap"]
+                </td>
+                <td style="width: 25%">Ngày lập:  @(lsDanhGiaChiTiet.Select(d => d.ngayLap).FirstOrDefault().HasValue ? lsDanhGiaChiTiet.FirstOrDefault().ngayLap.Value.ToString("dd/MM/yyyy") : string.Empty)
+                </td>
+            </tr>
+
+        </table>
+        @{
+                     
+            var stt = 1;
+            Dictionary<int, string> lsDiem = new Dictionary<int, string>();
+            lsDiem[0] = "0";
+            lsDiem[1] = "10";
+            lsDiem[2] = "20";
+            lsDiem[3] = "30";
+            lsDiem[4] = "40";
+            lsDiem[5] = "50";
+            lsDiem[6] = "60";
+            lsDiem[7] = "70";
+            lsDiem[8] = "80";
+            lsDiem[9] = "90";
+            lsDiem[10] = "100";
+          
+        }
+        <div class="noteDanhGia">
+            <div>
+                <span>Lưu ý:</span><span>Thang điểm đánh giá là 10đ/ 1 tiêu chí.</span>
+            </div>
+        </div>
+
+        <div id="table-container">
+            <table id="gridSource" class="tbl WorkTicket TableMobile TableMobileDGEdit" style="width: 100%">
+                <thead>
+                    <tr style="color: #000099; font-weight: 700">
+                        <td style="width: 30px; text-align: center">STT
+                        </td>
+                        <td style="width: 260px">Tên NV
+                        </td>
+                        <td style="width: 400px">Phòng ban / Chức danh
+                        </td>
+                        @*<style>
+                            table.TableMobileDGEdit td:nth-of-type(1):before {
+                                content: "";
+                            }
+
+                            table.TableMobileDGEdit td:nth-of-type(2):before {
+                                content: "Nhân viên";
+                            }
+
+                            table.TableMobileDGEdit td:nth-of-type(3):before {
+                                content: "Phòng ban";
+                            }
+                        </style>*@
+                        @{
+                            var sttBefore = 4;
+                            foreach (var tc in lsTieuChi)
+                            {
+                              
+@*<style>
+                                table.TableMobileDGEdit td:nth-of-type(@(sttBefore++)):before {
+                                    content: "@Html.Raw(tc.tenTieuChi)";
+                                }
+
+                               
+                            </style>*@
+                            <td style="width: 220px">
+                                <div style="cursor:pointer" data-toggle="tooltip" title="@Html.Raw(tc.ghiChu)" class="hoverTen">
+                                    <b style="color: red;">
+                                        @tc.tenTieuChi
+                                    </b>
+                                    <br />
+                                    <p style="margin: 0px;">
+                                        (Hệ số :
+                                    @tc.heSoDiem )
+                                    </p>
+                                    @Html.Hidden("maTieuChi", tc.id)
+                                </div>
+                            </td>
+                            }
+                        }
+                        <td style="width: 90px; text-align: center; background-color: #82f996;">Điểm TB
+                        </td>
+                    </tr>
+                    <tr>
+                </thead>
+                <tbody>
+                    @{   
+                        stt = 1;
+                        var dem = 1;
+                        foreach (var it in lsCapBac)
+                        {
+                            int count = 1;
+                            foreach (var nv in lsNV.Where(t => t.CapBac == it.CapBac))
+                            {
+                                dem++;
+                                var HinhAnh = nv.MaNhanVien + ".jpg"; 
+                        <tr>
+                            <td data-label="STT" style="text-align: center" rowspan="2">
+                                @(count++)
+                            </td>
+                            <td style="color: #006600; font-weight: 700" data-label="Tiêu chí" rowspan="2">
+                                <div class="asideMNV">
+                                    @nv.TenNhanVien
+                                    @Html.Hidden("maNhanVien", nv.MaNhanVien)
+                                    @Html.Hidden("maPhongBan", it.CapBac)
+                                </div>
+
+                                <div class="asideImg">
+                                    <div class="mouseOver2 mouseOver">
+                                        <img class="smallImg" onerror="imgError(this);" accept="image/*"  src="/UploadFiles/QLNV/@HinhAnh"/>
+
+
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-label="Phòng ban" class="customePhongBan" rowspan="2">
+                                <span><i class="fa fa-object-group" aria-hidden="true"></i>@nv.TenPhongBan </span>
+                                <br />
+                                <span><i class="fa fa-user-secret" aria-hidden="true"></i>@nv.TenChucDanh</span>
+                            </td>
+                            @{var countTieuChi = 1;
+                              foreach (var tc in lsTieuChi)
+                              {
+                                  countTieuChi++;
+                                  
+                                <td data-label="@tc.tenTieuChi (Hệ số : @tc.heSoDiem )">
+                                    @{
+                                  double key = 0;
+                                  var diemSo1 = lsDanhGiaChiTiet.Where(dt => dt.maNhanVienDanhGia.Equals(nv.MaNhanVien) && dt.idTieuChi == tc.id).
+                                 FirstOrDefault();
+                                  if (diemSo1 != null)
+                                  { key = (double)diemSo1.diemSo; }
+                                    }
+                                    <input type="text" class="diem" id="@(nv.MaNhanVien)_xepLoai_@(tc.id)" name="@(nv.MaNhanVien)_xepLoai_@(tc.id)"
+                                    alt="@nv.MaNhanVien" altHoTen="@nv.TenNhanVien" value="@key" style="text-align: right; width: 100%"
+                                    onkeypress="return ValidateKeypress(/\d/,event);" />
+                                </td>
+                               
+                              }
+                            }
+                            @{double tongDiem = 0;
+                              var td1 = lsDanhGiaChiTiet.Where(dt => dt.maNhanVienDanhGia.Equals(nv.MaNhanVien)).
+                                        FirstOrDefault();
+                              if (td1 != null)
+                              { tongDiem = (double)td1.tongDiem; }
+                            }
+                            <td align="right" data-label="Điểm TB" class="clsDiemTB">
+                                @Html.TextBox(nv.MaNhanVien + "_diemTong", tongDiem, new { @readonly = "readonly", @style = "text-align:right;width:100%" })
+                            </td>
+                            @Html.Hidden(nv.MaNhanVien + "_heSoCap", it.CapBac)
+                        </tr>
+                        <tr>
+                            @{
+                              string txtNhanXet = "";
+                              var NhanXet = lsDanhGiaChiTiet.Where(dt => dt.maNhanVienDanhGia.Equals(nv.MaNhanVien)).FirstOrDefault();
+                              if (NhanXet != null) { txtNhanXet = NhanXet.nhanXet; }
+                              
+                            }
+                            <td colspan="@countTieuChi" class="txtNXValue" attrNV="@nv.MaNhanVien" altHoTen="@nv.TenNhanVien" >@Html.TextArea(nv.MaNhanVien + "_nhanXet", txtNhanXet, new { @style = "width:100%; font-style:italic", @class = "txtNhanXet", @placeholder = "Thêm nhận xét", @rows = "1", @maxlength = "200" })  </td>
+
+                        </tr>
+                            }
+                       
+                       
+                        <tr>
+                            <td colspan="11">
+                                <div class="line_capbac"></div>
+                            </td>
+                        </tr>
+                                
+                        }}
+
+                </tbody>
+                @{stt++;}
+
+            </table>
+        </div>
+        <div class="heThongDangXuLy" style="display: none">
+            <div>
+                <img src="@Url.Content("~/Content/Images/loading.gif") " /><br />
+                <i>Hệ thống đang xử lý....</i>
+            </div>
+        </div>
+        <div class="LuuThanhCong" style="display: none">
+            <div>
+                <img src="/Content/Images/finishing.png "><br>
+                <i>Đã lưu thành công....</i>
+            </div>
+        </div>
+        <div id="bottom_anchor">
+        </div>
+        <br />
+        <div style="float: left; width: 50%; text-align: left; line-height: 1.7">
+            <i><i class="fa fa-quote-left" aria-hidden="true"></i>Nếu có phát hiện nhầm lẫn, sai sót, tiêu cực vui lòng liên hệ email: <span>danhgianhanvien@thuanviet.com.vn</span> <i class="fa fa-quote-right" aria-hidden="true"></i></i>
+        </div>
+
+        <div style="float: right; width: 40%; text-align: right" class="ShowFinish">
+            <button type="button" class="btnBlack"><i class="fa fa-reply-all" aria-hidden="true"></i>Quay về</button>
+            @if (ViewData["TrangThaiHoanThanh"] == "0")
+            {
+@*<button type="button" class="btnSave"><i class="fa fa-floppy-o" aria-hidden="true"></i>Lưu tạm</button>*@
+                <button type="button" class="btnHoanThanh" onclick="HoanThanhDanhGia()"><i class="fa fa-paper-plane" aria-hidden="true"></i>Hoàn thành đánh giá</button>
+            }
+
+        </div>
+    </div>
+</form>

@@ -1,0 +1,99 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<link rel="stylesheet" href="~/Content/batdongsan-alert.css" />
+<script src="~/Scripts/batdongsan.generals.js"></script>
+<script src="~/Scripts/autoNumeric.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+
+        $("#btnSearch").click(function () {
+            LoadTiLeKhenThuong();
+        });
+        $("#nam").change(function () {
+            LoadTiLeKhenThuong();
+        });
+        var url = '@Url.Action("LoadIndex", "KetQuaXepLoaiNhanVien")' + "?nam=" + $("#nam").val();
+
+        var imageUrl = '<div id="divMsg" align="center"><img src="@Url.Content("~/Content/Images/loading.gif") "/></div>';
+        $('#ViewIndex').html(imageUrl);
+        $('#ViewIndex').load(url, function () {
+
+        });
+
+
+    });
+
+
+    function LoadTiLeKhenThuong() {
+        var url = '@Url.Action("LoadIndex", "KetQuaXepLoaiNhanVien")' + "?nam=" + $("#nam").val();
+
+        var imageUrl = '<div id="divMsg" align="center"><img src="@Url.Content("~/Content/Images/loading.gif") "/></div>';
+        $('#ViewIndex').html(imageUrl);
+        $('#ViewIndex').load(url, function () {
+
+        });
+    }
+
+</script>
+<fieldset class="removeBorderFieldset">
+
+    <div id="tabs" style="" class="ui-tabs">
+        <ul class="ui-tabs-nav">
+            <li class="ui-tabs-selected ui-state-active"><a><span>Kết quả đánh giá xếp loại nhân viên</span></a></li>
+        </ul>
+    </div>
+    <div id="container">
+        <div class="form-inline">
+            <div class="panel-body background_top">
+                Năm:
+                    @Html.DropDownList("nam", ViewData["yearWorkings"] as SelectList)
+
+
+
+
+
+            </div>
+        </div>
+        <table style="width: 100%" class="table table-striped table-hover table-condensed tableThemeCustome TableMobile IndexXepLoaiNVMobile">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="text-align: center">STT</th>
+                    <th rowspan="2">Phòng ban</th>
+                    <th rowspan="2">Nhân viên</th>
+
+
+                    <th colspan="4">6 tháng đầu năm</th>
+                    <th colspan="4">6 tháng cuối năm</th>
+                    <th rowspan="2" style="width: 80px;">Tổng điểm</th>
+                    <th rowspan="2" style="width: 80px;">Xếp loại</th>
+                </tr>
+                <tr>
+                    <th>Điểm CT</th>
+                    <th>Điểm NC	</th>
+                    <th>Điểm CD</th>
+
+                    <th>Tổng điểm</th>
+                    <th>Điểm CT</th>
+                    <th>Điểm NC	</th>   
+                    <th>Điểm CD</th>
+
+                    <th>Tổng điểm</th>
+
+                </tr>
+            </thead>
+
+            <tbody id="ViewIndex">
+            </tbody>
+        </table>
+        <div class="list-group" style="max-width: 300px; margin-top: 10px;">
+            <a href="#" class="list-group-item disabled">Ghi chú
+            </a>
+            <a href="#" class="list-group-item">Điểm CT: Điểm cấp trên</a>
+            <a href="#" class="list-group-item">Điểm NC: Điểm ngang cấp</a>
+            <a href="#" class="list-group-item">Điểm CD: Điểm cấp dưới</a>
+        </div>
+
+    </div>
+</fieldset>

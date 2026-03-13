@@ -1,0 +1,271 @@
+﻿@using BatDongSan.Models.DanhMuc
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+    var listXL = ViewBag.listXLTong as List<BatDongSan.Models.DanhMuc.sp_DG_XepLoaiTongConResult>;
+    
+ 
+}
+<script>
+    $(document).ready(function () {
+       
+       
+        $("input[name='tiLe']").keyup(function () {
+            if (parseFloat($(this).val()) > 100) { $(this).val(100); }
+            var valTiLe = parseFloat($(this).val());
+
+            var getParent = $(this).parent().attr('class');
+            var clsParent = "." + getParent;
+            var sLToanCty = clsParent + " input[name='tiLeNVToanCty']";
+            var TongSoNVCty = $("#TongSoNVCty").val();
+            var tiLePT = parseFloat($(this).val());
+            if (tiLePT > 100) {
+                tiLePT = 100;
+                $(this).val(100);
+            }
+            var giaTriSLHang = Math.round((TongSoNVCty * tiLePT) / 100);
+            $(sLToanCty).val(giaTriSLHang);
+            CheckTiLeToanCty();
+
+        });
+        $("input[name='tiLeNVToanCty']").keyup(function () {
+
+            var getParent = $(this).parent().attr('class');
+            var clsParent = "." + getParent;
+            var sLToanCty = clsParent + " input[name='tiLe']";
+            var TongSoNVCty = $("#TongSoNVCty").val();
+            var tiLePT = parseFloat($(this).val());
+            if (tiLePT > TongSoNVCty) {
+                tiLePT = TongSoNVCty;
+                $(this).val(TongSoNVCty);
+            }
+            var giaTriPT = (tiLePT / TongSoNVCty) * 100;
+
+            giaTriPT = giaTriPT.toFixed(2);
+            //$(sLToanCty).val(giaTriPT
+            $(sLToanCty).autoNumeric("set", giaTriPT);
+            CheckTiLeToanCty();
+
+        });
+        $("#btnSaveTiLe").click(function () {
+            var imageUrl = '<div id="divMsg" align="center"><img src="/Content/Images/loading.gif "/></div>';
+
+            $(".infor_TiLe").html(imageUrl).css('display', 'block');
+            var lstMaLoai = "";
+            var lstSoLuong = "";
+            var arrSoLuong = [];
+            var iSL = 0;
+            var strString;
+            var tongTiLe = 0;
+            //Get value
+            jQuery("input[name='tiLe']").each(function (index, element) {
+                strString = getNumber(jQuery(this).val());
+                tongTiLe = tongTiLe + strString;
+                arrSoLuong[iSL] = strString;
+
+                iSL++;
+            });
+            // So Luong
+            var arrSoLuong2 = [];
+            var iSL2 = 0;
+            var strString2;
+            var tongTiLe2 = 0;
+            //Get value
+            jQuery("input[name='tiLeNVToanCty']").each(function (index, element) {
+                strString2 = getNumber(jQuery(this).val());
+                tongTiLe2 = tongTiLe2 + strString2;
+                arrSoLuong2[iSL2] = strString2;
+
+                iSL2++;
+            });
+            // End so luong
+            if (Math.round(tongTiLe) > 100) {
+                $(".infor_TiLe").html('Tổng tỉ lệ phải = 100');
+                return false;
+            }
+            var arrMaLoai = [];
+            var iML = 0;
+            var strStringML;
+            //Get value
+            jQuery("input[name='maLoai']").each(function (index, element) {
+                strStringML = jQuery(this).val();
+
+                arrMaLoai[iML] = strStringML.split(',');
+                iML++;
+            });
+
+            //post
+            $.ajax({
+
+                type: "POST",
+                url: '/DanhGiaXepLoaiTheoBPCon/UpdateTiLe',
+                dataType: "json",
+                data: { nam: $("#nam").val(), tiLes: arrSoLuong.toString(), soLuongs: arrSoLuong2.toString(), maLoais: arrMaLoai.toString(), maPhieu: $("#maPhieu").val(), MaPPNhomDG: $("#maPPNhomDG").val() },
+                success: function (result) {
+                    $(".infor_TiLe").css('display', 'block');
+
+
+                    $(".infor_TiLe").html('Cập nhật thành công tỉ lệ khen thưởng năm:' + $("#nam").val());
+                    location.href = '/DanhGiaXepLoaiTheoBPCon/Edit/' + $("#maPhieu").val();
+                    $(".vtt").hide();
+                },
+                error: function () {
+                    $(".infor_TiLe").html('Cập nhật thất bại tỉ lệ khen thưởng năm:' + $("#nam").val());
+
+                }
+
+
+            });
+            //End post
+        });
+
+    });
+   
+    function CheckTiLeToanCty() {
+        $(".infor_TiLe").hide().html('');
+        var TongSoNVCty = $("#TongSoNVCty").val();
+        var iSL = 0;
+        var strString;
+        var tongTiLe = 0;
+        //Get value
+        jQuery("input[name='tiLe']").each(function (index, element) {
+            strString = getNumber(jQuery(this).val());
+            tongTiLe = tongTiLe + strString;
+
+
+            iSL++;
+        });
+        var iSL2 = 0;
+        var strString2;
+        var tongTiLe2 = 0;
+        //Get value
+        jQuery("input[name='tiLeNVToanCty']").each(function (index, element) {
+            strString2 = getNumber(jQuery(this).val());
+            tongTiLe2 = tongTiLe2 + strString2;
+
+
+            iSL2++;
+        });
+
+        if (Math.round(tongTiLe) != 100) {
+
+            $(".infor_TongTiLeCty").html('Tỉ lệ % hiện tại= ' + Math.round(tongTiLe) + ' .Tổng giá trị hiện tại= ' + tongTiLe2).show();
+
+
+
+            $("#btnSaveTiLe").hide();
+
+        }
+        else {
+            $("#btnSaveTiLe").show();
+            $(".infor_Tong_TiLe_Cty,.infor_TiLe,.infor_TongTiLeCty").hide();
+        }
+
+
+    }
+    
+
+
+</script>
+
+
+<div class="box_TiLeKhenThuong">
+
+    <input type="hidden" value="@ViewBag.TongSoNV" id="TongSoNVCty" />
+    <div class="form-group bs-callout bs-callout-info" style="overflow: hidden; margin-bottom: 1px;">
+        <h4 class="col-md-12 tieudeGroup" style="color: #1b809e; margin: 0px;"><b></b>Tỉ lệ khen thưởng (<span class="showTongNV">@ViewBag.TongSoNV</span>)<span style="color: red; font-style: italic"></span></h4>
+    </div>
+    <div class="content_tiLeKhenThuong">
+        <div class="infor_Tong_TiLe_Cty" style="display: none">
+            Tổng tỉ lệ phải = 100%. Tổng số lượng NV phải bằng: @ViewBag.TongSoNV
+        </div>
+        <div class="infor_TiLe" style="display: none"></div>
+        <div class="infor_TongTiLeCty" style="display: none"></div>
+
+        <table class="table table-striped table-hover table-condensed">
+            <thead>
+
+                <tr>
+
+                    @{ 
+                       
+                            var clsMau = "";
+                            foreach (var item in listXL)
+                            {
+                                clsMau = item.maLoai;
+                                if (item.maLoai == "A+") { clsMau = "AA"; }
+                                if (item.maLoai == "B+") { clsMau = "BB"; }
+                                
+            
+                        <th colspan="2" style="text-align: center" class="@clsMau">@item.tenXepLoai</th>
+                            }
+                        
+                    }
+
+
+                    <th rowspan="2"></th>
+
+                </tr>
+                <tr>
+                    @{ 
+                        
+                            clsMau = "";
+                            foreach (var item in listXL)
+                            {
+                                clsMau = item.maLoai;
+                                if (item.maLoai == "A+") { clsMau = "AA"; }
+                                if (item.maLoai == "B+") { clsMau = "BB"; }
+                        <th class="@clsMau">%</th>
+                        <th class="@clsMau">SL</th>
+                            }
+                        
+                    }
+
+
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @{
+       
+                        
+                            double tongSoLuongNVCty = ViewBag.TongSoNV;
+                            double soLNTheoXLCty = ViewBag.TongSoNV;
+                            var colorDetail = "#fff";
+                            foreach (var item in listXL)
+                            {
+                                double giaTriTemp = Convert.ToDouble(tongSoLuongNVCty * item.tiLe / 100);
+                                double vlSoLuongTemp = Math.Round(giaTriTemp, 0, MidpointRounding.AwayFromZero);
+                                if (item.maLoai == "XS") { colorDetail = "rgba(232, 92, 25, 0.9)"; }
+                                if (item.maLoai == "A+") { colorDetail = "#8BC34A"; }
+                                if (item.maLoai == "A") { colorDetail = "#CDDC39"; }
+                                if (item.maLoai == "B+") { colorDetail = "#00BCD4"; }
+                                if (item.maLoai == "B") { colorDetail = "rgb(74, 195, 165)"; }
+                                if (item.maLoai == "C") { colorDetail = "rgba(157, 162, 103, 0.96)"; }
+                        <td class="toanCty_@item.id" style="background-color:@colorDetail">
+                             <input type="hidden" value="@item.maLoai" name="maLoai" class="numberinput" style="text-align:right"/>
+                            <input type="text" value="@item.tiLe" name="tiLe" class="numberinput" style="text-align:right"/></td>
+                        
+                        <td class="toanCty_@item.id"  style="background-color:@colorDetail">
+                            
+                                <input type="text" value="@item.soLuong" name="tiLeNVToanCty" class="numberinput" style="text-align: right"/>
+                            
+                           
+                        </td>
+               
+                            }
+
+                        }
+                    
+                    <td style="text-align: center">
+                        <button class="btn btn-info btnAdd" id="btnSaveTiLe">Lưu </button>
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
+</div>

@@ -1,0 +1,132 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    }
+<link rel="stylesheet" href="~/Content/batdongsan-alert.css" />
+<script src="~/Scripts/batdongsan.generals.js"></script>
+<script src="~/Scripts/autoNumeric.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+       
+       
+        $("#btnSearch").click(function () {
+            LoadTiLeKhenThuong();
+        });
+        $("#nam").change(function () {
+            LoadTiLeKhenThuong();
+        });
+        var url = '@Url.Action("LoadIndex", "DanhGiaXepLoaiTheoBPCon")' + "?nam=" + $("#nam").val() + "&qSearch=" + $("#pref-search").val();
+
+        var imageUrl = '<div id="divMsg" align="center"><img src="@Url.Content("~/Content/Images/loading.gif") "/></div>';
+        $('#ViewIndex').html(imageUrl);
+        $('#ViewIndex').load(url, function () {
+
+        });
+        $(document).on("click", ".btnDelete", function () {
+            var maPhieu = $(this).attr("alt");
+           
+            bootbox.confirm("Bạn chắc chắn xoá phiếu này không ?", function (result) {
+                if (result) {
+                    //post
+                    $.ajax({
+
+                        type: "POST",
+                        url: '/DanhGiaXepLoaiTheoBPCon/DeletePhieu',
+                        dataType: "json",
+                        data: {
+                            maPhieu: maPhieu,
+                            nam: $("#nam").val()
+                        },
+                        success: function (result) {
+                            Alert.success("Xóa thành công", "Thông báo", { displayDuration: 2000 });
+                            LoadTiLeKhenThuong();
+                        },
+                        error: function () {
+                            Alert.error("Xóa thất bại", "Thông báo", { displayDuration: 2000 });
+
+                        }
+
+
+                    });
+                    //End post
+                }
+            });
+        });
+
+    });
+   
+    function them() {
+        location.href = '@Url.Action("Create","DanhGiaXepLoaiTheoBPCon")';
+    }
+    function LoadTiLeKhenThuong() {
+        var url = '@Url.Action("LoadIndex", "DanhGiaXepLoaiTheoBPCon")' + "?nam=" + $("#nam").val() + "&qSearch=" + $("#pref-search").val();
+
+        var imageUrl = '<div id="divMsg" align="center"><img src="@Url.Content("~/Content/Images/loading.gif") "/></div>';
+        $('#ViewIndex').html(imageUrl);
+        $('#ViewIndex').load(url, function () {
+
+        });
+    }
+
+    </script>
+ <fieldset class="removeBorderFieldset">
+       
+        <div id="tabs" style="" class="ui-tabs">
+                <ul class="ui-tabs-nav">
+                    <li class="ui-tabs-selected ui-state-active"><a><span>Danh sách phiếu đánh giá xếp loại theo bộ phận con</span></a></li>
+                </ul>
+            </div>
+      <div id="container">
+       <div class="form-inline">
+                <div class="panel-body background_top">
+                     Năm:
+                    @Html.DropDownList("nam", ViewData["yearWorkings"] as SelectList)
+                    <div class="form-group">
+                        <input type="text" class="form-control" style="width:250px" id="pref-search" onkeypress="enterToSeacrh(event)" value="@ViewBag.Search" />
+                    </div>
+                    <div class="form-group">
+                        <button id="btnSearch" type="button" class="btn btn-primary btn-sm">
+                            <span class="glyphicon glyphicon-search" style="top: 2px;"></span>Tìm kiếm
+                        </button>
+                    </div>
+                    <div class="form-group" style="float: right">
+                        <button class="btn btn-info" type="button" onclick="them()">Thêm </button>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+                    <table id="grdDanhMucCongViec" class="table table-striped table-hover table-condensed tableThemeCustome WorkTicket TableMobile TableDanhGiaTN" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    STT
+                                </th>
+                                <th>
+                                    Mã phiếu
+                                </th>
+                                <th>
+                                    Mã PP đánh giá
+                                </th>
+                                <th>
+                                    Người lập
+                                </th>
+                                <th>
+                                    Ngày lập
+                                </th>
+                               
+                                <th>
+                                    Năm
+                                </th>
+                               
+                                <th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="ViewIndex">
+                          
+                        </tbody>
+                    </table>
+            
+          </div>
+    </fieldset>

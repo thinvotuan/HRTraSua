@@ -1,0 +1,71 @@
+﻿@using BatDongSan.Models.DBChamCong;
+@model Sys_SiteConection
+<div class="bs-callout bs-callout-info" id="callout-glyphicons-location">
+    <h4 style="color: #1b809e; margin-left: 10px">@ViewBag.TitleHead Site Connection</h4>
+</div>
+<div style="margin-top: 15px">
+    <table class="table table-responsive" id="tbl-create">
+        <tr>
+            <td>siteId<span style="font-style: italic; color: red">*</span></td>
+            <td>@{
+                if(Model.siteId == null)
+                {
+                @Html.TextBoxFor(model => model.siteId, new { @class = "form-control", required="required" })
+                }
+                else{
+                    
+                 @Html.HiddenFor(model => model.siteId, new { @class = "form-control", required="required" })
+                <span>@Model.siteId</span>
+                }
+                    }
+                
+                <div class="infor_SiteID"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>siteName<span style="font-style: italic; color: red">*</span></td>
+            <td>
+                <input type="hidden" id="siteIdEdit" value="@Model.siteId" />
+                @Html.TextBoxFor(model => model.siteName, new { @class = "form-control", required="required" })</td>
+        </tr>
+        <tr>
+            <td>siteAddress</td>
+            <td>@Html.TextBoxFor(model => model.siteAddress, new { @class = "form-control" })</td>
+        </tr>
+        <tr>
+            <td>siteIP<span style="font-style: italic; color: red">*</span></td>
+            <td>@Html.TextBoxFor(model => model.siteIP, new { @class = "form-control", required="required" })</td>
+        </tr>
+        <tr>
+            <td>port </td>
+            <td>@Html.TextBoxFor(model => model.port, new { @class = "form-control" })</td>
+        </tr>
+        <tr>
+            <td>loginName<span style="font-style: italic; color: red">*</span></td>
+            <td>@Html.TextBoxFor(model => model.loginName, new { @class = "form-control", required="required" })</td>
+        </tr>
+        <tr>
+            <td>pdw<span style="font-style: italic; color: red">*</span></td>
+            <td>@Html.TextBoxFor(model => model.pdw, new { @class = "form-control", required="required" })</td>
+        </tr>
+        <tr>
+            <td>databaseName<span style="font-style: italic; color: red">*</span></td>
+            <td>@Html.TextBoxFor(model => model.databaseName, new { @class = "form-control", required="required" })</td>
+        </tr>
+        <tr>
+            <td>remark </td>
+            <td>@Html.TextBoxFor(model => model.remark, new { @class = "form-control" })</td>
+        </tr>
+    </table>
+</div>
+<style>
+    #tbl-create td
+    {
+        border: none;
+    }
+
+    #tbl-create
+    {
+        margin: 0;
+    }
+</style>

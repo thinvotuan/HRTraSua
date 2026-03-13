@@ -1,0 +1,86 @@
+﻿@using BatDongSan.Models.NhanSu;
+@model List<DeNghiChiLuong>
+@{
+    Layout = null;
+    
+    var CongTrinh = ViewBag.ListCT as  List<string>; 
+}
+<style>
+    td
+    {
+        border: none;
+    }
+</style>
+@{
+    BatDongSan.Models.HeThong.Sys_User user1 = new BatDongSan.Models.HeThong.Sys_User();
+    if (Session["User"] != null)
+    {
+        user1 = (BatDongSan.Models.HeThong.Sys_User)Session["User"];
+    }
+}
+<table class="table table-striped table-hover table-condensed" id="maintable">
+    <thead>
+        <tr>
+            <th style="text-align: center; width: 45px">STT</th>
+            <th>Số phiếu</th>
+            <th>Tháng</th>
+            <th>Người lập</th>
+            <th>Ngày lập</th>
+            <th>Nội dung</th>
+            <th>Số tiền thực chuyển</th>
+            <th style="width: 80px">Trạng thái</th>
+            <th style="width: 100px"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var itemCT in CongTrinh)
+        {
+            var tenCongTrinh = string.Empty;
+            if (itemCT == "CTTV")
+            {
+                tenCongTrinh = "Văn phòng Công ty Thuận Việt";
+            }
+            else if (itemCT == "CT1330")
+            {
+                tenCongTrinh = "Công trình 1.330 căn hộ";
+            }
+            else if (itemCT == "CT2220")
+            {
+                tenCongTrinh = "Công trình 2.220 căn hộ";
+            }
+            else if (itemCT == "CTNEWCITY")
+            {
+                tenCongTrinh = "Công trình NewCity";
+            }
+            <tr>
+                <td style="color:#fff; background:#0F4C99;" colspan="9">@tenCongTrinh</td>
+            </tr>
+            int i = 1;
+            foreach (var item in Model)
+            {
+                
+                if (item.maCongTrinh == itemCT)
+                {
+            <tr>
+                <td style="text-align: center">@i</td>
+                <td><a style="color:#519ee5" href="@Url.Action("Details", "DeNghiChiLuong", new { id = item.soPhieu, congTrinh= item.maCongTrinh})">@item.soPhieu</a></td>
+                <td style="text-align: center">@item.thang</td>
+                <td>@item.tenNguoiLap</td>
+                <td style="text-align: center">@string.Format("{0:dd/MM/yyyy}", item.ngayLap)</td>
+                <td>@item.noiDung</td>
+                <td style="text-align: right">@string.Format("{0:#,##0}", item.tongTienThucChuyen)</td>
+                <td style="text-align: center"><a href="javascript:void(0);">@item.tenBuocDuyet</a></td>
+                <td style="text-align: center">
+                    @if (item.maNguoiLap == user1.manv && item.trangThai == 0)
+                    { 
+                        <a href="@Url.Action("Edit", "DeNghiChiLuong", new { id = item.soPhieu, congTrinh=item.maCongTrinh })" title ="Sửa phiếu"><i class="fa fa-pencil-square-o" style="font-size: 30px; color: orange;" aria-hidden="true">| </i></a>
+                        <a class="btnDelete" alt="@item.soPhieu" cong-trinh="@item.maCongTrinh" title ="Xoá phiếu"><i class="fa fa-trash" style="font-size: 30px; color: red; cursor: pointer;" aria-hidden="true"></i></a>
+                    }
+                </td>
+            </tr>
+                    ++i;
+                }
+            }
+        }
+    </tbody>
+</table>

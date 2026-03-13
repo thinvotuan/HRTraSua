@@ -1,0 +1,332 @@
+﻿@using BatDongSan.Models.PhieuDeNghi;
+@model PhieuDeNghiCongTac
+@{
+    ViewBag.Title = "Chi tiết phiếu đăng ký công tác";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string[] nhanVienNS = ViewBag.NhanVienThuocNhoms;
+}
+
+<script>
+    $(document).ready(function () {
+        $("#btnTroVe").click(function () {
+            var url = "@Url.Action("Index")";
+            location.href = url;
+        });
+        if ($("#congTacNgoai").is(":checked")) {
+            $(".showCTngoai").show();
+            $("#noiDenCongTacNgoai").addClass("required");
+        }
+        ResetNghiTheoGio();
+    });
+    function ResetNghiTheoGio() {
+        if ($("#nghiBuTheoGio").is(":checked")) {
+            $("#congTacNgoai").prop("checked", false);
+            //checkEndTime();
+            $(".nghiTheoGio").show();
+            $(".nghiTheoNgay").hide();
+            $.post('@Url.Action("GetSoNgayTangCa", "PhieuCongTac")', { maNhanVien: $("#NhanVien_maNhanVien").val() }, function (data) {
+
+                $("#soGioConLaiNghiBu").val(data.soGioConLai);
+                $("#tongGioTangCa").val(data.soGioTangCa);
+                tinhTimeNghiThucTe();
+            });
+        }
+        else {
+            $(".nghiTheoGio").hide();
+            $(".nghiTheoNgay").show();
+        }
+    }
+    function tinhTimeNghiThucTe() {
+        
+        $.post('@Url.Action("GetSoNgayTangCa", "PhieuCongTac")', { maNhanVien: $("#NhanVien_maNhanVien").val() }, function (data) {
+
+
+
+            var tongGioTangCa = parseFloat(data.soGioConLai);
+            $("#soGioConLaiNghiBu").val(tongGioTangCa.toFixed(2));
+        });
+
+
+    }
+    function PopUpManager(url, title, w, h) {
+        var left = (screen.width / 2) - (w / 2);
+        var top = (screen.height / 2) - (h / 2);
+        var targetWin = window.open(url, title, 'width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+    }
+    function chonNguoiDuyet(status, employeeId) {
+        if ($("#NhanVien_maNhanVien").val() != $("#maNVD").val()) {
+            $("#maNVD").val($("#NhanVien_maNhanVien").val());
+        }
+        var lyDo = "";
+        var url = ('@Url.Action("SelectCapDuyet1/", "DMNguoiDuyet")' + $('#maPhieu').val() + '?maCongViec=PhieuCongTac' + '&trangThai=' + 0 + '&title=' + "" + '&maNhanVien=' + $("#maNVD").val() + '&lyDo=' + lyDo + "&idQuiTrinh=" + $("#maQuiTrinhDuyet").val() + '&url=' + $("#url").val());
+        PopUpManager(url, "DUYET", 800, 500);
+    }
+
+    function chonNguoiDuyet2(status, employeeId) {
+        var lyDo = '';
+        var url = ('@Url.Action("SelectCapDuyet/", "DMNguoiDuyet")' + $('#maPhieu').val() + '?maCongViec=PhieuCongTac' + '&trangThai=' + 0 + '&title=' + "" + '&maNhanVien=' + $("#maNVD").val() + '&lyDo=' + lyDo + "&idQuiTrinh=" + $("#maQuiTrinhDuyet").val() + '&url=' + $("#url").val());
+        PopUpManager(url, "DUYET", 800, 500);
+    }
+
+    function DuyetPhieu() {
+        var url = ('@Url.Action("DuyetPhieuDK/", "DMNguoiDuyet")' + $('#maPhieu').val() + '?maCongViec=PhieuCongTac' + '&maQuiTrinhDuyet=' + $('#maQuiTrinhDuyet').val() + '&url=' + $('#url').val() + '&maNhanVien=' + $('#maNVD').val());
+        PopUpManager(url, "DUYET", 1000, 300);
+      @*  if (window.confirm('Bạn có chắc chắn duyệt phiếu công tác này hay không?')) {
+            var lyDo = "";//$('#lyDo').val().replace(/\ /g, '+');
+            $.post('@Url.Action("DuyeTheoQuiTrinhDong", "DMNguoiDuyet")', { lyDo: lyDo, maNhanVien: $('#maNVD').val(), maPhieu: $('#maPhieu').val(), soNgayNghiPhep: $('#soNgayNghiPhep').val(), maCongViec: "PhieuCongTac", tenNhanVien: $('#tenNhanVien').val(), idQuiTrinh: $("#maQuiTrinhDuyet").val(), sendMail: false, sendSMS: false }, function (data) {
+                if (data.length == 0) {
+                    location.href = '@Url.Action("Details/", "PhieuCongTac")' + $('#maPhieu').val();
+                }
+                else {
+                    jAlert(data);
+                }
+            });
+        }*@
+    }
+
+    function LoadLaiTrang() {
+        location.href = '@Url.Action("ListCongViecProcess", "User")';
+    }
+
+    function LoadLaiTrangChiTiet() {
+        location.href = '@Url.Action("Details/", "PhieuCongTac")' + $('#maPhieu').val();
+    }
+    function KhongDuyet() {
+        var sendEmail = false;
+        if ($("#emailKD").is(":checked")) {
+            sendEmail = true;
+        }
+        var sendSMS = false;
+        if ($("#smsKD").is(":checked")) {
+            sendSMS = true;
+        }
+        var lyDo = $("#lyDoKhongDuyet").val();
+        if (window.confirm('Bạn có chắc chắn không duyệt phiếu công tác này hay không?')) {
+
+            $.post('@Url.Action("KhongDuyetGhiChu", "DMNguoiDuyet")', { lyDo: lyDo, maNhanVien: $('#NhanVien_maNhanVien').val(), maPhieu: $('#maPhieu').val(), maCongViec: "PhieuCongTac", tenNhanVien: $('#NhanVien_hoVaTen').val(), idQuiTrinh: $("#maQuiTrinhDuyet").val(), sendMail: sendEmail, sendSMS: sendSMS }, function (data) {
+                if (data.length == 0) {
+                    location.href = '@Url.Action("Details/", "PhieuCongTac")' + $('#maPhieu').val();
+                }
+                else {
+                    alert(data);
+                    //$(this).attr("disabled", false);
+                }
+            });
+        }
+    }
+    
+    function TraLai(status, employeeId) {
+        var url = ('@Url.Action("TraLai/", "DMNguoiDuyet")' + $('#maPhieu').val() + '?maCongViec=PhieuCongTac' + '&trangThai=' + 0 + '&title=' + "" + '&maNhanVien=' + $("#maNVD").val() + '&lyDo=' + "" + "&idQuiTrinh=" + $("#maQuiTrinhDuyet").val() + '&url=' + $("#url").val());
+        PopUpManager(url, "DUYET", 700, 200);
+    }
+</script>
+<style>
+    #tbl-create td
+    {
+        border: none;
+    }
+</style>
+@{
+    string noiCongTac = string.Empty;
+    string loaiCongTac = string.Empty;
+    //if (Model.loaiCongTac == false)
+    //{
+    //    noiCongTac = Model.tenTinh;
+    //    loaiCongTac = "Trong nước";
+    //}
+    //else if (Model.loaiCongTac == true)
+    //{
+    //    noiCongTac = Model.tenQuocGia;
+    //    loaiCongTac = "Nước ngoài";
+    //}
+
+    BatDongSan.Models.HeThong.Sys_User user1 = new BatDongSan.Models.HeThong.Sys_User();
+    if (Session["User"] != null)
+    {
+        user1 = (BatDongSan.Models.HeThong.Sys_User)Session["User"];
+    }  
+    
+}
+<div id="container" class="custome_fieldSet">
+    <fieldset class="removeBorderFieldset">
+        <div id="tabs" style="width: 30%; height: auto; border: none; float: left; box-sizing: border-box; overflow: hidden; clear: none;" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+            <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+                <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active ">
+                    <a><span><i class="fa fa-yelp" aria-hidden="true"></i>Cập nhật phiếu công tác, nghỉ bù</span></a></li>
+            </ul>
+        </div>
+        <table class="table table-striped table-hover table-condensed TableMobileChild" id="tbl-create" style="position: relative">
+            @if (Model.NhanVien.maNhanVien != Model.NhanVienLapPhieuTT.maNhanVien)
+            {
+                <tr>
+                    <td style="width: 15%" class="tdtitle">MNV lập phiếu TT                                                                   
+                    </td>
+                    <td style="width: 35%">@Model.NhanVienLapPhieuTT.maNhanVien</td>
+                    <td style="width: 15%" class="tdtitle">Họ tên NV lập phiếu TT </td>
+                    <td style="width: 35%">@Model.NhanVienLapPhieuTT.hoVaTen</td>
+                </tr>
+            }
+            <tr>
+                <td style="width: 15%" class="tdtitle">Mã nhân viên công tác</td>
+                <td style="width: 35%">@Model.NhanVien.maNhanVien
+                    @Html.HiddenFor(model => model.NhanVien.maNhanVien)
+                    <input type="hidden" id="url" value="@ViewBag.URL" />
+                    @Html.HiddenFor(model => model.maQuiTrinhDuyet)
+                </td>
+                <td style="width: 15%" class="tdtitle">Tên nhân viên công tác</td>
+                <td style="width: 35%">@Model.NhanVien.hoVaTen</td>
+            </tr>
+            <tr>
+                <td class="tdtitle">Số phiếu ĐK công tác </td>
+                <td>@Model.maPhieu
+                </td>
+                @*<td>Loại công tác</td>
+                <td>
+                    @loaiCongTac
+                </td>*@
+                <td class="tdtitle">Phòng ban đến công tác </td>
+                <td>@Model.tenPhongBan
+                </td>
+            </tr>
+            <tr>
+                    <td class="tdtitle"></td>
+                    <td>
+                        <label class="checkbox-inline" style="padding-top: 0px; font-size: 13px;">@Html.CheckBoxFor(model => model.congTacNgoai, new { style = "width:auto", @checked = "" }) Công tác ngoài
+                        </label>
+                         <label class="checkbox-inline" style="padding-top: 0px; font-size: 13px;">@Html.CheckBoxFor(model => model.nghiBuTheoGio, new { style = "width:auto", @checked = "" }) Nghỉ bù( Theo giờ)
+                        </label>
+                    </td>
+                    <td style="display: none" class="tdtitle showCTngoai">Nơi đến công tác</td>
+                    <td style="display: none" class="showCTngoai">
+                        @Model.noiDenCongTacNgoai
+
+                    </td>
+                </tr>
+            <tr>
+                <td class="tdtitle">Ngày bắt đầu</td>
+                <td>@String.Format("{0: dd/MM/yyyy}", Model.ngayBatDau)</td>
+                <td class="tdtitle">Ngày kết thúc</td>
+                <td>@String.Format("{0: dd/MM/yyyy}", Model.ngayKetThuc)</td>
+            </tr>
+            <tr>
+                <td class="tdtitle">Giờ bắt đầu</td>
+                <td>@String.Format("{0:HH\\:mm}", Model.gioBatDau)</td>
+                <td class="tdtitle">Giờ kết thúc</td>
+                <td>@String.Format("{0:HH\\:mm}", Model.gioKetThuc)</td>
+            </tr>
+            <tr  class="nghiTheoNgay">
+                <td class="tdtitle">Số ngày công tác</td>
+                <td>@Model.soNgayCongTac</td>
+                @*<td>Nơi công tác</td>
+                <td>
+                    @noiCongTac
+                </td>*@
+                <td class="tdtitle" style="display:none">Phụ cấp công tác</td>
+                <td style="display:none">@String.Format("{0: #,#0}", Model.phuCap)</td>
+            </tr>
+            <tr style="display: none" class="nghiTheoGio">
+                    <td class="tdtitle nghiTheoGio">Số giờ nghỉ bù</td>
+                    <td class="nghiTheoGio">@Html.TextBoxFor(model => model.soGioNghiThucTe, new { @class = "form-control", @readonly = "readonly" })
+
+                    </td>
+                </tr>
+            <tr style="display: none" class="nghiTheoGio">
+                    <td class="tdtitle">Số giờ còn lại nghỉ bù</td>
+                    <td>
+                        <input class="form-control" id="soGioConLaiNghiBu" readonly="True" type="text" value="0"></td>
+                    <td class="tdtitle">Tổng giờ tăng ca:</td>
+                    <td>
+                        <input class="form-control" id="tongGioTangCa" readonly="True" type="text" value="0">
+                    </td>
+
+
+
+                </tr>
+            <tr>
+                <td class="tdtitle">Ghi chú</td>
+                <td colspan="3" class="formatTable">@Html.Raw(Model.ghiChu)</td>
+
+            </tr>
+        </table>
+        <div style="text-align: right; margin-bottom: 10px">
+             <button  class="btn btn-info" type="button" onclick="ViewDetailHistoryLayout('@Model.maPhieu','@Model.maQuiTrinhDuyet')" title="Lịch sử phiếu"><i class="fa fa-circle-o-notch" aria-hidden="true"></i>Lịch sử phiếu</button>
+
+            <input type="hidden" name="maNVD" id="maNVD" value="@user1.manv" />
+            <input type="hidden" name="tenNhanVien" id="tenNhanVien" value="@ViewBag.HoTen" />
+            @Html.HiddenFor(model => model.maPhieu)
+            @Html.HiddenFor(model => model.lyDo)
+            @if (ViewBag.TenTrangThaiDuyet != "KDD")
+            {
+                if ((Model.Duyet == null || Model.Duyet.tinhTrang == 0) && Model.nguoiLap == user1.manv && Model.Duyet.maBuocDuyet != "KDD")
+                {
+                <button class="btn btn-info" type="button" onclick="chonNguoiDuyet();">Gửi duyệt </button>
+                }
+                else if (Model.Duyet != null && (Model.Duyet.nguoiDuyet.maNhanVien == null ? string.Empty : Model.Duyet.nguoiDuyet.maNhanVien.Trim()) == user1.manv && Model.Duyet.maBuocDuyet != "DTN" && Model.Duyet.maBuocDuyet != "CDL2" && Model.Duyet.maBuocDuyet != "CD")
+                {
+                <button class="btn btn-info" type="button" onclick="chonNguoiDuyet2();">Duyệt phiếu </button>
+                <button class="btn btn-info" type="button"  data-toggle="modal" data-toggle="modal" data-target="#myModalKhongDuyet">Không duyệt</button>
+                <button class="btn btn-info" type="button" onclick="TraLai();">Trả lại</button>
+                }
+                else if (Model.Duyet != null && (Model.Duyet.maBuocDuyet == "CDL2" || Model.Duyet.maBuocDuyet == "CD") && (Model.Duyet.nguoiDuyet.maNhanVien == null ? string.Empty : Model.Duyet.nguoiDuyet.maNhanVien.Trim()) == user1.manv && Model.Duyet.maBuocDuyet != "DTN")
+                {
+                <button class="btn btn-info" type="button" onclick="DuyetPhieu();">Duyệt</button>
+                <button class="btn btn-info" type="button"  data-toggle="modal" data-toggle="modal" data-target="#myModalKhongDuyet">Không duyệt</button>
+                <button class="btn btn-info" type="button" onclick="TraLai();">Trả lại</button>
+                }
+                else if (Model.Duyet != null && (nhanVienNS != null && nhanVienNS.Contains(user1.manv)) && Model.Duyet.maBuocDuyet == "CTN" && Model.Duyet.maBuocDuyet != "DTN")//Tất cả nhân viên ở phòng nhân sự đều được duyệt ở đấy
+                {
+                <button class="btn btn-info" type="button" onclick="DuyetPhieu();">Duyệt</button>
+                <button class="btn btn-info" type="button"  data-toggle="modal" data-toggle="modal" data-target="#myModalKhongDuyet">Không duyệt</button>
+                <button class="btn btn-info" type="button" onclick="TraLai();">Trả lại</button>
+                }
+            }
+            <button class="btn btn-info" type="button" id="btnTroVe">Trở về </button>
+        </div>
+    </fieldset>
+
+</div>
+
+<!-- Bo sung chuc nang khong duyet them ly do-->
+<!-- Modal -->
+<div class="modal fade" id="myModalKhongDuyet" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"></h4>
+      </div>
+      <div class="modal-body">
+        <fieldset class="fieldset1 clsDuyetPhieu">
+            <div class="titleDP">Không duyệt phiếu</div>
+        <form name="form" action="" method="post">
+           
+            <table style="width: 100%; font-family: Tahoma;" cellpadding="2" cellspacing="0" border="0">
+                <tbody><tr>
+                    <td style="font-size: 25px; text-align: center;" colspan="2"></td>
+                </tr>
+                <tr>
+                    <td>Send Email:<input type="checkbox" id="emailKD">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Send SMS:<input type="checkbox" id="smsKD">
+                    </td>
+                    <td align="right" style="padding: 7px 0; float:right">
+                        <input type="button" class="btn btn-info" value="Không duyệt" onclick="KhongDuyet();">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <textarea class="form-control" cols="20" id="lyDoKhongDuyet" name="lyDoKhongDuyet" rows="2"></textarea>
+                        <div style="float: right; margin-top: 10px">
+                            <input type="button" class="btn btn-info" value="Không duyệt" onclick="KhongDuyet();">
+
+                        </div>
+                    </td>
+                </tr>
+            </tbody></table>
+        </form>
+        </fieldset>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<!-- End bo sung -->

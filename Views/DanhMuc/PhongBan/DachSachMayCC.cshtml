@@ -1,0 +1,150 @@
+﻿@using BatDongSan.Models.DBChamCong
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        $(document).on("click", ".btnEdit", function () {
+            var url = "@Url.Action("EditMayCC", "PhongBan")" + "/" + this.value;
+            var form = document.getElementById("form-submit");
+            form.action = url;
+            $("#custom-panel").load(url);
+        });
+
+        $(document).on("click", ".btnDelete", function () {
+            var url = "@Url.Action("DeleteMayCC", "PhongBan")" + "/" + this.value;
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "html",
+                success: function (html) {
+                    $("#ViewBody").html(html);
+                    Alert.success("Xóa thành công!", "Thông báo", { displayDuration: 2000 });
+                },
+                error: function () {
+                    Alert.error("Có lỗi xảy ra, Vui lòng kiểm tra lại!", "Thông báo", { displayDuration: 2000 });
+                }
+            });
+        });
+        $("#btnModalCreate").click(function () {
+            var url = "@Url.Action("CreateMayCC", "PhongBan")";
+            var form = document.getElementById("form-submit");
+            form.action = url;
+            $("#custom-panel").load(url);
+        });
+
+
+    });
+</script>
+<div id="tabs">
+    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+        <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active activeColorTab tabToggle">
+            <a href="#"><span><i class="fa fa-users" aria-hidden="true"></i>Danh sách máy chấm công</span></a>
+
+        </li>
+
+    </ul>
+</div>
+<div id="container">
+    <div id="filter-panel" class="collapse filter-panel" style="display: block">
+                
+                <div class="panel panel-default background_top">
+                    <div class="panel-body">
+                        <div class="form-group" style="float: right">
+                            <button class="btn btn-info" id="btnModalCreate" type="button" data-toggle="modal" data-target="#customModal">Thêm </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    <table class="table table-striped table-hover table-condensed TableMobile">
+        <thead>
+            <tr>
+                <th>STT
+                </th>
+                <th>Mã máy
+                </th>
+                <th>Tên máy
+                </th>
+                <th>Tên công trường/VP.
+                </th>
+                <th>Trạng thái
+                </th>
+
+
+                <th>Loại máy
+                </th>
+                <th>ghi chú
+                </th>
+                <th>Thao tác</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+
+            @{
+                var danhSach = ViewBag.List as List<Sp_ViewMachinePBResult>;
+                if (danhSach != null)
+                {
+                    int stt = 1;
+                    foreach (var data in danhSach)
+                    {
+                        
+                
+                <tr>
+                    <td style="text-align:center">
+                        @stt
+                    </td>
+                    <td>
+                       @data.machineId
+                    </td>
+                    <td>
+                        @data.MachineName
+                    </td>
+                    <td>
+                        @data.siteName
+                    </td>
+
+                    @if (data.trangThai == 1)
+                    {
+                        <td>Online
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="color: Red">Offline
+                        </td>
+               
+                    }
+                    @Html.Hidden("status", data.trangThai)
+
+
+                    <td>
+                        @if (data.typeMachine == 1)
+                        { 
+                            <span>Máy vào</span>
+                        }
+                        else if (data.typeMachine == 2)
+                        {
+                            <span>Máy ra</span>
+                        }
+                    </td>
+                    <td>
+                        @data.remark
+                    </td>
+                    <td style="text-align:center">
+                         <button class="btn btn-warning btn-xs btnEdit" type="button" data-toggle="modal" data-target="#customModal" value="@data.machineId">Sửa</button>
+            <button class="btn btn-warning btn-xs btnDelete" type="button" value="@data.machineId">Xóa</button>
+                    </td>
+
+                   
+                </tr>
+                        stt++;
+                    }
+                }
+            }
+        </tbody>
+
+    </table>
+</div>
+
+

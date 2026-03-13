@@ -1,0 +1,56 @@
+﻿@using BatDongSan.Models.NhanSu;
+@{     
+    Layout = null;
+    int i = 1;
+    var list = ViewBag.ListPhanCa as List<tbl_NS_CaLamViec>;
+}
+<div id="content">
+    <table class="table table-striped table-hover table-condensed TableMobile" id="maintable">
+        <thead>
+            <tr id="trtop">
+                <th style="width: 45px">STT</th>
+                <th>Tên ca</th>
+                <th>Thời gian bắt đầu</th>
+                <th>Thời gian kết thúc</th>
+                <th>Ghi chú</th>
+                <th style="width: 40px; text-align: center">
+                    <input type="checkbox" name="check-all" id="check-all">
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in list)
+        {
+            string bg = "", title = "";
+            if (item.trangThai == 1)
+            {
+                bg = "background:green; color:#fff";
+                title = "Phiếu đã xác nhận";
+            }
+            <tr>
+                <td style="text-align: center;@bg" title="@title"  class="setSizeSTT">@i</td>
+                <td>
+                    @if (item.trangThai == 1)
+                    {
+                        <a style="color:blue" href="@Url.Action("Details", "CaLamViec", new { id = item.maCa })">@item.tenCa</a>
+                    }
+                </td>
+                <td style="text-align: center">
+                    @string.Format("{0:HH:mm}", item.thoiGianTu)
+                </td>
+                <td style="text-align: center">
+                    @string.Format("{0:HH:mm}", item.thoiGianDen)
+                </td>
+                <td>
+                    @item.ghiChu
+                </td>
+                <td style="text-align: center">
+                    @if ((item.trangThai ?? 0) == 0)
+                    {
+                        <input name="maCa" type="checkbox" value="@item.maCa"/>
+                    }
+                </td>
+            </tr>
+                    i++;
+        }
+    </table>
+</div>

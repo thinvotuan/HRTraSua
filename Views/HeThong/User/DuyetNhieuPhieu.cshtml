@@ -1,0 +1,282 @@
+﻿@using BatDongSan.Models.NhanSu
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+  
+   
+}
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/additional-methods.min.js"></script>
+<script src="~/Scripts/autoNumeric.js"></script>
+<script src="~/Scripts/batdongsan.validate.js"></script>
+<script src="~/Scripts/moment.min.js"></script>
+<script src="~/Scripts/vi.js"></script>
+<script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+<link rel="stylesheet" href="~/Content/bootstrap-datetimepicker.min.css" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<style>
+    .pageActive, .pageCurrent:hover, .pageNext:hover, .pageLast:hover, .pageFirst:hover, .pagePrevious:hover {
+        padding: 7px 11px;
+        background-color: #4D8AFF;
+        color: #FFFFFF;
+        display: inline-block;
+        border: 1px solid #80ABFF;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .pageCurrent, .pageNext, .pageLast, .pageFirst, .pagePrevious {
+        padding: 7px 11px;
+        background-color: #fff;
+        display: inline-block;
+        border: 1px solid #80ABFF;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".datepicker").datetimepicker({
+            locale: 'vi',
+            format: 'DD/MM/YYYY'
+        });
+        $("#btnSearch").click(function () {
+            Search();
+        });
+        $("#maCongViec").val($(".valMaCongViec").val());
+        $("#maBuocDuyet").val($(".valMaBuocDuyet").val());
+        Search();
+
+        $("#maCongViec,#maBuocDuyet").change(function () {
+            var giatri = $("#qSearch").val().trim();
+            giatri = giatri.replace(/ /gi, '+');
+            var url = '@Url.Action("DuyetNhieuPhieu", "User")' + '?maCongViec=' + $("#maCongViec").val() + '&maBuocDuyet=' + $("#maBuocDuyet").val()+'&qSearch=' + giatri;
+            location.href = url;
+
+        });
+        $(document).on("click", "[name=checkeds]", function () {
+
+            if (false == $(this).prop("checked")) { //if this item is unchecked
+                $("[name=check-all]").prop('checked', $(this).prop("checked")); //change "select all" checked status to false
+            }
+        });
+        $(document).on("click", "[name=check-all]", function () {
+            $('#content input:checkbox').not(this).prop('checked', this.checked);
+        });
+
+
+    });
+    function OnCriteriaPC(page) {
+        $(".showBtn").hide();
+        var maPhieu = $(".valMaPhieu").val().trim();
+        var maCongViec = $(".valMaCongViec").val();
+        var maBuocDuyet = $(".valMaBuocDuyet").val();
+        var giatri = $("#qSearch").val().trim();
+        giatri = giatri.replace(/ /gi, '+');
+        var url = '@Url.Action("LoadDuyetNhieuPhieu", "User")' + "?qSearch=" + giatri + "&_page=" + page + "&maPhieu=" + maPhieu + "&maCongViec=" + maCongViec + "&maBuocDuyet=" + maBuocDuyet;
+        var imageUrl = '<div id="divMsg" align="center"><img src="@Url.Content("~/Content/Images/loading.gif") "/></div>';
+        $('#content').html(imageUrl);
+        $('#content').load(url, function () {
+            $(".showBtn").show();
+        });
+    }
+
+    function Search() {
+        $(".showBtn").hide();
+        var maPhieu = $(".valMaPhieu").val().trim();
+        var maCongViec = $(".valMaCongViec").val();
+        var maBuocDuyet = $(".valMaBuocDuyet").val();
+        var giatri = $("#qSearch").val().trim();
+        giatri = giatri.replace(/ /gi, '+');
+        var url = '@Url.Action("LoadDuyetNhieuPhieu", "User")' + "?qSearch=" + giatri + "&_page=0&maPhieu=" + maPhieu + "&maCongViec=" + maCongViec + "&maBuocDuyet=" + maBuocDuyet;
+
+        var imageUrl = '<div id="divMsg" align="center"><img src="@Url.Content("~/Content/Images/loading.gif") "/></div>';
+        $('#content').html(imageUrl);
+        $('#content').load(url, function () {
+            $(".showBtn").show();
+        });
+    }
+
+
+
+
+    function enterToSeacrh(event) {
+        if (event.keyCode == 13)
+            $("#btnSearch").click();
+    }
+    function DuyetPhieu() {
+
+        if ($("#content input:checked").length > 0) {
+
+            bootbox.confirm("Duyệt những phiếu đã chọn?", function (result) {
+                if (result) {
+                    if ($("[name='checkeds']:checked").length >= 1) {
+                        var i = 0;
+                        var strString;
+                        var arrMaNV = [];
+                        //Get value
+                        jQuery("input[name='checkeds']:checked").each(function (index, element) {
+                            strString = jQuery(this).val();
+                            arrMaNV[i] = strString.split(',');
+                            i++;
+                        });
+                        var maCongViec = $(".valMaCongViec").val();
+
+                        $.ajax({
+                            url: "/User/InsertDuyetNhieuPhieu",
+                            type: "POST",
+                            dataType: "json",
+                            data: { MaPhieus: arrMaNV.toString(), maCongViec: maCongViec },
+                            success: function (data) {
+
+                                if (data == "true" || data == true) {
+                                    Alert.success("Cập nhật duyệt phiếu thành công!", "Thông báo", { displayDuration: 2000 });
+                                    Search();
+                                }
+                                else {
+                                    Alert.error("Có lỗi xãy ra, Vui lòng kiểm tra lại!", "Thông báo", { displayDuration: 2000 });
+                                    Search();
+                                }
+
+                            },
+
+                            error: function () {
+                                Alert.error("Có lỗi xãy ra, Vui lòng kiểm tra lại!", "Thông báo", { displayDuration: 2000 });
+                            }
+                        });
+                    }
+
+
+                }
+            });
+        }
+        else {
+            Alert.warning("Không có phiếu cần chọn.", "Thông báo", { displayDuration: 2000 });
+
+        }
+    }
+    function TraLai() {
+
+        if ($("#content input:checked").length > 0) {
+
+            bootbox.confirm("Trả lại những phiếu đã chọn?", function (result) {
+                if (result) {
+                    if ($("[name='checkeds']:checked").length >= 1) {
+                        var i = 0;
+                        var strString;
+                        var arrMaNV = [];
+                        //Get value
+                        jQuery("input[name='checkeds']:checked").each(function (index, element) {
+                            strString = jQuery(this).val();
+                            arrMaNV[i] = strString.split(',');
+                            i++;
+                        });
+                        var maCongViec = $(".valMaCongViec").val();
+
+                        $.ajax({
+                            url: "/User/TraLaiDuyetNhieuPhieu",
+                            type: "POST",
+                            dataType: "json",
+                            data: { MaPhieus: arrMaNV.toString(), maCongViec: maCongViec },
+                            success: function (data) {
+
+                                if (data == "true" || data == true) {
+                                    Alert.success("Cập nhật trả phiếu thành công!", "Thông báo", { displayDuration: 2000 });
+                                    Search();
+                                }
+                                else {
+                                    Alert.error("Có lỗi xãy ra, Vui lòng kiểm tra lại!", "Thông báo", { displayDuration: 2000 });
+                                    Search();
+                                }
+
+                            },
+
+                            error: function () {
+                                Alert.error("Có lỗi xãy ra, Vui lòng kiểm tra lại!", "Thông báo", { displayDuration: 2000 });
+                            }
+                        });
+                    }
+
+
+                }
+            });
+        }
+        else {
+            Alert.warning("Không có phiếu cần chọn.", "Thông báo", { displayDuration: 2000 });
+
+        }
+    }
+    function TroVe() {
+        var url = '@Url.Action("ListCongViecProcess", "User")';
+        location.href = url;
+    }
+
+</script>
+
+<fieldset class="removeBorderFieldset">
+    <input type="hidden" class="valMaPhieu" value="@ViewBag.maPhieu" />
+    <input type="hidden" class="valMaCongViec" value="@ViewBag.maCongViec" />
+    <input type="hidden" class="valMaBuocDuyet" value="@ViewBag.maBuocDuyet" />
+    <div id="tabs" style="" class="ui-tabs">
+        <ul class="ui-tabs-nav">
+            <li class="ui-tabs-selected ui-state-active"><a><span>Duyệt nhiều phiếu</span></a></li>
+        </ul>
+    </div>
+    <div id="container">
+        <div id="filter-panel" class="collapse filter-panel" style="display: block; position: relative">
+            <table width="100%" class="table table-hover table-responsive table-condensed TableMobileChild" style="position: relative">
+                <tbody>
+                    <tr class="background_tr cusText">
+                        <td>
+                            <span style="float: left">Công việc:</span>
+                            <select class="form-control" id="maCongViec" name="maCongViec" style="float: left; width: 270px">
+                                <option value="">[Chọn]</option>
+                                <option value="PhieuCongTac">Phiếu công tác</option>
+                                <option value="PhieuNghiPhep">Phiếu nghỉ phép</option>
+                                <option value="PhieuTangCa">Phiếu tăng ca</option>
+                            </select>
+                        </td>
+                        <td>
+                            <span style="float: left">Bước duyệt:</span>
+                            <select class="form-control" id="maBuocDuyet" name="maBuocDuyet" style="float: left; width: 130px">
+                                <option value="">Chọn bước duyệt</option>
+                                <option value="CD">Chờ duyệt</option>
+                                <option value="CTN">Chờ tiếp nhận</option>
+                                <option value="CDL1">Chờ duyệt lần 1</option>
+                                <option value="CDL2">Chờ duyệt lần 2</option>
+                            </select>
+                        </td>
+                        <td>
+                            <div class="input-group timkiem" style="float: right">
+                                <input type="text" id="qSearch" class="form-control" value="@ViewData["qSearch"]" placeholder="Tìm kiếm..." onkeypress="enterToSeacrh(event)">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" id="btnSearch" type="button">Tìm kiếm</button>
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="float: right">
+                                <button class="btn btn-info" type="button" onclick="DuyetPhieu()"><i class="fa fa-paper-plane"></i>Duyệt</button>
+                                <button class="btn btn-info" type="button" onclick="TraLai()"><i class="fa fa-undo"></i>Trả lại</button>
+                                <button class="btn btn-info" type="button" onclick="TroVe()"><i class="fa fa-list-alt"></i>Trở về trang nhắc việc</button>
+
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div id="content">
+        </div>
+
+        <div style="float: right; display: none" class="showBtn">
+            <button class="btn btn-info" type="button" onclick="DuyetPhieu()"><i class="fa fa-paper-plane"></i>Duyệt</button>
+            <button class="btn btn-info" type="button" onclick="TraLai()"><i class="fa fa-undo"></i>Trả lại</button>
+            <button class="btn btn-info" type="button" onclick="TroVe()"><i class="fa fa-list-alt"></i>Trở về trang nhắc việc</button>
+
+        </div>
+    </div>
+</fieldset>
