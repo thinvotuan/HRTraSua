@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block title %}Nhân viên - HR Thealley{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-people me-2 text-primary"></i>Danh sách nhân viên</h4>
+    <a href="{{ url_for('employees.create') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Thêm nhân viên
+    </a>
+</div>
+
+<!-- Filter -->
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <input type="text" name="q" class="form-control form-control-sm"
+                       placeholder="Tìm kiếm tên, mã, SĐT, email..."
+                       value="{{ q }}">
+            </div>
+            <div class="col-md-3">
+                <select name="dept_id" class="form-select form-select-sm">
+                    <option value="">-- Tất cả phòng ban --</option>
+                    {% for d in departments %}
+                    <option value="{{ d.id }}" {% if dept_id|string == d.id|string %}selected{% endif %}>
+                        {{ d.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">-- Tất cả --</option>
+                    <option value="active" {% if status == 'active' %}selected{% endif %}>Đang làm việc</option>
+                    <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Đã nghỉ việc</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-search me-1"></i>Tìm
+                </button>
+                <a href="{{ url_for('employees.index') }}" class="btn btn-sm btn-outline-secondary ms-1">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã NV</th>
+                        <th>Họ tên</th>
+                        <th>Phòng ban</th>
+                        <th>Chức vụ</th>
+                        <th>Điện thoại</th>
+                        <th>Ngày vào làm</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in employees %}
+                    <tr>
+                        <td><code class="text-primary">{{ emp.employee_code }}</code></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-circle me-2 bg-primary text-white">
+                                    {{ emp.full_name[0] }}
+                                </div>
+                                <div>
+                                    <div class="fw-medium">{{ emp.full_name }}</div>
+                                    <small class="text-muted">{{ emp.gender or '' }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ emp.department.name if emp.department else '—' }}</td>
+                        <td>{{ emp.position.name if emp.position else '—' }}</td>
+                        <td>{{ emp.phone or '—' }}</td>
+                        <td>{{ emp.hire_date.strftime('%d/%m/%Y') if emp.hire_date else '—' }}</td>
+                        <td>
+                            {% if emp.status == 'active' %}
+                            <span class="badge bg-success">Đang làm</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Đã nghỉ</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{{ url_for('employees.detail', emp_id=emp.id) }}"
+                               class="btn btn-sm btn-outline-info me-1" title="Chi tiết">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ url_for('employees.update', emp_id=emp.id) }}"
+                               class="btn btn-sm btn-outline-warning me-1" title="Sửa">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form method="post" action="{{ url_for('employees.delete', emp_id=emp.id) }}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Bạn có chắc muốn xóa nhân viên {{ emp.full_name }}?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <i class="bi bi-person-x fs-4 d-block mb-2"></i>
+                            Không tìm thấy nhân viên nào
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-white text-muted small">
+        Tổng cộng: <strong>{{ employees|length }}</strong> nhân viên
+    </div>
+</div>
+{% endblock %}

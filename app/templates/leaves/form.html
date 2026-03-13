@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Tạo đơn nghỉ phép - HR Thealley{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">
+        <i class="bi bi-calendar-x me-2 text-primary"></i>Tạo đơn nghỉ phép
+    </h4>
+    <a href="{{ url_for('leaves.index') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm" style="max-width:550px">
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label fw-medium">Nhân viên <span class="text-danger">*</span></label>
+                <select name="employee_id" class="form-select" required>
+                    <option value="">-- Chọn nhân viên --</option>
+                    {% for emp in employees %}
+                    <option value="{{ emp.id }}"
+                            {% if form_data and form_data.employee_id|int == emp.id %}selected{% endif %}>
+                        {{ emp.full_name }} ({{ emp.employee_code }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">Loại nghỉ phép <span class="text-danger">*</span></label>
+                <select name="leave_type" class="form-select" required>
+                    <option value="">-- Chọn loại --</option>
+                    {% set sel_type = form_data.leave_type if form_data else '' %}
+                    <option value="annual" {% if sel_type == 'annual' %}selected{% endif %}>Nghỉ phép năm</option>
+                    <option value="sick" {% if sel_type == 'sick' %}selected{% endif %}>Nghỉ bệnh</option>
+                    <option value="personal" {% if sel_type == 'personal' %}selected{% endif %}>Nghỉ việc riêng</option>
+                    <option value="maternity" {% if sel_type == 'maternity' %}selected{% endif %}>Nghỉ thai sản</option>
+                    <option value="unpaid" {% if sel_type == 'unpaid' %}selected{% endif %}>Nghỉ không lương</option>
+                </select>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <label class="form-label fw-medium">Từ ngày <span class="text-danger">*</span></label>
+                    <input type="date" name="start_date" class="form-control"
+                           value="{{ form_data.start_date if form_data else '' }}" required>
+                </div>
+                <div class="col-6">
+                    <label class="form-label fw-medium">Đến ngày <span class="text-danger">*</span></label>
+                    <input type="date" name="end_date" class="form-control"
+                           value="{{ form_data.end_date if form_data else '' }}" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">Lý do</label>
+                <textarea name="reason" class="form-control" rows="3"
+                          placeholder="Nhập lý do nghỉ...">{{ form_data.reason if form_data else '' }}</textarea>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i>Tạo đơn
+                </button>
+                <a href="{{ url_for('leaves.index') }}" class="btn btn-outline-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Sửa' if emp else 'Thêm' }} nhân viên - HR Thealley{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">
+        <i class="bi bi-person-{% if emp %}pencil{% else %}plus{% endif %} me-2 text-primary"></i>
+        {{ 'Cập nhật nhân viên' if emp else 'Thêm nhân viên mới' }}
+    </h4>
+    <a href="{{ url_for('employees.index') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form method="post">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-medium">Mã nhân viên <span class="text-danger">*</span></label>
+                    <input type="text" name="employee_code" class="form-control"
+                           value="{{ emp.employee_code if emp else (form_data.employee_code if form_data else '') }}"
+                           {% if emp %}readonly{% endif %} required>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label fw-medium">Họ và tên <span class="text-danger">*</span></label>
+                    <input type="text" name="full_name" class="form-control"
+                           value="{{ emp.full_name if emp else (form_data.full_name if form_data else '') }}"
+                           required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-medium">Giới tính</label>
+                    <select name="gender" class="form-select">
+                        <option value="">-- Chọn --</option>
+                        {% set sel_gender = emp.gender if emp else (form_data.gender if form_data else '') %}
+                        <option value="Nam" {% if sel_gender == 'Nam' %}selected{% endif %}>Nam</option>
+                        <option value="Nữ" {% if sel_gender == 'Nữ' %}selected{% endif %}>Nữ</option>
+                        <option value="Khác" {% if sel_gender == 'Khác' %}selected{% endif %}>Khác</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-medium">Ngày sinh</label>
+                    <input type="date" name="date_of_birth" class="form-control"
+                           value="{{ emp.date_of_birth.isoformat() if emp and emp.date_of_birth else (form_data.date_of_birth if form_data else '') }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-medium">Phòng ban</label>
+                    <select name="department_id" class="form-select" id="deptSelect">
+                        <option value="">-- Chọn phòng ban --</option>
+                        {% set sel_dept = emp.department_id if emp else (form_data.department_id|int if form_data and form_data.department_id else 0) %}
+                        {% for d in departments %}
+                        <option value="{{ d.id }}" {% if sel_dept == d.id %}selected{% endif %}>
+                            {{ d.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium">Chức vụ</label>
+                    <select name="position_id" class="form-select" id="posSelect">
+                        <option value="">-- Chọn chức vụ --</option>
+                        {% set sel_pos = emp.position_id if emp else (form_data.position_id|int if form_data and form_data.position_id else 0) %}
+                        {% for p in positions %}
+                        <option value="{{ p.id }}" {% if sel_pos == p.id %}selected{% endif %}>
+                            {{ p.name }} ({{ p.department.name }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-medium">Ngày vào làm</label>
+                    <input type="date" name="hire_date" class="form-control"
+                           value="{{ emp.hire_date.isoformat() if emp and emp.hire_date else (form_data.hire_date if form_data else '') }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-medium">Trạng thái</label>
+                    <select name="status" class="form-select">
+                        {% set sel_status = emp.status if emp else (form_data.status if form_data else 'active') %}
+                        <option value="active" {% if sel_status == 'active' %}selected{% endif %}>Đang làm việc</option>
+                        <option value="inactive" {% if sel_status == 'inactive' %}selected{% endif %}>Đã nghỉ việc</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-medium">Điện thoại</label>
+                    <input type="tel" name="phone" class="form-control"
+                           value="{{ emp.phone if emp else (form_data.phone if form_data else '') }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium">Email</label>
+                    <input type="email" name="email" class="form-control"
+                           value="{{ emp.email if emp else (form_data.email if form_data else '') }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium">Địa chỉ</label>
+                    <input type="text" name="address" class="form-control"
+                           value="{{ emp.address if emp else (form_data.address if form_data else '') }}">
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i>
+                    {{ 'Cập nhật' if emp else 'Thêm mới' }}
+                </button>
+                <a href="{{ url_for('employees.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x me-1"></i>Hủy
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

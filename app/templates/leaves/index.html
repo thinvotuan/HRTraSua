@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}Nghỉ phép - HR Thealley{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-calendar-x me-2 text-primary"></i>Quản lý nghỉ phép</h4>
+    <a href="{{ url_for('leaves.create') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Tạo đơn nghỉ phép
+    </a>
+</div>
+
+<!-- Filter -->
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <select name="emp_id" class="form-select form-select-sm">
+                    <option value="">-- Tất cả nhân viên --</option>
+                    {% for emp in employees %}
+                    <option value="{{ emp.id }}" {% if emp_id|string == emp.id|string %}selected{% endif %}>
+                        {{ emp.full_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">-- Tất cả trạng thái --</option>
+                    <option value="pending" {% if status == 'pending' %}selected{% endif %}>Chờ duyệt</option>
+                    <option value="approved" {% if status == 'approved' %}selected{% endif %}>Đã duyệt</option>
+                    <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>Từ chối</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-search me-1"></i>Lọc
+                </button>
+                <a href="{{ url_for('leaves.index') }}" class="btn btn-sm btn-outline-secondary ms-1">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nhân viên</th>
+                        <th>Loại nghỉ</th>
+                        <th>Từ ngày</th>
+                        <th>Đến ngày</th>
+                        <th>Số ngày</th>
+                        <th>Lý do</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for leave in leaves %}
+                    <tr>
+                        <td>
+                            <div class="fw-medium small">{{ leave.employee.full_name }}</div>
+                            <small class="text-muted">{{ leave.employee.employee_code }}</small>
+                        </td>
+                        <td><span class="badge bg-info text-dark">{{ leave.leave_type_label }}</span></td>
+                        <td>{{ leave.start_date.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ leave.end_date.strftime('%d/%m/%Y') }}</td>
+                        <td class="fw-bold">{{ leave.days_count }} ngày</td>
+                        <td class="text-muted small" style="max-width:200px">
+                            {{ leave.reason or '—' }}
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ leave.status_label[1] }}">
+                                {{ leave.status_label[0] }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            {% if leave.status == 'pending' %}
+                            <form method="post" action="{{ url_for('leaves.approve', leave_id=leave.id) }}"
+                                  class="d-inline">
+                                <input type="hidden" name="action" value="approve">
+                                <input type="hidden" name="approved_by" value="Quản lý">
+                                <button type="submit" class="btn btn-sm btn-success me-1" title="Duyệt">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                            </form>
+                            <form method="post" action="{{ url_for('leaves.approve', leave_id=leave.id) }}"
+                                  class="d-inline">
+                                <input type="hidden" name="action" value="reject">
+                                <input type="hidden" name="approved_by" value="Quản lý">
+                                <button type="submit" class="btn btn-sm btn-warning me-1" title="Từ chối">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                            <form method="post" action="{{ url_for('leaves.delete', leave_id=leave.id) }}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Xóa đơn nghỉ phép này?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <i class="bi bi-calendar-x fs-3 d-block mb-2"></i>
+                            Không có đơn nghỉ phép nào
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-white text-muted small">
+        Tổng cộng: <strong>{{ leaves|length }}</strong> đơn
+    </div>
+</div>
+{% endblock %}

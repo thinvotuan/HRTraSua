@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Sửa' if rec else 'Thêm' }} chấm công - HR Thealley{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">
+        <i class="bi bi-clock me-2 text-primary"></i>
+        {{ 'Cập nhật chấm công' if rec else 'Thêm chấm công' }}
+    </h4>
+    <a href="{{ url_for('attendance.index') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm" style="max-width:500px">
+    <div class="card-body">
+        <form method="post">
+            {% if not rec %}
+            <div class="mb-3">
+                <label class="form-label fw-medium">Nhân viên <span class="text-danger">*</span></label>
+                <select name="employee_id" class="form-select" required>
+                    <option value="">-- Chọn nhân viên --</option>
+                    {% for emp in employees %}
+                    <option value="{{ emp.id }}"
+                            {% if form_data and form_data.employee_id|int == emp.id %}selected{% endif %}>
+                        {{ emp.employee_code }} - {{ emp.full_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">Ngày <span class="text-danger">*</span></label>
+                <input type="date" name="date" class="form-control"
+                       value="{{ form_data.date if form_data else '' }}" required>
+            </div>
+            {% else %}
+            <div class="mb-3">
+                <label class="form-label fw-medium">Nhân viên</label>
+                <input type="text" class="form-control" readonly
+                       value="{{ rec.employee.full_name }} ({{ rec.employee.employee_code }})">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium">Ngày</label>
+                <input type="text" class="form-control" readonly
+                       value="{{ rec.date.strftime('%d/%m/%Y') }}">
+            </div>
+            {% endif %}
+
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <label class="form-label fw-medium">Giờ vào</label>
+                    <input type="time" name="check_in" class="form-control"
+                           value="{{ rec.check_in if rec else (form_data.check_in if form_data else '') }}">
+                </div>
+                <div class="col-6">
+                    <label class="form-label fw-medium">Giờ ra</label>
+                    <input type="time" name="check_out" class="form-control"
+                           value="{{ rec.check_out if rec else (form_data.check_out if form_data else '') }}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-medium">Trạng thái</label>
+                <select name="status" class="form-select">
+                    {% set cur = rec.status if rec else (form_data.status if form_data else 'present') %}
+                    <option value="present" {% if cur=='present' %}selected{% endif %}>Có mặt</option>
+                    <option value="late" {% if cur=='late' %}selected{% endif %}>Đi muộn</option>
+                    <option value="half_day" {% if cur=='half_day' %}selected{% endif %}>Nửa ngày</option>
+                    <option value="absent" {% if cur=='absent' %}selected{% endif %}>Vắng mặt</option>
+                    <option value="leave" {% if cur=='leave' %}selected{% endif %}>Nghỉ phép</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-medium">Ghi chú</label>
+                <input type="text" name="note" class="form-control"
+                       value="{{ rec.note if rec else (form_data.note if form_data else '') }}">
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i>{{ 'Cập nhật' if rec else 'Thêm mới' }}
+                </button>
+                <a href="{{ url_for('attendance.index') }}" class="btn btn-outline-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

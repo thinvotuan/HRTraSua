@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block title %}Tổng quan - HR Thealley{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0"><i class="bi bi-speedometer2 me-2 text-primary"></i>Tổng quan hệ thống</h4>
+    <span class="text-muted">{{ today.strftime('%d/%m/%Y') }}</span>
+</div>
+
+<!-- Stats cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                        <i class="bi bi-people-fill text-primary fs-4"></i>
+                    </div>
+                    <div>
+                        <div class="h3 mb-0 fw-bold">{{ total_employees }}</div>
+                        <small class="text-muted">Nhân viên</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                        <i class="bi bi-building text-success fs-4"></i>
+                    </div>
+                    <div>
+                        <div class="h3 mb-0 fw-bold">{{ total_departments }}</div>
+                        <small class="text-muted">Phòng ban</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                        <i class="bi bi-check2-circle text-info fs-4"></i>
+                    </div>
+                    <div>
+                        <div class="h3 mb-0 fw-bold">{{ present_today }}</div>
+                        <small class="text-muted">Có mặt hôm nay</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                        <i class="bi bi-clock-history text-warning fs-4"></i>
+                    </div>
+                    <div>
+                        <div class="h3 mb-0 fw-bold">{{ pending_leaves }}</div>
+                        <small class="text-muted">Đơn phép chờ duyệt</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Attendance today summary -->
+    <div class="col-md-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+                <h6 class="mb-0"><i class="bi bi-calendar-day me-2 text-primary"></i>
+                    Chấm công hôm nay
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center g-2">
+                    <div class="col-4">
+                        <div class="p-3 rounded bg-success bg-opacity-10">
+                            <div class="h4 mb-0 text-success fw-bold">{{ present_today }}</div>
+                            <small class="text-muted">Có mặt</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3 rounded bg-warning bg-opacity-10">
+                            <div class="h4 mb-0 text-warning fw-bold">{{ late_today }}</div>
+                            <small class="text-muted">Đi muộn</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-3 rounded bg-danger bg-opacity-10">
+                            <div class="h4 mb-0 text-danger fw-bold">{{ absent_today }}</div>
+                            <small class="text-muted">Vắng mặt</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('attendance.index') }}" class="btn btn-sm btn-outline-primary w-100">
+                        <i class="bi bi-arrow-right me-1"></i>Xem chấm công
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick links -->
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+                <h6 class="mb-0"><i class="bi bi-lightning me-2 text-warning"></i>Thao tác nhanh</h6>
+            </div>
+            <div class="card-body d-flex flex-column gap-2">
+                <a href="{{ url_for('employees.create') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-person-plus me-1"></i>Thêm nhân viên
+                </a>
+                <a href="{{ url_for('attendance.create') }}" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-clock-history me-1"></i>Chấm công
+                </a>
+                <a href="{{ url_for('leaves.create') }}" class="btn btn-outline-warning btn-sm">
+                    <i class="bi bi-calendar-x me-1"></i>Tạo đơn nghỉ phép
+                </a>
+                <a href="{{ url_for('payroll.index') }}" class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-cash-coin me-1"></i>Bảng lương
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent employees -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+                <h6 class="mb-0"><i class="bi bi-person-lines-fill me-2 text-success"></i>
+                    Nhân viên mới nhất
+                </h6>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for emp in recent_employees %}
+                    <li class="list-group-item px-3 py-2">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-circle me-2 bg-primary text-white">
+                                {{ emp.full_name[0] }}
+                            </div>
+                            <div>
+                                <div class="fw-medium small">{{ emp.full_name }}</div>
+                                <div class="text-muted" style="font-size:0.75rem">
+                                    {{ emp.employee_code }}
+                                    {% if emp.department %}&bull; {{ emp.department.name }}{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-center text-muted py-3">
+                        Chưa có nhân viên nào
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

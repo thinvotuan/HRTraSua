@@ -1,0 +1,120 @@
+/* Thealley HR System - Custom Styles */
+
+:root {
+    --thealley-primary: #0d6efd;
+    --thealley-sidebar-bg: #1a1a2e;
+}
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Avatar circles */
+.avatar-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.avatar-circle-lg {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+/* Navbar */
+.navbar-brand {
+    letter-spacing: 0.5px;
+}
+
+/* Cards */
+.card {
+    border-radius: 12px;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    padding: 0.75rem 1rem;
+}
+
+/* Tables */
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.table td {
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
+/* Badges */
+.badge {
+    font-weight: 500;
+}
+
+/* Buttons */
+.btn-sm {
+    font-size: 0.8rem;
+}
+
+/* Form controls */
+.form-control, .form-select {
+    font-size: 0.875rem;
+}
+
+/* Footer */
+.footer {
+    margin-top: 3rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
+    }
+}
+
+/* Stat cards hover */
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12) !important;
+    transition: box-shadow 0.2s;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background: #dee2e6;
+    border-radius: 3px;
+}
+
+/* Print */
+@media print {
+    .navbar, .footer, .btn, form, .card-header form {
+        display: none !important;
+    }
+    .card {
+        border: 1px solid #dee2e6 !important;
+        box-shadow: none !important;
+    }
+}
