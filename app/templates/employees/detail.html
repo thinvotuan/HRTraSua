@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block title %}{{ emp.full_name }} - HR Thealley{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">
+        <i class="bi bi-person-badge me-2 text-primary"></i>Chi tiết nhân viên
+    </h4>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('employees.update', emp_id=emp.id) }}"
+           class="btn btn-sm btn-outline-warning">
+            <i class="bi bi-pencil me-1"></i>Sửa
+        </a>
+        <a href="{{ url_for('employees.index') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Quay lại
+        </a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center py-4">
+            <div class="card-body">
+                <div class="avatar-circle-lg mx-auto mb-3 bg-primary text-white fs-1">
+                    {{ emp.full_name[0] }}
+                </div>
+                <h5 class="fw-bold mb-1">{{ emp.full_name }}</h5>
+                <div class="text-muted mb-2">{{ emp.employee_code }}</div>
+                {% if emp.status == 'active' %}
+                <span class="badge bg-success fs-6">Đang làm việc</span>
+                {% else %}
+                <span class="badge bg-secondary fs-6">Đã nghỉ việc</span>
+                {% endif %}
+                <hr>
+                <div class="row text-center g-2">
+                    <div class="col-6">
+                        <div class="fw-bold text-primary">{{ emp.age or '—' }}</div>
+                        <small class="text-muted">Tuổi</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="fw-bold text-primary">{{ emp.years_of_service }}</div>
+                        <small class="text-muted">Năm công tác</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Thông tin cá nhân</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="text-muted small">Ngày sinh</label>
+                        <div class="fw-medium">
+                            {{ emp.date_of_birth.strftime('%d/%m/%Y') if emp.date_of_birth else '—' }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small">Giới tính</label>
+                        <div class="fw-medium">{{ emp.gender or '—' }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small">Điện thoại</label>
+                        <div class="fw-medium">{{ emp.phone or '—' }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small">Email</label>
+                        <div class="fw-medium">{{ emp.email or '—' }}</div>
+                    </div>
+                    <div class="col-12">
+                        <label class="text-muted small">Địa chỉ</label>
+                        <div class="fw-medium">{{ emp.address or '—' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mt-3">
+            <div class="card-header bg-white">
+                <h6 class="mb-0"><i class="bi bi-briefcase me-2"></i>Thông tin công việc</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label class="text-muted small">Phòng ban</label>
+                        <div class="fw-medium">{{ emp.department.name if emp.department else '—' }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small">Chức vụ</label>
+                        <div class="fw-medium">{{ emp.position.name if emp.position else '—' }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small">Ngày vào làm</label>
+                        <div class="fw-medium">
+                            {{ emp.hire_date.strftime('%d/%m/%Y') if emp.hire_date else '—' }}
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="text-muted small">Mức lương cơ bản</label>
+                        <div class="fw-medium text-success">
+                            {% if emp.position and emp.position.base_salary %}
+                                {{ "{:,.0f}".format(emp.position.base_salary) }} VNĐ
+                            {% else %}—{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent attendance -->
+<div class="card border-0 shadow-sm mt-3">
+    <div class="card-header bg-white d-flex justify-content-between">
+        <h6 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Chấm công gần đây</h6>
+        <a href="{{ url_for('attendance.index') }}" class="text-primary small">Xem tất cả</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Vào</th>
+                        <th>Ra</th>
+                        <th>Giờ làm</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rec in emp.attendance_records[-10:]|reverse %}
+                    <tr>
+                        <td>{{ rec.date.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ rec.check_in or '—' }}</td>
+                        <td>{{ rec.check_out or '—' }}</td>
+                        <td>{{ rec.work_hours }}h</td>
+                        <td>
+                            <span class="badge bg-{{ rec.status_label[1] }}">
+                                {{ rec.status_label[0] }}
+                            </span>
+                        </td>
+                        <td class="text-muted small">{{ rec.note or '' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-3">Chưa có dữ liệu chấm công</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
